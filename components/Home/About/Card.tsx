@@ -9,7 +9,7 @@ type Props = {
 
 const Card = ({title, description, Icon}: Props) => {
   return (
-     <div className= "flex flex-col items-center mx-5 justify-center bg-white shadow-sm rounded-xl hover:shadow-lg px-5 hover:scale-110 hover: transition-all duration-200 text-center w-1/6 h-[40vh]">
+     <div className= "flex flex-col items-center mx-5  justify-center bg-white shadow-sm rounded-xl hover:shadow-lg px-5 hover:scale-110 hover: transition-all duration-200 text-center md:w-1/6 w-1/4 h-[40vh]">
             <div>
                 <Image src={Icon} width={70} height={70} alt='smth' className='mt-2'></Image>
             </div>

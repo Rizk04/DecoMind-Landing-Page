@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 
 const MiddleDecription = () => {
   return (
-    <div className="flex flex-col text-center justify-center min-h-[50vh] md:h-[50vh] space-y-5 my-15 px-4">
+    <div className="flex flex-col text-center justify-center min-h-[50vh]  space-y-5 my-15 px-4">
       <h1 className="text-black text-2xl md:text-4xl font-medium mb-2">Our Core Values</h1>
       <p className="text-gray-500 text-base md:text-xl mb-10 px-2 md:px-0">
         At DecoMind, we're building the future of interior design — one room at

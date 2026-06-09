@@ -34,7 +34,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className="text-xl text-center mx-auto w-full md:w-2/3"
+        className=" lg:text-xl text-md text-center mx-auto w-full md:w-2/3"
       >
         DecoMind is an AI-powered furniture design app that helps you visualize
         and create stunning interior spaces in seconds. No design experience
@@ -46,7 +46,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className="text-xl text-center mx-auto w-full md:w-2/3"
+        className=" lg:text-xl text-md text-center mx-auto w-full md:w-2/3"
       >
         Choose from 10 wood types, 8 color palettes, 10 furniture styles, and 8
         materials. Our AI generates photorealistic room designs based on your
@@ -59,7 +59,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className="text-xl text-center mx-auto w-full md:w-2/3"
+        className=" lg:text-xl text-md =text-center mx-auto w-full md:w-2/3"
       >
         {" "}
         We believe everyone deserves a beautiful home without spending thousands
