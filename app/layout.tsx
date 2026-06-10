@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
-import { Montserrat } from "next/font/google";
+import { Montserrat, Geist } from "next/font/google";
 import "./globals.css";
 import WrapperNav from "@/components/Home/Navbar/WrapperNav";
 import Footer from "@/components/Home/Footer/Footer";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const font = Montserrat({
   weight: ["300", "400", "500", "700", "800", "900"],
@@ -20,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${font.className}  h-full antialiased`}>
+    <html lang="en" className={cn("h-full", "antialiased", font.className, "font-sans", geist.variable)}>
       <body className="min-h-full flex flex-col">
         <WrapperNav />
         {children}

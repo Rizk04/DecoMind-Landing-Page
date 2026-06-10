@@ -31,7 +31,7 @@ const Nav = ({openNav}: Props) => {
 
   return (
     <div
-      className={` text-lg fixed transition-all duration-200 h-[12vh] z-50 w-full ${navBg ? "bg-white shadow-md" : "bg-transparent"}`}
+      className={` text-lg fixed transition-all duration-200 h-[12vh] z-50 w-full ${navBg ? "bg-white shadow-md" : "bg-white"}`}
     >
       {" "}
       <div className="flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto">
