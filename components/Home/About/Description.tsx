@@ -16,7 +16,7 @@ const Description = () => {
           },
         },
       }}
-      className="flex flex-col text-center items-center justify-center space-y-5 h-[50vh] bg-blue-300/80 px-4"
+      className="flex flex-col text-center items-center justify-center space-y-4 md:space-y-5 py-16 sm:py-20 md:py-24 bg-blue-300/80 px-4"
     >
       <motion.h1
         transition={{ duration: 0.4, ease: "easeOut" }}
@@ -24,7 +24,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className="text-4xl font-medium"
+        className="text-2xl sm:text-3xl md:text-4xl font-medium"
       >
         About DecoMind{" "}
       </motion.h1>
@@ -34,7 +34,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className=" lg:text-xl text-md text-center mx-auto w-full md:w-2/3"
+        className=" text-sm sm:text-base md:text-lg text-center mx-auto w-full md:w-3/4 lg:text-2/3"
       >
         DecoMind is an AI-powered furniture design app that helps you visualize
         and create stunning interior spaces in seconds. No design experience
@@ -46,7 +46,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className=" lg:text-xl text-md text-center mx-auto w-full md:w-2/3"
+        className=" text-sm sm:text-base md:text-lg text-center mx-auto w-full md:w-3/4 lg:text-2/3"
       >
         Choose from 10 wood types, 8 color palettes, 10 furniture styles, and 8
         materials. Our AI generates photorealistic room designs based on your
@@ -59,7 +59,7 @@ const Description = () => {
           hidden: { opacity: 0, y: 20 },
           visible: { opacity: 1, y: 0 },
         }}
-        className=" lg:text-xl text-md =text-center mx-auto w-full md:w-2/3"
+        className=" text-sm sm:text-base md:text-lg text-center mx-auto w-full md:w-3/4 lg:text-2/3"
       >
         {" "}
         We believe everyone deserves a beautiful home without spending thousands

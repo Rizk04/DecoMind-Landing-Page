@@ -13,7 +13,7 @@ const MiddleDecription = () => {
         customer support.
       </p>
 
-      <motion.div className="flex flex-col md:flex-row items-center justify-evenly text-center gap-6 md:gap-0">
+      <motion.div className="flex flex-col md:flex-row items-stretch justify-center gap-35 flex-wrap">
         <Card
           description="We push the boundaries of what AI can do for interior design. From 3D visualization to real-time room generation, we're constantly evolving to make design smarter, faster, and more accessible."
           title="Innovation First"

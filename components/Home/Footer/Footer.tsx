@@ -1,8 +1,13 @@
 import Logo from "@/components/Helper/Logo";
 import React from "react";
-import { BsLinkedin } from "react-icons/bs";
-import { FaFacebook, FaFacebookSquare } from "react-icons/fa";
+import { BsInstagram, BsLinkedin } from "react-icons/bs";
+import {
+  FaFacebook,
+  FaFacebookSquare,
+  FaInstagramSquare,
+} from "react-icons/fa";
 import { FaX, FaXTwitter } from "react-icons/fa6";
+import { ImInstagram } from "react-icons/im";
 import { LiaLinkedin } from "react-icons/lia";
 
 const Footer = () => {
@@ -23,9 +28,8 @@ const Footer = () => {
               {" "}
               <FaFacebookSquare />{" "}
             </button>
-            <button className="text-3xl text-black">
-              {" "}
-              <FaXTwitter />{" "}
+            <button className="text-3xl text-[#E4405F]">
+              <BsInstagram />
             </button>
           </div>
         </div>

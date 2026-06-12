@@ -17,22 +17,22 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="pt-3 relative w-full sm:h-[120vh] h-screen items-center flex sm:justify-evenly lg:flex-row flex-col max-[768px]:mt-20">
+    <div className="relative w-full sm:min-h-[120vh] min-h-[100vh] items-center flex sm:justify-evenly lg:flex-row lg:space-y-3 flex-col pt-[12vh] lg:pt-0">
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ ease: "easeIn", duration: 0.5 }}
         className="relative"
       >
-        <h1 className="text-3xl lg:text-6xl font-bold text-center text-gray-800">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-center text-gray-800">
           Transform Any Room <br />
-          <motion.span animate={{ opacity: [0.8, 1, 0.8]}} transition={{duration: 2, repeat: Infinity}} className=" pb-2 text-3xl lg:text-6xl font-bold text-center text-transparent bg-linear-to-r bg-clip-text to-[#1A3A5C] from-[#0D9DB8]">
+          <motion.span animate={{ opacity: [0.8, 1, 0.8]}} transition={{duration: 2, repeat: Infinity}} className=" pb-2 text-2xl sm:text-3xl md:text-4xl lg:text-5xl  font-bold text-center text-transparent bg-linear-to-r bg-clip-text to-[#1A3A5C] from-[#0D9DB8]">
             AI-Powered
           </motion.span>
           <span> Design</span>
         </h1>
 
-        <p className="md:text-lg lg:text-xl text-center text-gray-400">
+        <p className="text-sm sm:text-base md:text-lg text-center text-gray-400">
           Generate stunning furniture layouts and interior designs in seconds.
           <br /> Choose from wood types, color palettes, furniture styles, and
           materials <br /> no design experience needed.
@@ -41,7 +41,7 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className=" cursor-pointer text-md max-[768px]:text-sm flex items-center justify-center gap-3 text-white text-md rounded-md bg-[#1A3A5C] w-1/2 max-[768px]:w-full  h-12 hover:bg-[#0D9DB8] font-medium hover:text-black transition-all duration-200 py-3"
+            className=" cursor-pointer  max-[768px]:text-sm flex items-center justify-center gap-3 text-white rounded-md bg-[#1A3A5C] px-3 py-5 h-12 hover:bg-[#0D9DB8] font-medium hover:text-black transition-all duration-200 py-3"
           >
             <FaGooglePlay />
             Download from Google Play
@@ -49,7 +49,7 @@ const Hero = () => {
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            className=" cursor-pointer text-md max-[768px]:text-sm flex items-center justify-center gap-3 text-black text-md rounded-md border-2 border-[#1A3A5C] w-1/2 max-[768px]:w-full  h-12 hover:bg-[#1A3A5C] font-medium hover:text-white transition-all duration-200"
+            className=" cursor-pointer max-[768px]:text-sm flex items-center justify-center gap-3 text-black  rounded-md border-2 border-[#1A3A5C] px-3 py-5 h-12 hover:bg-[#1A3A5C] font-medium hover:text-white transition-all duration-200"
           >
             <FaApple />
             Download from App Store

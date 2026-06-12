@@ -19,7 +19,7 @@ const ContactInfo = () => {
           },
         },
       }}
-      className="flex flex-col px-5 space-y-10 ml-5"
+      className="flex flex-col px-5 space-y-10 ml-5 py-15"
     >
       <motion.div
         variants={{
@@ -32,6 +32,7 @@ const ContactInfo = () => {
           Don't Hesitate to Reach Out
         </h1>
       </motion.div>
+      <div className="flex flex-row space-x-5">
       <motion.div
         variants={{
           hidden: { opacity: 0, y: 30 },
@@ -46,7 +47,7 @@ const ContactInfo = () => {
         </div>
         <div className="flex flex-col">
           <p className="text-lg md:text-xl">Phone</p>
-          <p className="text-lg font-medium text-blue-600">+12078818202</p>
+          <p className="text-md font-medium text-blue-600">+12078818202</p>
         </div>
       </motion.div>
 
@@ -66,7 +67,7 @@ const ContactInfo = () => {
           <p className="text-lg md:text-xl">Email</p>
           <a
             href="mailto:info@optima-solutions.cloud"
-            className="text-lg font-medium text-blue-600"
+            className="text-md  font-medium text-blue-600"
           >
             info@optima-solutions.cloud
           </a>
@@ -87,7 +88,7 @@ const ContactInfo = () => {
         </div>
         <div className="flex flex-col">
           <p className="text-lg md:text-xl">Location</p>
-          <p className="text-lg font-medium text-blue-600">Lebanon</p>
+          <p className="text-md  font-medium text-blue-600">Lebanon</p>
         </div>
       </motion.div>
 
@@ -105,11 +106,11 @@ const ContactInfo = () => {
         </div>
         <div className="flex flex-col">
           <p className="text-lg md:text-xl">Response Time</p>
-          <p className="text-lg font-medium text-blue-600">Within 24 hours</p>
+          <p className="text-md  font-medium text-blue-600">Within 24 hours</p>
         </div>
       </motion.div>
-
-      <div></div>
+</div>
+      
     </motion.div>
   );
 };
