@@ -17,7 +17,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className="pt-40 lg:pt-0 relative w-full min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
+    <div className=" translate-x-4 pt-40 lg:pt-0 relative w-full min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
       {" "}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -67,11 +67,14 @@ const Hero = () => {
         width={"500"}
         height={"500"}
       /> */}
-      <Lottie
+      
+         <Lottie
         animationData={animation}
         loop={true}
-        className="w-full max-w-2xl"
+        className="w-full max-w-xl translate-x-4"
       />
+      
+     
     </div>
   );
 };
