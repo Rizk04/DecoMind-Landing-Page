@@ -16,7 +16,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 const FeatureBarProgress = () => {
   const lottieRef = useRef(null);
   const lottieContainerRef = useRef(null);
-  const lottieInView = useInView(lottieContainerRef, {once: false, amount:0.3})
+  const lottieInView = useInView(lottieContainerRef, { once: false, amount: 0.3 });
   const count1 = useMotionValue(0);
   const count2 = useMotionValue(0);
   const count3 = useMotionValue(0);
@@ -48,54 +48,55 @@ const FeatureBarProgress = () => {
 
   return (
     <div className="py-12 bg-[#1A3A5C]">
-      <div className="flex text-white text-center justify-center mb-15">
-        <h1 className="text-3xl font-medium">
-          <div className="flex flex-col md:flex-row text-white text-center justify-center gap-24">
-            <div ref={ref}>
-              <motion.span className="text-5xl font-bold">
-                {rounded1}
-              </motion.span>
-              <span className="text-5xl font-bold">+</span>
-
-              <p className="text-sm mt-2 text-gray-300">Happy Customers</p>
-            </div>
-            <div>
-              <motion.span className="text-5xl font-bold">
-                {rounded2}
-              </motion.span>
-              <span className="text-5xl font-bold">+</span>
-              <p className="text-sm mt-2 text-gray-300">AI-Generated Designs</p>
-            </div>
-            <div>
-              <motion.span className="text-5xl font-bold">
-                {rounded3}
-              </motion.span>
-              <span className="text-5xl font-bold">★</span>
-
-              <p className="text-sm mt-2 text-gray-300">User Rating</p>
-            </div>
-            <div>
-              <motion.span className="text-5xl font-bold">
-                {rounded4}
-              </motion.span>
-              <span className="text-5xl font-bold">+</span>
-
-              <p className="text-sm mt-2 text-gray-300">Styles & Materials</p>
-            </div>
-          </div>
-        </h1>
+      {/* Stats row — 2×2 on mobile, 4-across on md+ */}
+      <div
+        ref={ref}
+        className="grid grid-cols-2 md:flex md:flex-row text-white text-center justify-center gap-8 md:gap-24 mb-12 md:mb-16 px-6"
+      >
+        <div>
+          <motion.span className="text-4xl md:text-5xl font-bold">
+            {rounded1}
+          </motion.span>
+          <span className="text-4xl md:text-5xl font-bold">+</span>
+          <p className="text-sm mt-2 text-gray-300">Happy Customers</p>
+        </div>
+        <div>
+          <motion.span className="text-4xl md:text-5xl font-bold">
+            {rounded2}
+          </motion.span>
+          <span className="text-4xl md:text-5xl font-bold">+</span>
+          <p className="text-sm mt-2 text-gray-300">AI-Generated Designs</p>
+        </div>
+        <div>
+          <motion.span className="text-4xl md:text-5xl font-bold">
+            {rounded3}
+          </motion.span>
+          <span className="text-4xl md:text-5xl font-bold">★</span>
+          <p className="text-sm mt-2 text-gray-300">User Rating</p>
+        </div>
+        <div>
+          <motion.span className="text-4xl md:text-5xl font-bold">
+            {rounded4}
+          </motion.span>
+          <span className="text-4xl md:text-5xl font-bold">+</span>
+          <p className="text-sm mt-2 text-gray-300">Styles & Materials</p>
+        </div>
       </div>
 
-      <div className="w-[80%] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center ">
+      {/* Main content — stacks on mobile, side-by-side on lg+ */}
+      <div className="w-[90%] md:w-[80%] mx-auto grid grid-cols-1 lg:grid-cols-2 items-center gap-8 lg:gap-0">
         <div>
-          <div className="">
-            <h1 className="text-6xl text-white font-bold px-5 #0D9DB8">
+          {/* Heading — smaller on mobile */}
+          <div className="text-center lg:text-left">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl text-white font-bold px-5">
               Smart Design for
             </h1>
-            <h1 className="text-6xl font-bold px-5 text-[#0D9DB8] ">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold px-5 text-[#0D9DB8]">
               Smart Homeowners
             </h1>
           </div>
+
+          {/* Feature cards — column on mobile, row on sm+ */}
           <motion.div
             initial="hidden"
             whileInView="visible"
@@ -108,7 +109,7 @@ const FeatureBarProgress = () => {
                 },
               },
             }}
-            className="flex flex-row justify-between max-w-4xl mt-16 space-x-5 mx-auto "
+            className="flex flex-col sm:flex-row justify-between max-w-4xl mt-8 md:mt-16 gap-4 sm:gap-3 sm:space-x-0 mx-auto px-2"
           >
             <motion.div
               transition={{ duration: 0.4, ease: "easeOut" }}
@@ -116,11 +117,11 @@ const FeatureBarProgress = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="group text-center p-4 text-white bg-white/5 rounded-xl  "
+              className="group text-center p-4 text-white bg-white/5 rounded-xl flex-1"
             >
               <div className="text-3xl mb-2">🪑</div>
-              <h3 className=" font-semibold ">100+ combinations</h3>
-              <p className="text-gray-300  ">
+              <h3 className="font-semibold">100+ combinations</h3>
+              <p className="text-gray-300 text-sm">
                 10 Wood Types · 8 Color Palettes · 10 Styles
               </p>
             </motion.div>
@@ -131,11 +132,11 @@ const FeatureBarProgress = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="group text-center p-4 text-white bg-white/5 rounded-xl "
+              className="group text-center p-4 text-white bg-white/5 rounded-xl flex-1"
             >
               <div className="text-3xl mb-2">💰</div>
-              <h3 className=" font-semibold ">100+ combinations</h3>
-              <p className="text-gray-300  ">No expensive interior designers</p>
+              <h3 className="font-semibold">Save Money</h3>
+              <p className="text-gray-300 text-sm">No expensive interior designers</p>
             </motion.div>
 
             <motion.div
@@ -144,23 +145,24 @@ const FeatureBarProgress = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="group text-center p-4 text-white bg-white/5 rounded-xl"
+              className="group text-center p-4 text-white bg-white/5 rounded-xl flex-1"
             >
               <div className="text-3xl mb-2">🤖</div>
-              <h3 className=" font-semibold ">AI-Powered</h3>
-              <p className="text-gray-300  ">
+              <h3 className="font-semibold">AI-Powered</h3>
+              <p className="text-gray-300 text-sm">
                 Generate stunning rooms in seconds
               </p>
             </motion.div>
           </motion.div>
         </div>
-        <motion.div
-        >
+
+        {/* Lottie — constrained and centered on mobile */}
+        <motion.div className="flex justify-center">
           <Lottie
-          lottieRef={lottieRef}
+            lottieRef={lottieRef}
             animationData={animation}
             loop={true}
-            className="w-full max-w-3xl"
+            className="w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-3xl"
           />
         </motion.div>
       </div>
