@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@import-normalize;
+
+@media (max-width: 850px) {
+  .feature-progress-section * {
+    font-size: 0.75em !important;
+  }
+
+  .feature-progress-section .lottie-wrap {
+    max-width: 200px !important;
+  }
+
+  .feature-progress-section .stat-number {
+    font-size: 1.8rem !important;
+  }
+}

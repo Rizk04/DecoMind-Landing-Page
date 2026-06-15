@@ -1,0 +1,129 @@
+"use client";
+import { motion } from "framer-motion";
+import Image from "next/image";
+import React from "react";
+import { FaCouch } from "react-icons/fa";
+import { FaMagnifyingGlass } from "react-icons/fa6";
+
+const Feature = () => {
+  return (
+    <motion.div
+      className="bg-linear-to-r from-[#1A3A5C] via-[#1A3F60] to-[#152D4A] flex items-center overflow-hidden"
+      style={{ height: "100svh", padding: "clamp(0.75rem, 2vh, 2rem) 0" }}
+    >
+      <div
+        className="mx-auto grid grid-cols-1 lg:grid-cols-2 items-center w-[85%]"
+        style={{ gap: "clamp(1rem, 3vw, 3rem)" }}
+      >
+        {/* Image */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          transition={{ duration: 1 }}
+          viewport={{ once: true }}
+          className="flex justify-center"
+        >
+          <Image
+            src="/Assets/images/Feature-Illust.svg"
+            alt="feature illustration"
+            width={600}
+            height={500}
+            style={{ width: "clamp(180px, 35vw, 600px)", height: "auto" }}
+          />
+        </motion.div>
+
+        {/* Text */}
+        <div>
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-white font-bold"
+            style={{ fontSize: "clamp(1.2rem, 3vw, 3rem)", lineHeight: 1.2 }}
+          >
+            Everything You Need to Design Your Dream Space
+          </motion.h1>
+
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            variants={{
+              hidden: {},
+              visible: { transition: { staggerChildren: 0.15 } },
+            }}
+          >
+            {/* Feature 1 */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, x: 30 }, visible: { opacity: 1, x: 0 } }}
+              transition={{ duration: 0.6 }}
+              style={{ marginTop: "clamp(0.75rem, 3vh, 2.5rem)" }}
+            >
+              <div className="flex items-center" style={{ gap: "clamp(0.75rem, 2vw, 1.25rem)" }}>
+                <div
+                  className="rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0"
+                  style={{ width: "clamp(2rem, 3.5vw, 3rem)", height: "clamp(2rem, 3.5vw, 3rem)" }}
+                >
+                  <FaMagnifyingGlass
+                    className="text-white"
+                    style={{ width: "clamp(0.875rem, 1.5vw, 1.5rem)", height: "clamp(0.875rem, 1.5vw, 1.5rem)" }}
+                  />
+                </div>
+                <div className="flex-1">
+                  <h1
+                    className="text-white font-medium"
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.5rem)" }}
+                  >
+                    Browse Beautiful Galleries
+                  </h1>
+                  <p
+                    className="text-white sm:w-2/3"
+                    style={{ fontSize: "clamp(0.7rem, 1.1vw, 1rem)", marginTop: "clamp(0.2rem, 0.8vh, 0.5rem)" }}
+                  >
+                    Explore thousands of room designs. Filter by category, style, and color palette.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Feature 2 */}
+            <motion.div
+              variants={{ hidden: { opacity: 0, x: 30 }, visible: { opacity: 1, x: 0 } }}
+              transition={{ duration: 0.6 }}
+              style={{ marginTop: "clamp(0.75rem, 3vh, 2.5rem)" }}
+            >
+              <div className="flex items-center" style={{ gap: "clamp(0.75rem, 2vw, 1.25rem)" }}>
+                <div
+                  className="rounded-full bg-green-400 flex items-center justify-center flex-shrink-0"
+                  style={{ width: "clamp(2rem, 3.5vw, 3rem)", height: "clamp(2rem, 3.5vw, 3rem)" }}
+                >
+                  <FaCouch
+                    className="text-white"
+                    style={{ width: "clamp(0.875rem, 1.5vw, 1.5rem)", height: "clamp(0.875rem, 1.5vw, 1.5rem)" }}
+                  />
+                </div>
+                <div className="flex-1">
+                  <h1
+                    className="text-white font-medium"
+                    style={{ fontSize: "clamp(0.9rem, 1.8vw, 1.5rem)" }}
+                  >
+                    Visualize in 3D
+                  </h1>
+                  <p
+                    className="text-white sm:w-2/3"
+                    style={{ fontSize: "clamp(0.7rem, 1.1vw, 1rem)", marginTop: "clamp(0.2rem, 0.8vh, 0.5rem)" }}
+                  >
+                    Walk through your future room before buying. Rotate, zoom, and explore from every angle.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          </motion.div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default Feature;
