@@ -96,20 +96,7 @@ export default function ServicesPage() {
               Transform room photos, floor plans, and ideas into photorealistic
               interiors powered by advanced AI technology.
             </p>
-            <div className="flex gap-[1vw] mt-[2.5vh]">
-              <button
-                className="bg-[#0D9DB8] rounded-xl font-semibold hover:bg-[#0bc0e0] transition-colors whitespace-nowrap"
-                style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)", padding: "clamp(0.5rem, 0.9vh, 0.9rem) clamp(0.8rem, 1.5vw, 1.8rem)" }}
-              >
-                Start Designing
-              </button>
-              <button
-                className="border border-white/20 rounded-xl hover:bg-white/5 transition-colors whitespace-nowrap"
-                style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)", padding: "clamp(0.5rem, 0.9vh, 0.9rem) clamp(0.8rem, 1.5vw, 1.8rem)" }}
-              >
-                Watch Demo
-              </button>
-            </div>
+           
           </motion.div>
 
           <motion.div

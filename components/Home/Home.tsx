@@ -1,30 +1,34 @@
-import React from 'react'
-import Hero from './Hero/Hero'
-import Feature from './Features/FeatureBar'
-import FeatureList from './Features/FeatureList'
-import Download from './DownloadBar/Download'
-import FeatureBarProgress from './Features/FeatureBarProgress'
+import React from "react";
+import Hero from "./Hero/Hero";
+import Feature from "./Features/FeatureBar";
+import FeatureList from "./Features/FeatureList";
+import Download from "./DownloadBar/Download";
+import FeatureBarProgress from "./Features/FeatureBarProgress";
 
 const Home = () => {
   return (
-    <div className='h-screen overflow-y-scroll snap-y snap-mandatory'>
-      <section className='snap-start pt-[12vh]'>
+    <div className="h-screen overflow-y-scroll snap-y snap-mandatory">
+      <section className="h-screen snap-start">
         <Hero />
       </section>
-      <section className='snap-start pt-[12vh]'>
+
+      <section className="h-screen snap-start">
         <FeatureBarProgress />
       </section>
-      <section className='snap-start'>
+
+      <section className="h-screen snap-start">
         <FeatureList />
       </section>
-      <section className='snap-start pb-[12vh]'>
+
+      <section className="h-screen snap-start">
         <Feature />
       </section>
-      <section className='snap-start'>
+
+      <section className="h-screen snap-start">
         <Download />
       </section>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;
