@@ -111,7 +111,7 @@ export default function ServicesPage() {
             <img
               src="../Assets/images/hero-phone.jpg"
               alt="DecoMind"
-              className="relative z-10 object-contain"
+              className="relative z-10 object-contain rounded"
               style={{ maxHeight: "75vh", maxWidth: "100%", width: "auto" }}
             />
           </motion.div>
@@ -120,7 +120,7 @@ export default function ServicesPage() {
 
       {/* STATS */}
       <section
-        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
+        className="snap-start w-full shrink-0 flex items-center overflow-hidden md:px-[5vw]"
         style={{ height: "88vh" }}
       >
         <div
@@ -196,7 +196,7 @@ export default function ServicesPage() {
                 {service.features.map((feature) => (
                   <div
                     key={feature}
-                    className="bg-white/5 border border-white/10 rounded-xl"
+                    className="bg-white/5 border border-white/10 rounded"
                     style={{
                       padding: "clamp(0.4rem, 0.7vw, 0.8rem)",
                       fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
@@ -220,7 +220,7 @@ export default function ServicesPage() {
               <img
                 src={service.image}
                 alt={service.title}
-                className="relative z-10 object-contain rounded-2xl shadow-2xl border border-white/10"
+                className="relative z-10 object-contain rounded shadow-2xl border border-white/10"
                 style={{ maxHeight: "72vh", maxWidth: "100%", width: "auto" }}
               />
             </motion.div>
@@ -239,9 +239,9 @@ export default function ServicesPage() {
           </h2>
           <div
             className="grid mt-[4vh]"
-            style={{ gridTemplateColumns: "repeat(5, 1fr)", gap: "1.5vw" }}
+            style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5vw" }}
           >
-            {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results"].map((step) => (
+            {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results", "Sustainable Plan"].map((step) => (
               <div
                 key={step}
                 className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"

@@ -17,7 +17,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <div className=" translate-x-4 h-[88svh] lg:pt-0 relative w-full min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
+    <div className=" translate-x-4 h-[88svh] lg:pt-0 relative w-[95%] min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
       {" "}
       <motion.div
         initial={{ opacity: 0, y: 10 }}

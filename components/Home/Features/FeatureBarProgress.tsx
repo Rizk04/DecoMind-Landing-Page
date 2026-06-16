@@ -169,7 +169,7 @@ const FeatureBarProgress = () => {
                 <div
                   style={{
                     fontSize: "clamp(1rem, 2vw, 1.875rem)",
-                    marginBottom: "clamp(0.15rem, 0.5vh, 0.5rem)",
+                    marginBottom: "clamp(0.15rem, 0.3vh, 0.5rem)",
                   }}
                 >
                   {emoji}
