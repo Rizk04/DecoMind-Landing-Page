@@ -51,52 +51,62 @@ const stats = [
   { value: "500+", label: "Happy Customers" },
 ];
 
+// The navbar is fixed at 12vh tall.
+// The snap container sits below it: top: 12vh, height: 88vh.
+// Every section is exactly 88vh so one section = one screen, always.
+// All font/spacing uses vw so it shrinks automatically at 150% zoom.
+
 export default function ServicesPage() {
   return (
-    /* 
-      1. Enabled scroll snapping on the main parent container.
-      2. Added smooth scrolling behavior.
-    */
-    <div className="bg-[#1A3A5C] text-white overflow-x-hidden h-screen overflow-y-scroll scroll-smooth snap-y snap-mandatory pt-[10vh]">
-      
-      {/* HERO SECTION */}
-      {/* Changed to min-h-[90svh] and added snap-start + scroll-mt to handle zoom gracefully */}
-      <section className="min-h-[90svh] flex items-center px-4 sm:px-6 lg:px-20 py-12 snap-start scroll-mt-[10vh]">
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-16 items-center w-full">
+    <div
+      className="bg-[#1A3A5C] text-white overflow-x-hidden overflow-y-scroll snap-y snap-mandatory"
+      style={{ position: "fixed", top: "12vh", left: 0, right: 0, bottom: 0 }}
+    >
+      {/* HERO */}
+      <section
+        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
+        style={{ height: "88vh" }}
+      >
+        <div
+          className="w-full max-w-7xl mx-auto grid items-center"
+          style={{ gridTemplateColumns: "1fr 1fr", gap: "4vw", height: "80vh" }}
+        >
           <motion.div
-            initial={{ opacity: 0, y: 40 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }} // Prevents animation stuttering while snap-scrolling
+            viewport={{ once: true }}
             transition={{ duration: 0.7 }}
+            className="flex flex-col justify-center"
           >
-            <span className="text-[#0D9DB8] font-semibold uppercase tracking-wider text-sm sm:text-base">
+            <span style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }} className="text-[#0D9DB8] font-semibold uppercase tracking-widest">
               DecoMind Services
             </span>
-
             <h1
-              className="font-bold mt-4 leading-tight"
-              style={{
-                fontSize: "clamp(2.2rem, 5vw, 4.5rem)",
-              }}
+              className="font-bold leading-tight mt-[1.5vh]"
+              style={{ fontSize: "clamp(1.4rem, 2.8vw, 3.5rem)" }}
             >
               Design Smarter.
               <br />
-              <span className="text-[#0D9DB8]">
-                Visualize Before You Build.
-              </span>
+              <span className="text-[#0D9DB8]">Visualize Before You Build.</span>
             </h1>
-
-            <p className="text-gray-300 mt-6 max-w-xl text-base sm:text-lg">
+            <p
+              className="text-gray-300 leading-relaxed mt-[1.5vh]"
+              style={{ fontSize: "clamp(0.7rem, 1vw, 1rem)", maxWidth: "38vw" }}
+            >
               Transform room photos, floor plans, and ideas into photorealistic
               interiors powered by advanced AI technology.
             </p>
-
-            <div className="flex flex-wrap gap-3 sm:gap-4 mt-8">
-              <button className="bg-[#0D9DB8] px-6 sm:px-8 py-3 sm:py-4 rounded-xl font-semibold text-sm sm:text-base hover:bg-[#0bc0e0] transition-colors">
+            <div className="flex gap-[1vw] mt-[2.5vh]">
+              <button
+                className="bg-[#0D9DB8] rounded-xl font-semibold hover:bg-[#0bc0e0] transition-colors whitespace-nowrap"
+                style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)", padding: "clamp(0.5rem, 0.9vh, 0.9rem) clamp(0.8rem, 1.5vw, 1.8rem)" }}
+              >
                 Start Designing
               </button>
-
-              <button className="border border-white/20 px-6 sm:px-8 py-3 sm:py-4 rounded-xl text-sm sm:text-base hover:bg-white/5 transition-colors">
+              <button
+                className="border border-white/20 rounded-xl hover:bg-white/5 transition-colors whitespace-nowrap"
+                style={{ fontSize: "clamp(0.7rem, 0.95vw, 1rem)", padding: "clamp(0.5rem, 0.9vh, 0.9rem) clamp(0.8rem, 1.5vw, 1.8rem)" }}
+              >
                 Watch Demo
               </button>
             </div>
@@ -107,34 +117,42 @@ export default function ServicesPage() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative"
+            className="relative flex items-center justify-center"
+            style={{ height: "80vh" }}
           >
-            <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[120px] pointer-events-none" />
+            <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[8vw] pointer-events-none" />
             <img
               src="../Assets/images/hero-phone.jpg"
-              className="relative z-10 mx-auto max-h-[40vh] sm:max-h-[550px] lg:max-h-[600px] object-contain"
               alt="DecoMind"
+              className="relative z-10 object-contain"
+              style={{ maxHeight: "75vh", maxWidth: "100%", width: "auto" }}
             />
           </motion.div>
         </div>
       </section>
 
-      {/* STATS SECTION */}
-      {/* Kept separate, but set to snap-start so it locks cleanly into position */}
-      <section className="px-4 sm:px-6 lg:px-20 py-12 snap-start scroll-mt-[10vh] min-h-[50svh] flex items-center">
-        <div className="max-w-7xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 w-full">
+      {/* STATS */}
+      <section
+        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
+        style={{ height: "88vh" }}
+      >
+        <div
+          className="w-full max-w-7xl mx-auto grid"
+          style={{ gridTemplateColumns: "repeat(4, 1fr)", gap: "2vw" }}
+        >
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="bg-white/5 border border-white/10 rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-center"
+              className="bg-white/5 border border-white/10 rounded-2xl text-center"
+              style={{ padding: "clamp(1rem, 2.5vw, 2.5rem)" }}
             >
               <h3
                 className="font-bold text-[#0D9DB8]"
-                style={{ fontSize: "clamp(1.5rem, 3vw, 2.5rem)" }}
+                style={{ fontSize: "clamp(1.2rem, 2.5vw, 2.5rem)" }}
               >
                 {stat.value}
               </h3>
-              <p className="text-gray-300 mt-2 text-sm sm:text-base">
+              <p className="text-gray-300 mt-2" style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}>
                 {stat.label}
               </p>
             </div>
@@ -142,44 +160,60 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* SERVICES SECTIONS */}
-      {/* Added snap-start and min-h-screen to ensure each individual service is its own dedicated viewport card */}
+      {/* SERVICES */}
       {services.map((service, index) => (
         <section
           key={service.title}
-          className="px-4 sm:px-6 lg:px-20 min-h-[90svh] flex items-center py-16 snap-start scroll-mt-[10vh]"
+          className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
+          style={{ height: "88vh" }}
         >
           <div
-            className={`max-w-7xl mx-auto grid lg:grid-cols-2 gap-10 lg:gap-20 items-center w-full ${
-              index % 2 !== 0 ? "lg:[&>*:first-child]:order-2" : ""
-            }`}
+            className="w-full max-w-7xl mx-auto grid items-center"
+            style={{
+              gridTemplateColumns: "1fr 1fr",
+              gap: "4vw",
+              height: "80vh",
+              direction: index % 2 !== 0 ? "rtl" : "ltr",
+            }}
           >
             <motion.div
-              initial={{ opacity: 0, x: -40 }}
+              initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
+              className="flex flex-col justify-center"
+              style={{ direction: "ltr" }}
             >
-              <span className="text-[#0D9DB8] font-medium text-sm sm:text-base">
+              <span
+                className="text-[#0D9DB8] font-medium"
+                style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
+              >
                 {service.title}
               </span>
-
               <h2
-                className="font-bold mt-3 leading-tight"
-                style={{ fontSize: "clamp(1.8rem, 4vw, 3.5rem)" }}
+                className="font-bold leading-tight mt-[1vh]"
+                style={{ fontSize: "clamp(1.2rem, 2.4vw, 3rem)" }}
               >
                 {service.subtitle}
               </h2>
-
-              <p className="text-gray-300 mt-5 sm:mt-6 text-sm sm:text-lg leading-relaxed">
+              <p
+                className="text-gray-300 leading-relaxed mt-[1.2vh]"
+                style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
+              >
                 {service.description}
               </p>
-
-              <div className="grid sm:grid-cols-2 gap-3 sm:gap-4 mt-8 sm:mt-10">
+              <div
+                className="grid mt-[2vh]"
+                style={{ gridTemplateColumns: "1fr 1fr", gap: "1vw" }}
+              >
                 {service.features.map((feature) => (
                   <div
                     key={feature}
-                    className="bg-white/5 border border-white/10 rounded-xl sm:rounded-2xl p-3 sm:p-4 text-sm sm:text-base"
+                    className="bg-white/5 border border-white/10 rounded-xl"
+                    style={{
+                      padding: "clamp(0.4rem, 0.7vw, 0.8rem)",
+                      fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
+                    }}
                   >
                     ✓ {feature}
                   </div>
@@ -188,44 +222,47 @@ export default function ServicesPage() {
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 40 }}
+              initial={{ opacity: 0, x: 30 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
-              className="relative"
+              className="relative flex items-center justify-center"
+              style={{ height: "80vh", direction: "ltr" }}
             >
-              <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[100px] pointer-events-none" />
+              <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[6vw] pointer-events-none" />
               <img
                 src={service.image}
-                className="relative z-10 rounded-2xl sm:rounded-3xl shadow-2xl border border-white/10 max-h-[45vh] lg:max-h-[500px] w-full object-cover mx-auto"
                 alt={service.title}
+                className="relative z-10 object-contain rounded-2xl shadow-2xl border border-white/10"
+                style={{ maxHeight: "72vh", maxWidth: "100%", width: "auto" }}
               />
             </motion.div>
           </div>
         </section>
       ))}
 
-      {/* FLOOR PLAN SECTION */}
-      <section className="px-4 sm:px-6 lg:px-20 min-h-[90svh] flex items-center py-16 snap-start scroll-mt-[10vh]">
-        <div className="max-w-7xl mx-auto w-full">
-          <h2
-            className="font-bold mt-4"
-            style={{ fontSize: "clamp(2rem, 5vw, 4rem)" }}
-          >
+      {/* FLOOR PLAN */}
+      <section
+        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
+        style={{ height: "88vh" }}
+      >
+        <div className="w-full max-w-7xl mx-auto">
+          <h2 className="font-bold" style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}>
             From Floor Plans To Reality
           </h2>
-
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-6 mt-12 sm:mt-16">
-            {[
-              "Upload Plan",
-              "AI Detects Rooms",
-              "Customize Styles",
-              "Generate Designs",
-              "Photoreal Results",
-            ].map((step) => (
+          <div
+            className="grid mt-[4vh]"
+            style={{ gridTemplateColumns: "repeat(5, 1fr)", gap: "1.5vw" }}
+          >
+            {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results"].map((step) => (
               <div
                 key={step}
-                className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-8 text-center text-sm sm:text-base flex items-center justify-center min-h-[100px]"
+                className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"
+                style={{
+                  padding: "clamp(0.8rem, 1.5vw, 2rem)",
+                  fontSize: "clamp(0.6rem, 0.9vw, 1rem)",
+                  minHeight: "clamp(60px, 8vh, 120px)",
+                }}
               >
                 {step}
               </div>
