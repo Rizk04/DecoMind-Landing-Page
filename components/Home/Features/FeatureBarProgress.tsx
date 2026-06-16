@@ -205,7 +205,7 @@ const FeatureBarProgress = () => {
             loop={true}
             style={{
               width: "clamp(220px, 80vw, 550px)",
-              maxHeight: "45vh",
+              maxHeight: "65vh",
             }}
           />
         </div>

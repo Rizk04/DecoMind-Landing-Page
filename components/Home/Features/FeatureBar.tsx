@@ -21,14 +21,15 @@ const Feature = () => {
           whileInView={{ opacity: 1, x: 0 }}
           transition={{ duration: 1 }}
           viewport={{ once: true }}
-          className="flex justify-center"
+          className="flex justify-center mt-10"
         >
           <Image
-            src="/Assets/images/Feature-Illust.svg"
+            src="/Assets/images/ai-design.jpg"
             alt="feature illustration"
-            width={600}
-            height={500}
-            style={{ width: "clamp(180px, 35vw, 600px)", height: "auto" }}
+            width={300}
+            height={200}
+            style={{ width: " clamp(140px, 20vw, 360px)", height: "auto" }}
+            className="rounded-2xl"
           />
         </motion.div>
 

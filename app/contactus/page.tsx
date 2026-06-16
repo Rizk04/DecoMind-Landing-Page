@@ -5,12 +5,15 @@ import React from "react";
 
 const ContactUs = () => {
   return (
-    <div className="pt-[12vh]">
-      <HeroContact />
-        
-          <ContactInfo />
-          
+    <div className="h-screen snap-y snap-mandatory overflow-y-scroll">
+      <div className="snap-start">
+        <HeroContact />
       </div>
+
+      <div className="snap-start">
+        <ContactInfo />
+      </div>
+    </div>
   );
 };
 

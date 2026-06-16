@@ -16,7 +16,7 @@ const HeroContact = () => {
           },
         },
       }}
-      className=" flex flex-col text-center items-center text-white justify-center space-y-5 min-h-[50vh] bg-linear-to-r from-[#1A3A5C] to-[#152D4A] px-4"
+      className=" flex flex-col text-center items-center h-screen text-white justify-center space-y-5 min-h-[50vh] bg-linear-to-r from-[#1A3A5C] to-[#152D4A] px-4"
     >
       <motion.h1
         transition={{ duration: 0.4, ease: "easeOut" }}
