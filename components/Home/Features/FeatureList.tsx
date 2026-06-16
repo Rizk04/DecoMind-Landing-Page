@@ -21,68 +21,83 @@ const FeatureList = () => {
   if (!animation || !animation2 || !animation3) return null;
 
   return (
-    <div
-      className="bg-gray-100 flex flex-col justify-center overflow-hidden"
-      style={{ height: "100svh", padding: "clamp(0.75rem, 2vh, 2rem) clamp(1rem, 4vw, 4rem)" }}
-    >
-      {/* Title */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        viewport={{ once: true, amount: 0.3 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="font-medium text-center"
-        style={{
-          fontSize: "clamp(1.4rem, 3.5vw, 3rem)",
-          marginBottom: "clamp(0.75rem, 3vh, 3rem)",
-        }}
-      >
-        Why DecoMind?
-      </motion.div>
+    <>
+      <style>{`
+        @media (max-width: 768px) {
+          .feature-section {
+            height: auto !important;
+            padding-top: 2rem !important;
+            padding-bottom: 2rem !important;
+          }
+        }
+      `}</style>
 
-      {/* Cards */}
-      <motion.div
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, amount: 0.2 }}
-        variants={{
-          hidden: {},
-          visible: { transition: { staggerChildren: 0.15 } },
+      <div
+        className="feature-section  flex flex-col justify-center overflow-hidden"
+        style={{
+          height: "100svh",
+          padding: "clamp(0.75rem, 2vh, 2rem) clamp(1rem, 4vw, 4rem)",
         }}
-        className="grid grid-cols-1 md:grid-cols-3"
-        style={{ gap: "clamp(0.5rem, 2vw, 1.5rem)" }}
       >
-        {[
-          {
-            title: "Total Creative Control",
-            src: animation,
-            description:
-              "Choose from 10 wood types, 8 color palettes, 10 furniture styles, and 8 materials. Mix and match to create a space that's uniquely yours.",
-          },
-          {
-            title: "Save Thousands on Designers",
-            src: animation2,
-            description:
-              "Visualize your dream room before buying a single piece of furniture. No expensive interior designers needed — AI does it for free.",
-          },
-          {
-            title: "Buy With Confidence",
-            src: animation3,
-            description:
-              "See exactly how furniture looks in your space before purchasing. Eliminate guesswork and expensive return shipping fees.",
-          },
-        ].map(({ title, src, description }) => (
-          <motion.div
-            key={title}
-            variants={{ hidden: { opacity: 0, x: 30 }, visible: { opacity: 1, x: 0 } }}
-            transition={{ duration: 0.6 }}
-            className="flex"
-          >
-            <FeatureItem title={title} src={src} description={description} />
-          </motion.div>
-        ))}
-      </motion.div>
-    </div>
+        {/* Title */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          viewport={{ once: true, amount: 0.3 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="font-medium text-center"
+          style={{
+            fontSize: "clamp(1.4rem, 3.5vw, 3rem)",
+            marginBottom: "clamp(0.75rem, 3vh, 3rem)",
+          }}
+        >
+          Why DecoMind?
+        </motion.div>
+
+        {/* Cards */}
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.15 } },
+          }}
+          className="grid grid-cols-1 md:grid-cols-3"
+          style={{ gap: "clamp(0.5rem, 2vw, 1.5rem)" }}
+        >
+          {[
+            {
+              title: "Total Creative Control",
+              src: animation,
+              description:
+                "Choose from 10 wood types, 8 color palettes, 10 furniture styles, and 8 materials. Mix and match to create a space that's uniquely yours.",
+            },
+            {
+              title: "Save Thousands on Designers",
+              src: animation2,
+              description:
+                "Visualize your dream room before buying a single piece of furniture. No expensive interior designers needed — AI does it for free.",
+            },
+            {
+              title: "Buy With Confidence",
+              src: animation3,
+              description:
+                "See exactly how furniture looks in your space before purchasing. Eliminate guesswork and expensive return shipping fees.",
+            },
+          ].map(({ title, src, description }) => (
+            <motion.div
+              key={title}
+              variants={{ hidden: { opacity: 0, x: 30 }, visible: { opacity: 1, x: 0 } }}
+              transition={{ duration: 0.6 }}
+              className="flex"
+            >
+              <FeatureItem title={title} src={src} description={description} />
+            </motion.div>
+          ))}
+        </motion.div>
+      </div>
+    </>
   );
 };
 

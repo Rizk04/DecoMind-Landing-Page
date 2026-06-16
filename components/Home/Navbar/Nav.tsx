@@ -34,7 +34,6 @@ const Nav = ({ openNav }: Props) => {
       }`}
     >
       <div className="flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto">
-        {/* Logo */}
         <div>
           <div className="lg:hidden">
             <Logo />
