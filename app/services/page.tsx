@@ -51,212 +51,304 @@ const stats = [
   { value: "500+", label: "Happy Customers" },
 ];
 
-// The navbar is fixed at 12vh tall.
-// The snap container sits below it: top: 12vh, height: 88vh.
-// Every section is exactly 88vh so one section = one screen, always.
-// All font/spacing uses vw so it shrinks automatically at 150% zoom.
-
 export default function ServicesPage() {
   return (
-    <div
-      className="bg-[#1A3A5C] text-white overflow-x-hidden overflow-y-scroll snap-y snap-mandatory"
-      style={{ position: "fixed", top: "12vh", left: 0, right: 0, bottom: 0 }}
-    >
-      {/* HERO */}
-      <section
-        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
-        style={{ height: "88vh" }}
-      >
-        <div
-          className="w-full max-w-7xl mx-auto grid items-center"
-          style={{ gridTemplateColumns: "1fr 1fr", gap: "4vw", height: "80vh" }}
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
-            className="flex flex-col justify-center"
-          >
-            <span style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }} className="text-[#0D9DB8] font-semibold uppercase tracking-widest">
-              DecoMind Services
-            </span>
-            <h1
-              className="font-bold leading-tight mt-[1.5vh]"
-              style={{ fontSize: "clamp(1.4rem, 2.8vw, 3.5rem)" }}
-            >
-              Design Smarter.
-              <br />
-              <span className="text-[#0D9DB8]">Visualize Before You Build.</span>
-            </h1>
-            <p
-              className="text-gray-300 leading-relaxed mt-[1.5vh]"
-              style={{ fontSize: "clamp(0.7rem, 1vw, 1rem)", maxWidth: "38vw" }}
-            >
-              Transform room photos, floor plans, and ideas into photorealistic
-              interiors powered by advanced AI technology.
-            </p>
-           
-          </motion.div>
+    <>
+      <style>{`
+        /* ── DESKTOP: fixed snap layout ── */
+        .svc-outer {
+          position: fixed;
+          top: 12vh;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          overflow-x: hidden;
+          overflow-y: scroll;
+          scroll-snap-type: y mandatory;
+          background-color: #1A3A5C;
+          color: white;
+        }
+        .svc-section {
+          height: 88vh;
+          scroll-snap-align: start;
+          width: 100%;
+          flex-shrink: 0;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+          padding-left: 5vw;
+          padding-right: 5vw;
+        }
+        .svc-hero-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4vw;
+          height: 80vh;
+          width: 100%;
+          max-width: 80rem;
+          margin: 0 auto;
+          align-items: center;
+        }
+        .svc-hero-img-col {
+          height: 80vh;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .svc-stats-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 2vw;
+          width: 100%;
+          max-width: 80rem;
+          margin: 0 auto;
+        }
+        .svc-service-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 4vw;
+          height: 80vh;
+          width: 100%;
+          max-width: 80rem;
+          margin: 0 auto;
+          align-items: center;
+        }
+        .svc-service-img-col {
+          height: 80vh;
+          position: relative;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
 
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative flex items-center justify-center"
-            style={{ height: "80vh" }}
-          >
-            <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[8vw] pointer-events-none" />
-            <img
-              src="../Assets/images/hero-phone.jpg"
-              alt="DecoMind"
-              className="relative z-10 object-contain rounded"
-              style={{ maxHeight: "75vh", maxWidth: "100%", width: "auto" }}
-            />
-          </motion.div>
-        </div>
-      </section>
+        /* ── MOBILE: free-scroll, stacked layout ── */
+        @media (max-width: 768px) {
+          .svc-outer {
+            position: static !important;
+            overflow-y: auto !important;
+            scroll-snap-type: none !important;
+            height: auto !important;
+            bottom: auto !important;
+            top: auto !important;
+          }
+          .svc-section {
+            height: auto !important;
+            scroll-snap-align: none !important;
+            padding-top: 2.5rem !important;
+            padding-bottom: 2.5rem !important;
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            align-items: flex-start !important;
+          }
+          /* Hero */
+          .svc-hero-grid {
+            grid-template-columns: 1fr !important;
+            height: auto !important;
+            gap: 1.5rem !important;
+          }
+          .svc-hero-img-col {
+            height: 70vw !important;
+          }
+          .svc-hero-p {
+            max-width: 100% !important;
+          }
+          /* Stats */
+          .svc-stats-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.75rem !important;
+          }
+          /* Services */
+          .svc-service-grid {
+            grid-template-columns: 1fr !important;
+            height: auto !important;
+            gap: 1.5rem !important;
+            direction: ltr !important;
+          }
+          .svc-service-img-col {
+            height: 70vw !important;
+            direction: ltr !important;
+          }
+          /* Floor plan */
+          .svc-floor-grid {
+            grid-template-columns: 1fr 1fr !important;
+            gap: 0.75rem !important;
+          }
+        }
+      `}</style>
 
-      {/* STATS */}
-      <section
-        className="snap-start w-full shrink-0 flex items-center overflow-hidden md:px-[5vw]"
-        style={{ height: "88vh" }}
-      >
-        <div
-          className="w-full max-w-7xl mx-auto grid"
-          style={{ gridTemplateColumns: "repeat(4, 1fr)", gap: "2vw" }}
-        >
-          {stats.map((stat) => (
-            <div
-              key={stat.label}
-              className="bg-white/5 border border-white/10 rounded-2xl text-center"
-              style={{ padding: "clamp(1rem, 2.5vw, 2.5rem)" }}
-            >
-              <h3
-                className="font-bold text-[#0D9DB8]"
-                style={{ fontSize: "clamp(1.2rem, 2.5vw, 2.5rem)" }}
-              >
-                {stat.value}
-              </h3>
-              <p className="text-gray-300 mt-2" style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}>
-                {stat.label}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <div className="svc-outer">
 
-      {/* SERVICES */}
-      {services.map((service, index) => (
-        <section
-          key={service.title}
-          className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
-          style={{ height: "88vh" }}
-        >
-          <div
-            className="w-full max-w-7xl mx-auto grid items-center"
-            style={{
-              gridTemplateColumns: "1fr 1fr",
-              gap: "4vw",
-              height: "80vh",
-              direction: index % 2 !== 0 ? "rtl" : "ltr",
-            }}
-          >
+        {/* HERO */}
+        <section className="svc-section">
+          <div className="svc-hero-grid">
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7 }}
               className="flex flex-col justify-center"
-              style={{ direction: "ltr" }}
             >
-              <span
-                className="text-[#0D9DB8] font-medium"
-                style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
-              >
-                {service.title}
+              <span style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }} className="text-[#0D9DB8] font-semibold uppercase tracking-widest">
+                DecoMind Services
               </span>
-              <h2
-                className="font-bold leading-tight mt-[1vh]"
-                style={{ fontSize: "clamp(1.2rem, 2.4vw, 3rem)" }}
+              <h1
+                className="font-bold leading-tight mt-[1.5vh]"
+                style={{ fontSize: "clamp(1.4rem, 2.8vw, 3.5rem)" }}
               >
-                {service.subtitle}
-              </h2>
+                Design Smarter.
+                <br />
+                <span className="text-[#0D9DB8]">Visualize Before You Build.</span>
+              </h1>
               <p
-                className="text-gray-300 leading-relaxed mt-[1.2vh]"
-                style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
+                className="svc-hero-p text-gray-300 leading-relaxed mt-[1.5vh]"
+                style={{ fontSize: "clamp(0.7rem, 1vw, 1rem)", maxWidth: "38vw" }}
               >
-                {service.description}
+                Transform room photos, floor plans, and ideas into photorealistic
+                interiors powered by advanced AI technology.
               </p>
-              <div
-                className="grid mt-[2vh]"
-                style={{ gridTemplateColumns: "1fr 1fr", gap: "1vw" }}
-              >
-                {service.features.map((feature) => (
-                  <div
-                    key={feature}
-                    className="bg-white/5 border border-white/10 rounded"
-                    style={{
-                      padding: "clamp(0.4rem, 0.7vw, 0.8rem)",
-                      fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
-                    }}
-                  >
-                    ✓ {feature}
-                  </div>
-                ))}
-              </div>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="relative flex items-center justify-center"
-              style={{ height: "80vh", direction: "ltr" }}
+              transition={{ duration: 0.8 }}
+              className="svc-hero-img-col"
             >
-              <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[6vw] pointer-events-none" />
+              <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[8vw] pointer-events-none" />
               <img
-                src={service.image}
-                alt={service.title}
-                className="relative z-10 object-contain rounded shadow-2xl border border-white/10"
-                style={{ maxHeight: "72vh", maxWidth: "100%", width: "auto" }}
+                src="../Assets/images/hero-phone.jpg"
+                alt="DecoMind"
+                className="relative z-10 object-contain rounded"
+                style={{ maxHeight: "100%", maxWidth: "100%", width: "auto" }}
               />
             </motion.div>
           </div>
         </section>
-      ))}
 
-      {/* FLOOR PLAN */}
-      <section
-        className="snap-start w-full shrink-0 flex items-center overflow-hidden px-[5vw]"
-        style={{ height: "88vh" }}
-      >
-        <div className="w-full max-w-7xl mx-auto">
-          <h2 className="font-bold" style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}>
-            From Floor Plans To Reality
-          </h2>
-          <div
-            className="grid mt-[4vh]"
-            style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5vw" }}
-          >
-            {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results", "Sustainable Plan"].map((step) => (
+        {/* STATS */}
+        <section className="svc-section">
+          <div className="svc-stats-grid">
+            {stats.map((stat) => (
               <div
-                key={step}
-                className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"
-                style={{
-                  padding: "clamp(0.8rem, 1.5vw, 2rem)",
-                  fontSize: "clamp(0.6rem, 0.9vw, 1rem)",
-                  minHeight: "clamp(60px, 8vh, 120px)",
-                }}
+                key={stat.label}
+                className="bg-white/5 border border-white/10 rounded-2xl text-center"
+                style={{ padding: "clamp(1rem, 2.5vw, 2.5rem)" }}
               >
-                {step}
+                <h3
+                  className="font-bold text-[#0D9DB8]"
+                  style={{ fontSize: "clamp(1.2rem, 2.5vw, 2.5rem)" }}
+                >
+                  {stat.value}
+                </h3>
+                <p className="text-gray-300 mt-2" style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}>
+                  {stat.label}
+                </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-    </div>
+        </section>
+
+        {/* SERVICES */}
+        {services.map((service, index) => (
+          <section key={service.title} className="svc-section">
+            <div
+              className="svc-service-grid"
+              style={{ direction: index % 2 !== 0 ? "rtl" : "ltr" }}
+            >
+              <motion.div
+                initial={{ opacity: 0, x: -30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="flex flex-col justify-center"
+                style={{ direction: "ltr" }}
+              >
+                <span
+                  className="text-[#0D9DB8] font-medium"
+                  style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
+                >
+                  {service.title}
+                </span>
+                <h2
+                  className="font-bold leading-tight mt-[1vh]"
+                  style={{ fontSize: "clamp(1.2rem, 2.4vw, 3rem)" }}
+                >
+                  {service.subtitle}
+                </h2>
+                <p
+                  className="text-gray-300 leading-relaxed mt-[1.2vh]"
+                  style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
+                >
+                  {service.description}
+                </p>
+                <div
+                  className="grid mt-[2vh]"
+                  style={{ gridTemplateColumns: "1fr 1fr", gap: "1vw" }}
+                >
+                  {service.features.map((feature) => (
+                    <div
+                      key={feature}
+                      className="bg-white/5 border border-white/10 rounded"
+                      style={{
+                        padding: "clamp(0.4rem, 0.7vw, 0.8rem)",
+                        fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
+                      }}
+                    >
+                      ✓ {feature}
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.7 }}
+                className="svc-service-img-col"
+              >
+                <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[6vw] pointer-events-none" />
+                <img
+                  src={service.image}
+                  alt={service.title}
+                  className="relative z-10 object-contain rounded shadow-2xl border border-white/10"
+                  style={{ maxHeight: "100%", maxWidth: "100%", width: "auto" }}
+                />
+              </motion.div>
+            </div>
+          </section>
+        ))}
+
+        {/* FLOOR PLAN */}
+        <section className="svc-section">
+          <div className="w-full max-w-7xl mx-auto">
+            <h2 className="font-bold" style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}>
+              From Floor Plans To Reality
+            </h2>
+            <div
+              className="svc-floor-grid grid mt-[4vh]"
+              style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5vw" }}
+            >
+              {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results", "Sustainable Plan"].map((step) => (
+                <div
+                  key={step}
+                  className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"
+                  style={{
+                    padding: "clamp(0.8rem, 1.5vw, 2rem)",
+                    fontSize: "clamp(0.6rem, 0.9vw, 1rem)",
+                    minHeight: "clamp(60px, 8vh, 120px)",
+                  }}
+                >
+                  {step}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </>
   );
 }

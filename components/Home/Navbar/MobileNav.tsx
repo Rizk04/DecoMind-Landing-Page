@@ -7,13 +7,13 @@ type Props = {
   closeNav: () => void;
 };
 const MobileNav = ({ closeNav, showNav }: Props) => {
-  const navOpenCloseStyle = showNav ? "translate-x-0" : "translate-x-[-100%]";
+  const navOpenCloseStyle = showNav ? "translate-x-0" : "translate-x-[100%]";
 
   return (
     <div
       className={`fixed ${navOpenCloseStyle} inset-0 transform transition-all duration-500 z-1002 bg-black/70 w-full h-screen`}
     >
-      <div className="text-black fixed justify-center flex flex-col h-full transform transition-all duration-500 delay-300 w-[60%] bg-white space-y-6 z-1050">
+      <div className="text-black right-0  fixed justify-center flex flex-col h-full transform transition-all duration-500 delay-300 w-[60%] bg-white space-y-6 z-1050">
         {Navlinks.map((link) => {
           return (
             <Link key={link.id} href={link.url} onClick={closeNav}>

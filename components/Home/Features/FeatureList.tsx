@@ -25,7 +25,7 @@ const FeatureList = () => {
       <style>{`
         @media (max-width: 768px) {
           .feature-section {
-            height: auto !important;
+            
             padding-top: 2rem !important;
             padding-bottom: 2rem !important;
           }
@@ -33,7 +33,7 @@ const FeatureList = () => {
       `}</style>
 
       <div
-        className="feature-section  flex flex-col justify-center overflow-hidden"
+        className="feature-section flex flex-col items-center justify-center overflow-hidden"
         style={{
           height: "100svh",
           padding: "clamp(0.75rem, 2vh, 2rem) clamp(1rem, 4vw, 4rem)",
@@ -45,7 +45,7 @@ const FeatureList = () => {
           viewport={{ once: true, amount: 0.3 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="font-medium text-center"
+          className="font-medium text-center w-full"
           style={{
             fontSize: "clamp(1.4rem, 3.5vw, 3rem)",
             marginBottom: "clamp(0.75rem, 3vh, 3rem)",
@@ -63,7 +63,7 @@ const FeatureList = () => {
             hidden: {},
             visible: { transition: { staggerChildren: 0.15 } },
           }}
-          className="grid grid-cols-1 md:grid-cols-3"
+          className="grid grid-cols-1 md:grid-cols-3 w-full"
           style={{ gap: "clamp(0.5rem, 2vw, 1.5rem)" }}
         >
           {[

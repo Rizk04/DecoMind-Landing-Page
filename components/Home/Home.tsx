@@ -7,24 +7,24 @@ import FeatureBarProgress from "./Features/FeatureBarProgress";
 
 const Home = () => {
   return (
-    <div className="h-screen overflow-y-scroll snap-y snap-mandatory">
+    <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory">
       <section className="h-screen snap-start">
         <Hero />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <FeatureBarProgress />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <FeatureList />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <Feature />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <Download />
       </section>
     </div>

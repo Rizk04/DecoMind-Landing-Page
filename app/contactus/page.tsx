@@ -5,12 +5,12 @@ import React from "react";
 
 const ContactUs = () => {
   return (
-    <div className="h-screen snap-y snap-mandatory overflow-y-scroll">
-      <div className="snap-start">
+    <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory">
+      <div className="md:snap-start">
         <HeroContact />
       </div>
 
-      <div className="snap-start">
+      <div className="md:snap-start">
         <ContactInfo />
       </div>
     </div>

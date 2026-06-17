@@ -5,16 +5,16 @@ import React from "react";
 
 const AboutPage = () => {
   return (
-    <div className="h-screen snap-y snap-mandatory overflow-y-scroll">
-      <section className="h-screen snap-start">
+    <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory">
+      <section className="h-screen md:snap-start">
         <Description />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <MiddleDecription />
       </section>
 
-      <section className="h-screen snap-start">
+      <section className="h-screen md:snap-start">
         <ContactUs />
       </section>
     </div>
