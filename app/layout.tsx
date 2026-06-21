@@ -5,7 +5,7 @@ import WrapperNav from "@/components/Home/Navbar/WrapperNav";
 import Footer from "@/components/Home/Footer/Footer";
 import { cn } from "@/lib/utils";
 
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
+const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 const font = Montserrat({
   weight: ["300", "400", "500", "700", "800", "900"],
@@ -23,8 +23,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={cn("h-full", "antialiased", font.className, "font-sans", geist.variable)}>
-      <body className="min-h-full flex flex-col">
+    <html
+      lang="en"
+      className={cn(
+        "h-full",
+        "antialiased",
+        font.className,
+        "font-sans",
+        geist.variable,
+      )}
+    >
+      <body className="h-screen md:overflow-hidden flex flex-col">
+        {" "}
         <WrapperNav />
         {children}
       </body>
