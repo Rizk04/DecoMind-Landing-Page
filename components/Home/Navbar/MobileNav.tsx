@@ -1,5 +1,5 @@
 import React from "react";
-import { Navlinks } from "../Home/constant/Navlinks";
+import { Navlinks } from "../constant/Navlinks";
 import Link from "next/link";
 import { CgClose } from "react-icons/cg";
 type Props = {

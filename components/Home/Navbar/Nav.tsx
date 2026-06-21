@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Logo from "../Helper/Logo";
-import { Navlinks } from "../Home/constant/Navlinks";
+import Logo from "@/components/Helper/Logo";
+import { Navlinks } from "../constant/Navlinks";
 import Link from "next/link";
 import { HiBars3BottomRight } from "react-icons/hi2";
 
