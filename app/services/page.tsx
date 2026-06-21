@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Footer from "@/components/Home/Footer/Footer";
 
 const services = [
   {
@@ -55,13 +56,9 @@ export default function ServicesPage() {
   return (
     <>
       <style>{`
-        /* ── DESKTOP: fixed snap layout ── */
+        /* ── DESKTOP: fixed-height snap layout, single scroll container ── */
         .svc-outer {
-          position: fixed;
-          top: 12vh;
-          left: 0;
-          right: 0;
-          bottom: 0;
+          height: calc(100vh - 12vh);
           overflow-x: hidden;
           overflow-y: scroll;
           scroll-snap-type: y mandatory;
@@ -121,16 +118,18 @@ export default function ServicesPage() {
           align-items: center;
           justify-content: center;
         }
+        .svc-footer-section {
+          scroll-snap-align: start;
+          width: 100%;
+          flex-shrink: 0;
+        }
 
         /* ── MOBILE: free-scroll, stacked layout ── */
         @media (max-width: 768px) {
           .svc-outer {
-            position: static !important;
-            overflow-y: auto !important;
-            scroll-snap-type: none !important;
             height: auto !important;
-            bottom: auto !important;
-            top: auto !important;
+            overflow-y: visible !important;
+            scroll-snap-type: none !important;
           }
           .svc-section {
             height: auto !important;
@@ -346,6 +345,11 @@ export default function ServicesPage() {
               ))}
             </div>
           </div>
+        </section>
+
+        {/* FOOTER — last snap section, reached only by scrolling to the end */}
+        <section className="svc-footer-section text-black">
+          <Footer />
         </section>
 
       </div>

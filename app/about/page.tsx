@@ -1,6 +1,7 @@
 import ContactUs from "@/components/Home/About/ContactUs";
 import Description from "@/components/Home/About/Description";
 import MiddleDecription from "@/components/Home/About/MiddleDecription";
+import Footer from "@/components/Home/Footer/Footer";
 import React from "react";
 
 const AboutPage = () => {
@@ -16,6 +17,9 @@ const AboutPage = () => {
 
       <section className="h-screen md:snap-start">
         <ContactUs />
+      </section>
+      <section className="md:snap-start">
+        <Footer />
       </section>
     </div>
   );
