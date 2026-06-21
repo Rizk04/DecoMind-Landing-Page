@@ -1,7 +1,7 @@
-import ContactUs from "@/components/Home/About/ContactUs";
-import Description from "@/components/Home/About/Description";
-import MiddleDecription from "@/components/Home/About/MiddleDecription";
-import Footer from "@/components/Home/Footer/Footer";
+import ContactUs from "@/components/About/ContactUs";
+import Description from "@/components/About/Description";
+import MiddleDecription from "@/components/About/MiddleDecription";
+import Footer from "@/components/Footer/Footer";
 import React from "react";
 
 const AboutPage = () => {

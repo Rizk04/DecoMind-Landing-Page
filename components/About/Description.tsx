@@ -55,7 +55,7 @@ const Description = () => {
             },
           },
         }}
-        className="desc-section flex flex-col items-center justify-center bg-blue-300/80 overflow-hidden"
+        className="desc-section h-screen flex flex-col items-center justify-center bg-blue-300/80 overflow-hidden"
         style={{
           minHeight: "88vh",
           padding: "clamp(1rem, 4vh, 3rem) clamp(1rem, 4vw, 2rem)",

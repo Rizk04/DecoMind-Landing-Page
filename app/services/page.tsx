@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Footer from "@/components/Home/Footer/Footer";
+import Footer from "@/components/Footer/Footer";
 
 const services = [
   {
@@ -177,7 +177,6 @@ export default function ServicesPage() {
       `}</style>
 
       <div className="svc-outer">
-
         {/* HERO */}
         <section className="svc-section">
           <div className="svc-hero-grid">
@@ -188,7 +187,10 @@ export default function ServicesPage() {
               transition={{ duration: 0.7 }}
               className="flex flex-col justify-center"
             >
-              <span style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }} className="text-[#0D9DB8] font-semibold uppercase tracking-widest">
+              <span
+                style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
+                className="text-[#0D9DB8] font-semibold uppercase tracking-widest"
+              >
                 DecoMind Services
               </span>
               <h1
@@ -197,14 +199,19 @@ export default function ServicesPage() {
               >
                 Design Smarter.
                 <br />
-                <span className="text-[#0D9DB8]">Visualize Before You Build.</span>
+                <span className="text-[#0D9DB8]">
+                  Visualize Before You Build.
+                </span>
               </h1>
               <p
                 className="svc-hero-p text-gray-300 leading-relaxed mt-[1.5vh]"
-                style={{ fontSize: "clamp(0.7rem, 1vw, 1rem)", maxWidth: "38vw" }}
+                style={{
+                  fontSize: "clamp(0.7rem, 1vw, 1rem)",
+                  maxWidth: "38vw",
+                }}
               >
-                Transform room photos, floor plans, and ideas into photorealistic
-                interiors powered by advanced AI technology.
+                Transform room photos, floor plans, and ideas into
+                photorealistic interiors powered by advanced AI technology.
               </p>
             </motion.div>
 
@@ -241,7 +248,10 @@ export default function ServicesPage() {
                 >
                   {stat.value}
                 </h3>
-                <p className="text-gray-300 mt-2" style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}>
+                <p
+                  className="text-gray-300 mt-2"
+                  style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
+                >
                   {stat.label}
                 </p>
               </div>
@@ -323,14 +333,24 @@ export default function ServicesPage() {
         {/* FLOOR PLAN */}
         <section className="svc-section">
           <div className="w-full max-w-7xl mx-auto">
-            <h2 className="font-bold" style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}>
+            <h2
+              className="font-bold"
+              style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}
+            >
               From Floor Plans To Reality
             </h2>
             <div
               className="svc-floor-grid grid mt-[4vh]"
               style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5vw" }}
             >
-              {["Upload Plan", "AI Detects Rooms", "Customize Styles", "Generate Designs", "Photoreal Results", "Sustainable Plan"].map((step) => (
+              {[
+                "Upload Plan",
+                "AI Detects Rooms",
+                "Customize Styles",
+                "Generate Designs",
+                "Photoreal Results",
+                "Sustainable Plan",
+              ].map((step) => (
                 <div
                   key={step}
                   className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"
@@ -351,7 +371,6 @@ export default function ServicesPage() {
         <section className="svc-footer-section text-black">
           <Footer />
         </section>
-
       </div>
     </>
   );

@@ -4,7 +4,7 @@ import Feature from "./Features/FeatureBar";
 import FeatureList from "./Features/FeatureList";
 import Download from "./DownloadBar/Download";
 import FeatureBarProgress from "./Features/FeatureBarProgress";
-import Footer from "./Footer/Footer";
+import Footer from "../Footer/Footer";
 
 const Home = () => {
   return (
@@ -28,7 +28,7 @@ const Home = () => {
       <section className="h-screen md:snap-start">
         <Download />
       </section>
-       <section className="md:snap-start">
+      <section className="md:snap-start">
         <Footer />
       </section>
     </div>

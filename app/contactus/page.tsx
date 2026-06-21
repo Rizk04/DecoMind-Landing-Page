@@ -1,7 +1,7 @@
-import ContactForm from "@/components/Home/Contact/ContactForm";
-import ContactInfo from "@/components/Home/Contact/ContactInfo";
-import HeroContact from "@/components/Home/Contact/HeroContact";
-import Footer from "@/components/Home/Footer/Footer";
+import ContactForm from "@/components/Contact/ContactForm";
+import ContactInfo from "@/components/Contact/ContactInfo";
+import HeroContact from "@/components/Contact/HeroContact";
+import Footer from "@/components/Footer/Footer";
 import React from "react";
 
 const ContactUs = () => {

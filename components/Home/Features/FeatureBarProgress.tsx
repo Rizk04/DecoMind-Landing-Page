@@ -71,49 +71,6 @@ const FeatureBarProgress = () => {
       }}
     >
       <div
-        ref={ref}
-        className="flex flex-wrap lg:flex-nowrap justify-center text-white text-center"
-        style={{
-          gap: "clamp(1rem, 4vw, 6rem)",
-          marginBottom: "clamp(0.5rem, 2vh, 2.5rem)",
-        }}
-      >
-        {stats.map(({ value, suffix, label }) => (
-          <div key={label}>
-            <div className="flex items-baseline justify-center">
-              <motion.span
-                style={{
-                  fontSize: "clamp(1.2rem, 3vw, 3rem)",
-                  fontWeight: 700,
-                }}
-              >
-                {value}
-              </motion.span>
-
-              <span
-                style={{
-                  fontSize: "clamp(1.2rem, 3vw, 3rem)",
-                  fontWeight: 700,
-                }}
-              >
-                {suffix}
-              </span>
-            </div>
-
-            <p
-              className="text-gray-300"
-              style={{
-                fontSize: "clamp(0.6rem, 1vw, 0.875rem)",
-                marginTop: "0.25rem",
-              }}
-            >
-              {label}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div
         className="grid grid-cols-1 lg:grid-cols-2 items-center flex-1 min-h-0"
         style={{ gap: "clamp(0.5rem, 2vw, 2rem)" }}
       >
@@ -134,6 +91,50 @@ const FeatureBarProgress = () => {
           >
             Smart Homeowners
           </h1>
+
+          {/* STATS — moved here, under the headline */}
+          <div
+            ref={ref}
+            className="flex flex-wrap justify-center lg:justify-start text-white text-center lg:text-left"
+            style={{
+              gap: "clamp(0.75rem, 3vw, 3rem)",
+              marginBottom: "clamp(0.5rem, 2vh, 2rem)",
+            }}
+          >
+            {stats.map(({ value, suffix, label }) => (
+              <div key={label}>
+                <div className="flex items-baseline justify-center lg:justify-start">
+                  <motion.span
+                    style={{
+                      fontSize: "clamp(1rem, 2.2vw, 2rem)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {value}
+                  </motion.span>
+
+                  <span
+                    style={{
+                      fontSize: "clamp(1rem, 2.2vw, 2rem)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    {suffix}
+                  </span>
+                </div>
+
+                <p
+                  className="text-gray-300"
+                  style={{
+                    fontSize: "clamp(0.55rem, 0.9vw, 0.8rem)",
+                    marginTop: "0.2rem",
+                  }}
+                >
+                  {label}
+                </p>
+              </div>
+            ))}
+          </div>
 
           <motion.div
             initial="hidden"
