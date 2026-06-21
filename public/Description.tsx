@@ -40,6 +40,15 @@ const Description = () => {
             padding-top: 2.5rem !important;
             padding-bottom: 2.5rem !important;
           }
+          .desc-grid {
+            gap: 1rem !important;
+          }
+          .desc-card {
+            padding: 0.875rem !important;
+          }
+          .desc-card p {
+            font-size: 0.8rem !important;
+          }
         }
       `}</style>
 
@@ -55,11 +64,7 @@ const Description = () => {
             },
           },
         }}
-        className="desc-section flex flex-col items-center justify-center bg-blue-300/80 overflow-hidden"
-        style={{
-          minHeight: "88vh",
-          padding: "clamp(1rem, 4vh, 3rem) clamp(1rem, 4vw, 2rem)",
-        }}
+        className="desc-section flex flex-col items-center justify-center h-[88vh] bg-blue-300/80 px-4"
       >
         <motion.h1
           transition={{ duration: 0.4, ease: "easeOut" }}
@@ -67,19 +72,12 @@ const Description = () => {
             hidden: { opacity: 0, y: 20 },
             visible: { opacity: 1, y: 0 },
           }}
-          className="font-medium text-center"
-          style={{
-            fontSize: "clamp(1.2rem, 2.8vw, 2.25rem)",
-            marginBottom: "clamp(0.75rem, 2.5vh, 2rem)",
-          }}
+          className="text-2xl sm:text-3xl md:text-4xl font-medium text-center mb-6 md:mb-10"
         >
           About DecoMind
         </motion.h1>
 
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 w-full max-w-5xl"
-          style={{ gap: "clamp(0.75rem, 2vw, 2rem)" }}
-        >
+        <div className="desc-grid grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-8 w-full md:w-4/5 lg:w-3/4 max-w-5xl">
           {points.map(({ icon: Icon, title, description }) => (
             <motion.div
               key={title}
@@ -88,34 +86,12 @@ const Description = () => {
                 hidden: { opacity: 0, y: 20 },
                 visible: { opacity: 1, y: 0 },
               }}
-              className="flex items-start text-left bg-white/40 rounded-xl"
-              style={{
-                gap: "clamp(0.6rem, 1.5vw, 1rem)",
-                padding: "clamp(0.75rem, 1.8vw, 1.25rem)",
-              }}
+              className="desc-card flex items-start gap-4 text-left bg-white/40 rounded-xl p-4 md:p-5"
             >
-              <Icon
-                className="shrink-0 text-[#1A3A5C]"
-                style={{
-                  width: "clamp(1.3rem, 2.2vw, 2rem)",
-                  height: "clamp(1.3rem, 2.2vw, 2rem)",
-                  marginTop: "0.15rem",
-                }}
-              />
+              <Icon className="shrink-0 w-7 h-7 md:w-8 md:h-8 text-[#1A3A5C] mt-1" />
               <div>
-                <h2
-                  className="font-semibold"
-                  style={{
-                    fontSize: "clamp(0.85rem, 1.3vw, 1.125rem)",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  {title}
-                </h2>
-                <p
-                  className="text-gray-700 leading-snug"
-                  style={{ fontSize: "clamp(0.7rem, 1vw, 1rem)" }}
-                >
+                <h2 className="font-semibold text-base sm:text-lg mb-1">{title}</h2>
+                <p className="text-sm sm:text-base text-gray-700 leading-snug">
                   {description}
                 </p>
               </div>
