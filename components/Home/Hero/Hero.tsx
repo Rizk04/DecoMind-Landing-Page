@@ -85,11 +85,19 @@ const Hero = () => {
             </motion.button>
           </div>
         </motion.div>
-        <Lottie
-          animationData={animation}
-          loop={true}
-          className="hero-lottie w-full max-w-xl translate-x-4"
-        />
+        <div className="hero-lottie relative w-full max-w-xl">
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="relative w-full h-auto"
+    style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+  >
+    <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
+  </video>
+  
+</div>
       </div>
     </>
   );

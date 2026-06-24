@@ -35,12 +35,10 @@ const Nav = ({ openNav }: Props) => {
     >
       <div className="flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto">
         <div>
-          <div className="lg:hidden">
-            <Logo />
-          </div>
-          <div className="hidden lg:block">
-            <span className="text-2xl font-semibold">Deco</span>
-            <span className="text-2xl font-semibold text-[#1A3A5C]">Mind</span>
+          
+          <div className="py-3 sm:py-0">
+            <span className="text-xl sm:text-2xl font-semibold">Deco</span>
+            <span className="text-xl sm:text-2xl font-semibold text-[#1A3A5C]">Mind</span>
           </div>
         </div>
 
