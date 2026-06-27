@@ -1,7 +1,7 @@
 "use client";
 import Lottie from "lottie-react";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { FaGooglePay } from "react-icons/fa6";
 import { GrGooglePay } from "react-icons/gr";
@@ -9,38 +9,11 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   const [animation, setAnimation] = useState(null);
-  const [videoEnded, setVideoEnded] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-
   useEffect(() => {
     fetch("/Assets/Lottie/houseAnimation.json")
       .then((res) => res.json())
       .then(setAnimation);
   }, []);
-
-  useEffect(() => {
-    const scrollContainer = sectionRef.current?.closest(".md\\:overflow-y-scroll") as HTMLElement;
-    if (!scrollContainer) return;
-
-    if (!videoEnded) {
-      const block = (e: Event) => e.preventDefault();
-      scrollContainer.addEventListener("wheel", block, { passive: false });
-      scrollContainer.addEventListener("touchmove", block, { passive: false });
-      return () => {
-        scrollContainer.removeEventListener("wheel", block);
-        scrollContainer.removeEventListener("touchmove", block);
-      };
-    }
-  }, [videoEnded]);
-
-  const handleVideoEnd = () => {
-    setVideoEnded(true);
-    const next = sectionRef.current?.closest("section")?.nextElementSibling;
-    if (next) {
-      next.scrollIntoView({ behavior: "smooth" });
-    }
-  };
 
   return (
     <>
@@ -68,10 +41,8 @@ const Hero = () => {
           }
         }
       `}</style>
-      <div
-        ref={sectionRef}
-        className="hero-outer translate-x-4 h-[88svh] lg:pt-0 relative w-[95%] min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4"
-      >
+
+      <div className="hero-outer translate-x-4 h-[88svh] lg:pt-0 relative w-[95%] min-h-screen lg:min-h-[90vh] flex flex-col lg:flex-row items-center justify-center gap-12 px-4">
         {" "}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -114,21 +85,19 @@ const Hero = () => {
             </motion.button>
           </div>
         </motion.div>
-
         <div className="hero-lottie relative w-full max-w-xl">
-          <video
-            ref={videoRef}
-            autoPlay
-            muted
-            playsInline
-            onLoadedData={() => { if (videoRef.current) videoRef.current.playbackRate = 2; }}
-            onEnded={handleVideoEnd}
-            className="relative w-full h-auto"
-            style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-          >
-            <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
-          </video>
-        </div>
+  <video
+    autoPlay
+    loop
+    muted
+    playsInline
+    className="relative w-full h-auto"
+    style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+  >
+    <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
+  </video>
+  
+</div>
       </div>
     </>
   );
