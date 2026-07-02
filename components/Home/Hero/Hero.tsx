@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   const [animation, setAnimation] = useState(null);
-  const [videoEnded, setVideoEnded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -19,28 +19,34 @@ const Hero = () => {
       .then(setAnimation);
   }, []);
 
+  // Set isMobile before anything renders
   useEffect(() => {
-    const scrollContainer = sectionRef.current?.closest(".md\\:overflow-y-scroll") as HTMLElement;
-    if (!scrollContainer) return;
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
-    if (!videoEnded) {
-      const block = (e: Event) => e.preventDefault();
-      scrollContainer.addEventListener("wheel", block, { passive: false });
-      scrollContainer.addEventListener("touchmove", block, { passive: false });
-      return () => {
-        scrollContainer.removeEventListener("wheel", block);
-        scrollContainer.removeEventListener("touchmove", block);
-      };
-    }
-  }, [videoEnded]);
+  // Mobile scroll scrub
+  useEffect(() => {
+    if (!isMobile) return;
+    const video = videoRef.current;
+    if (!video) return;
 
-  const handleVideoEnd = () => {
-    setVideoEnded(true);
-    const next = sectionRef.current?.closest("section")?.nextElementSibling;
-    if (next) {
-      next.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+    const scrub = () => {
+      const section = sectionRef.current;
+      if (!section || !video.duration || isNaN(video.duration)) return;
+      const rect = section.getBoundingClientRect();
+      const progress = Math.min(Math.max(-rect.top / (rect.height || 1), 0), 1);
+      video.currentTime = progress * video.duration;
+    };
+
+    window.addEventListener("scroll", scrub, { passive: true });
+    video.addEventListener("loadedmetadata", scrub, { once: true });
+    if (video.readyState >= 1) scrub();
+
+    return () => window.removeEventListener("scroll", scrub);
+  }, [isMobile]);
 
   return (
     <>
@@ -118,11 +124,11 @@ const Hero = () => {
         <div className="hero-lottie relative w-full max-w-xl">
           <video
             ref={videoRef}
-            autoPlay
+            autoPlay={!isMobile}
+            loop={!isMobile}
             muted
             playsInline
-            onLoadedData={() => { if (videoRef.current) videoRef.current.playbackRate = 2; }}
-            onEnded={handleVideoEnd}
+            preload="auto"
             className="relative w-full h-auto"
             style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
           >
