@@ -9,7 +9,7 @@ import Footer from "../Footer/Footer";
 const Home = () => {
   return (
     <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory">
-      <section className="h-screen snap-start">
+      <section className="h-auto md:h-screen  snap-start">
         <Hero />
       </section>
 

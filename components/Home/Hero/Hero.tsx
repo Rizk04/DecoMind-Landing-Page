@@ -26,6 +26,7 @@ const Hero = () => {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+  
 
   // Mobile scroll scrub
   useEffect(() => {
@@ -33,13 +34,29 @@ const Hero = () => {
     const video = videoRef.current;
     if (!video) return;
 
-    const scrub = () => {
-      const section = sectionRef.current;
-      if (!section || !video.duration || isNaN(video.duration)) return;
-      const rect = section.getBoundingClientRect();
-      const progress = Math.min(Math.max(-rect.top / (rect.height || 1), 0), 1);
-      video.currentTime = progress * video.duration;
-    };
+ const scrub = () => {
+  const section = sectionRef.current;
+  const video = videoRef.current;
+
+  if (!section || !video || !video.duration || isNaN(video.duration)) return;
+
+  const rect = section.getBoundingClientRect();
+
+  const progress = Math.min(
+    Math.max(-rect.top / (rect.height || 1), 0),
+    1
+  );
+
+  // 🎯 full video position from scroll
+  const fullTime = progress * video.duration;
+
+  // 🔥 clamp to HALF ONLY on mobile
+  const isMobileDevice = window.innerWidth <= 768;
+
+  video.currentTime = isMobileDevice
+    ? Math.min(fullTime, video.duration * 0.5)
+    : fullTime;
+};
 
     window.addEventListener("scroll", scrub, { passive: true });
     video.addEventListener("loadedmetadata", scrub, { once: true });
@@ -122,18 +139,16 @@ const Hero = () => {
         </motion.div>
 
         <div className="hero-lottie relative w-full max-w-xl">
-          <video
-            ref={videoRef}
-            autoPlay={!isMobile}
-            loop={!isMobile}
-            muted
-            playsInline
-            preload="auto"
-            className="relative w-full h-auto"
-            style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-          >
-            <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
-          </video>
+         <video
+  ref={videoRef}
+  muted
+  playsInline
+  preload="auto"
+  className="relative w-full h-auto"
+  style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+>
+  <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
+</video>
         </div>
       </div>
     </>
