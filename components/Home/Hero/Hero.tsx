@@ -9,7 +9,6 @@ import { motion } from "framer-motion";
 
 const Hero = () => {
   const [animation, setAnimation] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -19,51 +18,77 @@ const Hero = () => {
       .then(setAnimation);
   }, []);
 
-  // Set isMobile before anything renders
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-  
-
-  // Mobile scroll scrub
-  useEffect(() => {
-    if (!isMobile) return;
     const video = videoRef.current;
     if (!video) return;
 
- const scrub = () => {
-  const section = sectionRef.current;
-  const video = videoRef.current;
+    // Find whichever element is ACTUALLY scrolling.
+    // Desktop: the .md\:overflow-y-scroll wrapper in Home.tsx.
+    // Mobile: that wrapper doesn't scroll (md: prefix), so fall back to html/body.
+    const scrollContainer = sectionRef.current?.closest(
+      ".md\\:overflow-y-scroll"
+    ) as HTMLElement | null;
 
-  if (!section || !video || !video.duration || isNaN(video.duration)) return;
+    const html = document.documentElement;
+    const body = document.body;
 
-  const rect = section.getBoundingClientRect();
+    const prevContainerOverflow = scrollContainer?.style.overflow;
+    const prevHtmlOverflow = html.style.overflow;
+    const prevBodyOverflow = body.style.overflow;
 
-  const progress = Math.min(
-    Math.max(-rect.top / (rect.height || 1), 0),
-    1
-  );
+    const lock = () => {
+      if (scrollContainer) {
+        scrollContainer.style.overflow = "hidden";
+      }
+      html.style.overflow = "hidden";
+      body.style.overflow = "hidden";
+    };
 
-  // 🎯 full video position from scroll
-  const fullTime = progress * video.duration;
+    const unlock = () => {
+      if (scrollContainer) {
+        scrollContainer.style.overflow = prevContainerOverflow || "";
+      }
+      html.style.overflow = prevHtmlOverflow;
+      body.style.overflow = prevBodyOverflow;
+    };
 
-  // 🔥 clamp to HALF ONLY on mobile
-  const isMobileDevice = window.innerWidth <= 768;
+    lock();
 
-  video.currentTime = isMobileDevice
-    ? Math.min(fullTime, video.duration * 0.5)
-    : fullTime;
-};
+    let started = false;
+    let ended = false;
 
-    window.addEventListener("scroll", scrub, { passive: true });
-    video.addEventListener("loadedmetadata", scrub, { once: true });
-    if (video.readyState >= 1) scrub();
+    const startVideo = () => {
+      if (started || ended) return;
+      started = true;
+      video.currentTime = 0;
+      video.play();
+    };
 
-    return () => window.removeEventListener("scroll", scrub);
-  }, [isMobile]);
+    const onWheel = () => startVideo();
+    const onTouchStart = () => startVideo();
+
+    const handleEnded = () => {
+      ended = true;
+      unlock();
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+
+      const section = sectionRef.current?.closest("section");
+      const next = section?.nextElementSibling;
+      if (next) next.scrollIntoView({ behavior: "smooth" });
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    video.addEventListener("ended", handleEnded);
+
+    return () => {
+      unlock();
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      video.removeEventListener("ended", handleEnded);
+    };
+  }, []);
 
   return (
     <>
@@ -139,16 +164,16 @@ const Hero = () => {
         </motion.div>
 
         <div className="hero-lottie relative w-full max-w-xl">
-         <video
-  ref={videoRef}
-  muted
-  playsInline
-  preload="auto"
-  className="relative w-full h-auto"
-  style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
->
-  <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
-</video>
+          <video
+            ref={videoRef}
+            muted
+            playsInline
+            preload="auto"
+            className="relative w-full h-auto"
+            style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+          >
+            <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
+          </video>
         </div>
       </div>
     </>
