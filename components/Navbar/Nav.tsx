@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Logo from "../Helper/Logo";
 import { Navlinks } from "../Home/constant/Navlinks";
@@ -18,7 +17,6 @@ const Nav = ({ openNav }: Props) => {
       if (window.scrollY >= 90) setNavBg(true);
       else setNavBg(false);
     };
-
     window.addEventListener("scroll", handler);
     return () => window.removeEventListener("scroll", handler);
   }, []);
@@ -29,13 +27,12 @@ const Nav = ({ openNav }: Props) => {
 
   return (
     <div
-      className={`text-lg sticky top-0 z-50 w-full h-[12vh] transition-all duration-200 ${
+      className={`text-lg fixed md:sticky top-0 left-0 z-50 w-full h-[12vh] transition-all duration-200 ${
         navBg ? "bg-white shadow-md" : "bg-white"
       }`}
     >
       <div className="flex items-center h-full justify-between w-[90%] xl:w-[80%] mx-auto">
         <div>
-          
           <div className="py-3 sm:py-0">
             <span className="text-xl sm:text-2xl font-semibold">Deco</span>
             <span className="text-xl sm:text-2xl font-semibold text-[#1A3A5C]">Mind</span>
