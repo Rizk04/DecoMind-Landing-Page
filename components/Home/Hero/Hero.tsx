@@ -46,20 +46,36 @@ const Hero = () => {
 
       const target: HTMLElement | Window = scrollContainer || window;
 
-      const scrub = () => {
+      let rafId: number | null = null;
+
+      const applyScrub = () => {
+        rafId = null;
         if (!video.duration || isNaN(video.duration)) return;
         const rect = outer.getBoundingClientRect();
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
         const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        // currentTime is in fractional seconds already (e.g. 0.016 = 16ms),
+        // so this is already millisecond-precise. The batching below is
+        // what actually smooths things out on mobile.
         video.currentTime = progress * video.duration;
+      };
+
+      const scrub = () => {
+        // Batch with rAF so rapid mobile scroll events don't all fight
+        // to set currentTime in the same frame — smooths out the jank.
+        if (rafId !== null) return;
+        rafId = requestAnimationFrame(applyScrub);
       };
 
       target.addEventListener("scroll", scrub, { passive: true });
       scrub();
 
-      cleanupScroll = () => target.removeEventListener("scroll", scrub);
+      cleanupScroll = () => {
+        target.removeEventListener("scroll", scrub);
+        if (rafId !== null) cancelAnimationFrame(rafId);
+      };
     };
 
     const onLoaded = () => attach();
@@ -175,7 +191,7 @@ const Hero = () => {
               className="relative w-full h-auto"
               style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
             >
-              <source src="/Assets/Logo/LogoLoop.mp4" type="video/mp4" />
+              <source src="/Assets/Logo/LogoLoop_smooth2.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
