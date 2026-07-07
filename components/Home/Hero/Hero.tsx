@@ -33,7 +33,7 @@ const Hero = () => {
       // ACTUALLY scrolling right now (checked via computed style),
       // not just because it has the class name in the DOM.
       const potentialContainer = outer.closest(
-        ".md\\:overflow-y-scroll"
+        ".md\\:overflow-y-scroll",
       ) as HTMLElement | null;
 
       let scrollContainer: HTMLElement | null = null;
@@ -55,7 +55,11 @@ const Hero = () => {
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
+
         // currentTime is in fractional seconds already (e.g. 0.016 = 16ms),
         // so this is already millisecond-precise. The batching below is
         // what actually smooths things out on mobile.
@@ -95,11 +99,11 @@ const Hero = () => {
     <>
       <style>{`
         .hero-outer {
-          position: relative;
-          width: 95%;
-          margin: 0 auto;
-          height: 250vh;
-        }
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
+  height: 400vh;
+}
         .hero-sticky {
           position: sticky;
           top: 0;
@@ -112,9 +116,9 @@ const Hero = () => {
           padding: 0 1rem;
         }
         @media (max-width: 768px) {
-          .hero-outer {
-            height: 200vh;
-          }
+  .hero-outer {
+    height: 300vh;
+  }
           .hero-sticky {
             flex-direction: column;
             gap: 1.5rem;
@@ -158,9 +162,9 @@ const Hero = () => {
               <span> Design</span>
             </h1>
             <p className="text-sm sm:text-base md:text-lg text-center text-gray-400">
-              Generate stunning furniture layouts and interior designs in seconds.
-              Choose from wood types, color palettes, furniture styles, and
-              materials no design experience needed.
+              Generate stunning furniture layouts and interior designs in
+              seconds. Choose from wood types, color palettes, furniture styles,
+              and materials no design experience needed.
             </p>
             <div className="hero-buttons flex max-[768px]:flex-col flex-row max-[768px]:space-y-3 md:space-x-3 mt-3 items-center">
               <motion.button
@@ -191,7 +195,10 @@ const Hero = () => {
               className="relative w-full h-auto"
               style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
             >
-              <source src="/Assets/Logo/LogoLoop_smooth2.mp4" type="video/mp4" />
+              <source
+                src="/Assets/Logo/LogoLoop_smooth2.mp4"
+                type="video/mp4"
+              />
             </video>
           </div>
         </div>
