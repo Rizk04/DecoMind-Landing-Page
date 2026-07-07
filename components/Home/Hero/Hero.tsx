@@ -138,7 +138,7 @@ const Hero = () => {
         }
       `}</style>
 
-      <div ref={sectionRef} className="hero-outer">
+      <div ref={sectionRef} className="hero-outer bg-[#fafcf9]">
         <div className="hero-sticky">
           <motion.div
             initial={{ opacity: 0, y: 10 }}
