@@ -26,8 +26,12 @@ const Hero = () => {
     let cleanupScroll: (() => void) | null = null;
 
     const attach = () => {
+      // Clean up any previous listener before reattaching
       if (cleanupScroll) cleanupScroll();
 
+      // Only use the wrapper div as the scroll target if it is
+      // ACTUALLY scrolling right now (checked via computed style),
+      // not just because it has the class name in the DOM.
       const potentialContainer = outer.closest(
         ".md\\:overflow-y-scroll",
       ) as HTMLElement | null;
@@ -42,39 +46,47 @@ const Hero = () => {
 
       const target: HTMLElement | Window = scrollContainer || window;
 
-      // Throttle seeks — mobile video decoders cap out around 15fps of seeks.
-      // Sending seeks faster than that builds a backlog and causes stutter.
-      const isMobile = window.innerWidth <= 768;
-      const SEEK_INTERVAL = isMobile ? 66 : 16; // ~15fps mobile, ~60fps desktop
-      let lastSeek = 0;
+      let rafId: number | null = null;
 
       const applyScrub = () => {
+        rafId = null;
         if (!video.duration || isNaN(video.duration)) return;
         const rect = outer.getBoundingClientRect();
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
+
+        // currentTime is in fractional seconds already (e.g. 0.016 = 16ms),
+        // so this is already millisecond-precise. The batching below is
+        // what actually smooths things out on mobile.
         video.currentTime = progress * video.duration;
       };
 
       const scrub = () => {
-        const now = performance.now();
-        if (now - lastSeek < SEEK_INTERVAL) return;
-        lastSeek = now;
-        applyScrub();
+        // Batch with rAF so rapid mobile scroll events don't all fight
+        // to set currentTime in the same frame — smooths out the jank.
+        if (rafId !== null) return;
+        rafId = requestAnimationFrame(applyScrub);
       };
 
       target.addEventListener("scroll", scrub, { passive: true });
-      applyScrub(); // set initial frame
+      scrub();
 
-      cleanupScroll = () => target.removeEventListener("scroll", scrub);
+      cleanupScroll = () => {
+        target.removeEventListener("scroll", scrub);
+        if (rafId !== null) cancelAnimationFrame(rafId);
+      };
     };
 
     const onLoaded = () => attach();
     video.addEventListener("loadedmetadata", onLoaded, { once: true });
     if (video.readyState >= 1) attach();
 
+    // Re-check on resize in case we cross the md breakpoint
     window.addEventListener("resize", attach);
 
     return () => {
@@ -87,11 +99,11 @@ const Hero = () => {
     <>
       <style>{`
         .hero-outer {
-          position: relative;
-          width: 95%;
-          margin: 0 auto;
-          height: 400vh;
-        }
+  position: relative;
+  width: 95%;
+  margin: 0 auto;
+  height: 400vh;
+}
         .hero-sticky {
           position: sticky;
           top: 0;
@@ -104,9 +116,9 @@ const Hero = () => {
           padding: 0 1rem;
         }
         @media (max-width: 768px) {
-          .hero-outer {
-            height: 300vh;
-          }
+  .hero-outer {
+    height: 300vh;
+  }
           .hero-sticky {
             flex-direction: column;
             gap: 1.5rem;
@@ -183,7 +195,10 @@ const Hero = () => {
               className="relative w-full h-auto"
               style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
             >
-              <source src="/Assets/Logo/LogoLoop_smooth2.mp4" type="video/mp4" />
+              <source
+                src="/Assets/Logo/LogoLoop_smooth2.mp4"
+                type="video/mp4"
+              />
             </video>
           </div>
         </div>
