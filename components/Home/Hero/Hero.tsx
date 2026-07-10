@@ -183,7 +183,7 @@ const Hero = () => {
               className="relative w-full h-auto"
               style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
             >
-              <source src="/Assets/Logo/LogoLoop_smooth2.mp4" type="video/mp4" />
+              <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
