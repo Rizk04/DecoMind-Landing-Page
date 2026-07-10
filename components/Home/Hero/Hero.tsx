@@ -18,163 +18,73 @@ const Hero = () => {
       .then(setAnimation);
   }, []);
 
+  useEffect(() => {
+    const video = videoRef.current;
+    const outer = sectionRef.current;
+    if (!video || !outer) return;
 
-useEffect(() => {
-  const video = videoRef.current;
-  const outer = sectionRef.current;
-  if (!video || !outer) return;
+    let cleanupScroll: (() => void) | null = null;
 
-  let cleanupScroll: (() => void) | null = null;
+    const attach = () => {
+      if (cleanupScroll) cleanupScroll();
 
-  const attach = () => {
-    if (cleanupScroll) cleanupScroll();
+      const potentialContainer = outer.closest(
+        ".md\\:overflow-y-scroll",
+      ) as HTMLElement | null;
 
-    const potentialContainer = outer.closest(
-      ".md\\:overflow-y-scroll"
-    ) as HTMLElement | null;
-
-    let scrollContainer: HTMLElement | null = null;
-    if (potentialContainer) {
-      const style = window.getComputedStyle(potentialContainer);
-      if (style.overflowY === "scroll" || style.overflowY === "auto") {
-        scrollContainer = potentialContainer;
+      let scrollContainer: HTMLElement | null = null;
+      if (potentialContainer) {
+        const style = window.getComputedStyle(potentialContainer);
+        if (style.overflowY === "scroll" || style.overflowY === "auto") {
+          scrollContainer = potentialContainer;
+        }
       }
-    }
 
-    const target: HTMLElement | Window = scrollContainer || window;
+      const target: HTMLElement | Window = scrollContainer || window;
 
-    let raf = 0;
+      // Throttle seeks — mobile video decoders cap out around 15fps of seeks.
+      // Sending seeks faster than that builds a backlog and causes stutter.
+      const isMobile = window.innerWidth <= 768;
+      const SEEK_INTERVAL = isMobile ? 66 : 16; // ~15fps mobile, ~60fps desktop
+      let lastSeek = 0;
 
-    // Smooth interpolation values
-    let currentProgress = 0;
-    let targetProgress = 0;
-    let animationRunning = false;
+      const applyScrub = () => {
+        if (!video.duration || isNaN(video.duration)) return;
+        const rect = outer.getBoundingClientRect();
+        const scrollableDistance = outer.offsetHeight - window.innerHeight;
+        if (scrollableDistance <= 0) return;
+        const scrolled = -rect.top;
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
+        video.currentTime = progress * video.duration;
+      };
 
-    const updateTarget = () => {
-      const scrollableDistance = outer.offsetHeight - window.innerHeight;
-      if (scrollableDistance <= 0) return;
+      const scrub = () => {
+        const now = performance.now();
+        if (now - lastSeek < SEEK_INTERVAL) return;
+        lastSeek = now;
+        applyScrub();
+      };
 
-      const rect = outer.getBoundingClientRect();
-      const scrolled = -rect.top;
+      target.addEventListener("scroll", scrub, { passive: true });
+      applyScrub(); // set initial frame
 
-      targetProgress = Math.min(
-        Math.max(scrolled / scrollableDistance, 0),
-        1
-      );
-
-      if (!animationRunning) {
-        animationRunning = true;
-        raf = requestAnimationFrame(animate);
-      }
+      cleanupScroll = () => target.removeEventListener("scroll", scrub);
     };
 
-    const animate = () => {
-      if (!video.duration || isNaN(video.duration)) {
-        animationRunning = false;
-        return;
-      }
+    const onLoaded = () => attach();
+    video.addEventListener("loadedmetadata", onLoaded, { once: true });
+    if (video.readyState >= 1) attach();
 
-      // Ease toward the target progress
-      currentProgress += (targetProgress - currentProgress) * 0.18;
+    window.addEventListener("resize", attach);
 
-      video.currentTime = currentProgress * video.duration;
-
-      if (Math.abs(targetProgress - currentProgress) > 0.0005) {
-        raf = requestAnimationFrame(animate);
-      } else {
-        currentProgress = targetProgress;
-        video.currentTime = currentProgress * video.duration;
-        animationRunning = false;
-      }
+    return () => {
+      if (cleanupScroll) cleanupScroll();
+      window.removeEventListener("resize", attach);
     };
-
-    target.addEventListener("scroll", updateTarget, { passive: true });
-    updateTarget();
-
-    cleanupScroll = () => {
-      target.removeEventListener("scroll", updateTarget);
-      cancelAnimationFrame(raf);
-    };
-  };
-
-  const onLoaded = () => attach();
-
-  video.addEventListener("loadedmetadata", onLoaded, { once: true });
-
-  if (video.readyState >= 1) attach();
-
-  window.addEventListener("resize", attach);
-
-  return () => {
-    if (cleanupScroll) cleanupScroll();
-    window.removeEventListener("resize", attach);
-  };
-}, []);
-
-  // useEffect(() => {
-  //   const video = videoRef.current;
-  //   const outer = sectionRef.current;
-  //   if (!video || !outer) return;
-
-  //   let cleanupScroll: (() => void) | null = null;
-
-  //   const attach = () => {
-  //     if (cleanupScroll) cleanupScroll();
-
-  //     const potentialContainer = outer.closest(
-  //       ".md\\:overflow-y-scroll",
-  //     ) as HTMLElement | null;
-
-  //     let scrollContainer: HTMLElement | null = null;
-  //     if (potentialContainer) {
-  //       const style = window.getComputedStyle(potentialContainer);
-  //       if (style.overflowY === "scroll" || style.overflowY === "auto") {
-  //         scrollContainer = potentialContainer;
-  //       }
-  //     }
-
-  //     const target: HTMLElement | Window = scrollContainer || window;
-
-  //     // Throttle seeks — mobile video decoders cap out around 15fps of seeks.
-  //     // Sending seeks faster than that builds a backlog and causes stutter.
-  //     const isMobile = window.innerWidth <= 768;
-  //     const SEEK_INTERVAL = isMobile ? 66 : 16; // ~15fps mobile, ~60fps desktop
-  //     let lastSeek = 0;
-
-  //     const applyScrub = () => {
-  //       if (!video.duration || isNaN(video.duration)) return;
-  //       const rect = outer.getBoundingClientRect();
-  //       const scrollableDistance = outer.offsetHeight - window.innerHeight;
-  //       if (scrollableDistance <= 0) return;
-  //       const scrolled = -rect.top;
-  //       const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-  //       video.currentTime = progress * video.duration;
-  //     };
-
-  //     const scrub = () => {
-  //       const now = performance.now();
-  //       if (now - lastSeek < SEEK_INTERVAL) return;
-  //       lastSeek = now;
-  //       applyScrub();
-  //     };
-
-  //     target.addEventListener("scroll", scrub, { passive: true });
-  //     applyScrub(); // set initial frame
-
-  //     cleanupScroll = () => target.removeEventListener("scroll", scrub);
-  //   };
-
-  //   const onLoaded = () => attach();
-  //   video.addEventListener("loadedmetadata", onLoaded, { once: true });
-  //   if (video.readyState >= 1) attach();
-
-  //   window.addEventListener("resize", attach);
-
-  //   return () => {
-  //     if (cleanupScroll) cleanupScroll();
-  //     window.removeEventListener("resize", attach);
-  //   };
-  // }, []);
+  }, []);
 
   return (
     <>
@@ -275,6 +185,10 @@ useEffect(() => {
               preload="auto"
               className="relative w-full h-auto"
               style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+              onLoadedMetadata={(e) => {
+                const v = e.currentTarget;
+                v.currentTime = 0.001;
+              }}
             >
               <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
             </video>
