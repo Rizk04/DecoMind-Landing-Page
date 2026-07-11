@@ -41,17 +41,24 @@ const Hero = () => {
     framesRef.current = imgs;
   }, [isMobile]);
 
-  // Draw a specific frame on canvas
+  // Draw a specific frame on canvas — sharp on retina/high-DPR screens
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current;
     const img = framesRef.current[index];
     if (!canvas || !img) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
+
+    const dpr = window.devicePixelRatio || 1;
+    const cssWidth = canvas.offsetWidth;
+    const cssHeight = canvas.offsetHeight || (cssWidth * img.naturalHeight) / img.naturalWidth;
+
+    // Set the internal resolution to match the display resolution × DPR
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
   };
 
   // Mobile scroll scrub via canvas
@@ -60,7 +67,6 @@ const Hero = () => {
     const outer = sectionRef.current;
     if (!outer) return;
 
-    // Draw first frame immediately
     drawFrame(0);
 
     let rafId: number | null = null;
@@ -232,7 +238,6 @@ const Hero = () => {
           </motion.div>
 
           <div className="hero-lottie relative w-full max-w-xl">
-            {/* Mobile: canvas image sequence */}
             {isMobile && (
               <canvas
                 ref={canvasRef}
@@ -240,7 +245,6 @@ const Hero = () => {
                 style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
               />
             )}
-            {/* Desktop: video scrub */}
             {!isMobile && (
               <video
                 ref={videoRef}
