@@ -93,7 +93,7 @@ const Hero = () => {
           position: relative;
           width: 95%;
           margin: 0 auto;
-          height: 500vh;
+          height: 400vh;
         }
         .hero-sticky {
           position: sticky;
