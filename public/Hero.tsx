@@ -1,101 +1,24 @@
 "use client";
+import Lottie from "lottie-react";
+import Image from "next/image";
 import React, { useEffect, useRef, useState } from "react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
+import { FaGooglePay } from "react-icons/fa6";
+import { GrGooglePay } from "react-icons/gr";
 import { motion } from "framer-motion";
 
-const FRAME_COUNT = 164;
-const FRAME_PATH = (n: number) =>
-  `/Assets/Logo/frames/frame${String(n).padStart(4, "0")}.jpg`;
-
 const Hero = () => {
+  const [animation, setAnimation] = useState(null);
   const sectionRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const framesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [framesLoaded, setFramesLoaded] = useState(false);
 
-  // Detect mobile
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
+    fetch("/Assets/Lottie/houseAnimation.json")
+      .then((res) => res.json())
+      .then(setAnimation);
   }, []);
 
-  // Preload all frames on mobile
   useEffect(() => {
-    if (!isMobile) return;
-    let loaded = 0;
-    const imgs: HTMLImageElement[] = [];
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new window.Image();
-      img.src = FRAME_PATH(i);
-      img.onload = () => {
-        loaded++;
-        if (loaded === FRAME_COUNT) setFramesLoaded(true);
-      };
-      imgs.push(img);
-    }
-    framesRef.current = imgs;
-  }, [isMobile]);
-
-  // Draw a specific frame on canvas
-  const drawFrame = (index: number) => {
-    const canvas = canvasRef.current;
-    const img = framesRef.current[index];
-    if (!canvas || !img) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    canvas.width = img.naturalWidth;
-    canvas.height = img.naturalHeight;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0);
-  };
-
-  // Mobile scroll scrub via canvas
-  useEffect(() => {
-    if (!isMobile || !framesLoaded) return;
-    const outer = sectionRef.current;
-    if (!outer) return;
-
-    // Draw first frame immediately
-    drawFrame(0);
-
-    let rafId: number | null = null;
-
-    const scrub = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const rect = outer.getBoundingClientRect();
-        const scrollableDistance = outer.offsetHeight - window.innerHeight;
-        if (scrollableDistance <= 0) return;
-        const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-        const frameIndex = Math.min(
-          Math.floor(progress * FRAME_COUNT),
-          FRAME_COUNT - 1
-        );
-        if (frameIndex !== currentFrameRef.current) {
-          currentFrameRef.current = frameIndex;
-          drawFrame(frameIndex);
-        }
-      });
-    };
-
-    window.addEventListener("scroll", scrub, { passive: true });
-    scrub();
-    return () => {
-      window.removeEventListener("scroll", scrub);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
-  }, [isMobile, framesLoaded]);
-
-  // Desktop scroll scrub via video
-  useEffect(() => {
-    if (isMobile) return;
     const video = videoRef.current;
     const outer = sectionRef.current;
     if (!video || !outer) return;
@@ -104,7 +27,11 @@ const Hero = () => {
 
     const attach = () => {
       if (cleanupScroll) cleanupScroll();
-      const potentialContainer = outer.closest(".md\\:overflow-y-scroll") as HTMLElement | null;
+
+      const potentialContainer = outer.closest(
+        ".md\\:overflow-y-scroll",
+      ) as HTMLElement | null;
+
       let scrollContainer: HTMLElement | null = null;
       if (potentialContainer) {
         const style = window.getComputedStyle(potentialContainer);
@@ -112,33 +39,52 @@ const Hero = () => {
           scrollContainer = potentialContainer;
         }
       }
+
       const target: HTMLElement | Window = scrollContainer || window;
+
+      // Throttle seeks — mobile video decoders cap out around 15fps of seeks.
+      // Sending seeks faster than that builds a backlog and causes stutter.
+      const isMobile = window.innerWidth <= 768;
+      const SEEK_INTERVAL = isMobile ? 66 : 16; // ~15fps mobile, ~60fps desktop
       let lastSeek = 0;
-      const scrub = () => {
-        const now = performance.now();
-        if (now - lastSeek < 16) return;
-        lastSeek = now;
+
+      const applyScrub = () => {
         if (!video.duration || isNaN(video.duration)) return;
         const rect = outer.getBoundingClientRect();
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
         video.currentTime = progress * video.duration;
       };
+
+      const scrub = () => {
+        const now = performance.now();
+        if (now - lastSeek < SEEK_INTERVAL) return;
+        lastSeek = now;
+        applyScrub();
+      };
+
       target.addEventListener("scroll", scrub, { passive: true });
-      scrub();
+      applyScrub(); // set initial frame
+
       cleanupScroll = () => target.removeEventListener("scroll", scrub);
     };
 
-    video.addEventListener("loadedmetadata", attach, { once: true });
+    const onLoaded = () => attach();
+    video.addEventListener("loadedmetadata", onLoaded, { once: true });
     if (video.readyState >= 1) attach();
+
     window.addEventListener("resize", attach);
+
     return () => {
       if (cleanupScroll) cleanupScroll();
       window.removeEventListener("resize", attach);
     };
-  }, [isMobile]);
+  }, []);
 
   return (
     <>
@@ -147,7 +93,7 @@ const Hero = () => {
           position: relative;
           width: 95%;
           margin: 0 auto;
-          height: 500vh;
+          height: 300vh;
         }
         .hero-sticky {
           position: sticky;
@@ -232,27 +178,20 @@ const Hero = () => {
           </motion.div>
 
           <div className="hero-lottie relative w-full max-w-xl">
-            {/* Mobile: canvas image sequence */}
-            {isMobile && (
-              <canvas
-                ref={canvasRef}
-                className="w-full h-auto"
-                style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-              />
-            )}
-            {/* Desktop: video scrub */}
-            {!isMobile && (
-              <video
-                ref={videoRef}
-                muted
-                playsInline
-                preload="auto"
-                className="relative w-full h-auto"
-                style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-              >
-                <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
-              </video>
-            )}
+            <video
+              ref={videoRef}
+              muted
+              playsInline
+              preload="auto"
+              className="relative w-full h-auto"
+              style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
+              onLoadedMetadata={(e) => {
+                const v = e.currentTarget;
+                v.currentTime = 0.001;
+              }}
+            >
+              <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
+            </video>
           </div>
         </div>
       </div>
