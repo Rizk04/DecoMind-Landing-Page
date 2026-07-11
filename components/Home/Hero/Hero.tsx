@@ -50,10 +50,15 @@ const Hero = () => {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const cssWidth = canvas.offsetWidth;
-    const cssHeight = canvas.offsetHeight || (cssWidth * img.naturalHeight) / img.naturalWidth;
+    const cssWidth = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
+    // Always derive height from image aspect ratio — never trust offsetHeight on canvas
+    const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
 
-    // Set the internal resolution to match the display resolution × DPR
+    // Set canvas.style so the element actually takes up that space in the layout
+    canvas.style.width = `${cssWidth}px`;
+    canvas.style.height = `${cssHeight}px`;
+
+    // Set internal resolution to CSS size × DPR for sharp rendering
     canvas.width = cssWidth * dpr;
     canvas.height = cssHeight * dpr;
     ctx.scale(dpr, dpr);
