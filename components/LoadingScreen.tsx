@@ -17,14 +17,14 @@ const LoadingScreen = () => {
           key="loader"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
-          className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white"
+          transition={{ duration: 1.2, ease: "easeOut" }}
+          className="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-white"
         >
           {/* Logo text */}
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
+            transition={{ duration: 1 }}
             className="mb-6"
           >
             <span className="text-3xl font-semibold text-gray-800">Deco</span>
@@ -37,7 +37,7 @@ const LoadingScreen = () => {
               className="h-full bg-[#1A3A5C] rounded-full"
               initial={{ width: "0%" }}
               animate={{ width: "100%" }}
-              transition={{ duration: 2, ease: "easeInOut" }}
+              transition={{ duration: 3, ease: "easeInOut" }}
             />
           </div>
         </motion.div>
