@@ -4,6 +4,7 @@ import "./globals.css";
 import WrapperNav from "@/components/Navbar/WrapperNav";
 import Footer from "@/components/Footer/Footer";
 import { cn } from "@/lib/utils";
+import LoadingScreen from "@/components/LoadingScreen";
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -34,7 +35,7 @@ export default function RootLayout({
       )}
     >
       <body className="h-screen md:overflow-hidden flex flex-col">
-        {" "}
+        <LoadingScreen />
         <WrapperNav />
         {children}
       </body>
