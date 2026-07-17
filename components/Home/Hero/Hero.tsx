@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { motion } from "framer-motion";
+import { TypeAnimation } from "react-type-animation";
 
 const FRAME_COUNT = 164;
 const FRAME_PATH = (n: number) =>
@@ -50,7 +51,8 @@ const Hero = () => {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const cssWidth = canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
+    const cssWidth =
+      canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
     // Always derive height from image aspect ratio — never trust offsetHeight on canvas
     const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
 
@@ -84,10 +86,13 @@ const Hero = () => {
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
         const frameIndex = Math.min(
           Math.floor(progress * FRAME_COUNT),
-          FRAME_COUNT - 1
+          FRAME_COUNT - 1,
         );
         if (frameIndex !== currentFrameRef.current) {
           currentFrameRef.current = frameIndex;
@@ -115,7 +120,9 @@ const Hero = () => {
 
     const attach = () => {
       if (cleanupScroll) cleanupScroll();
-      const potentialContainer = outer.closest(".md\\:overflow-y-scroll") as HTMLElement | null;
+      const potentialContainer = outer.closest(
+        ".md\\:overflow-y-scroll",
+      ) as HTMLElement | null;
       let scrollContainer: HTMLElement | null = null;
       if (potentialContainer) {
         const style = window.getComputedStyle(potentialContainer);
@@ -134,7 +141,10 @@ const Hero = () => {
         const scrollableDistance = outer.offsetHeight - window.innerHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -rect.top;
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
         video.currentTime = progress * video.duration;
       };
       target.addEventListener("scroll", scrub, { passive: true });
@@ -200,13 +210,20 @@ const Hero = () => {
 
       <div ref={sectionRef} className="hero-outer bg-[#fafcf9]">
         <div className="hero-sticky">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ ease: "easeIn", duration: 0.5 }}
-            className="relative"
-          >
+          <motion.div className="relative">
             <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800">
+              <TypeAnimation
+                sequence={[2700, "Transform Any Room AI-Powered Design"]}
+                speed={50}
+                cursor={true}
+              />
+            </h1>
+            {/* <motion.h1
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ease: "easeOut", duration: 0.5, delay: 2.7 }}
+              className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800"
+            >
               Transform Any Room{" "}
               <motion.span
                 animate={{ opacity: [0.8, 1, 0.8] }}
@@ -216,13 +233,23 @@ const Hero = () => {
                 AI-Powered
               </motion.span>
               <span> Design</span>
-            </h1>
-            <p className="text-sm sm:text-base md:text-lg text-center text-gray-400">
+            </motion.h1> */}
+            <motion.p
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ease: "easeOut", duration: 0.5, delay: 2.9 }}
+              className="text-sm sm:text-base md:text-lg text-center text-gray-400"
+            >
               Generate stunning furniture layouts and interior designs in
               seconds. Choose from wood types, color palettes, furniture styles,
               and materials no design experience needed.
-            </p>
-            <div className="hero-buttons flex max-[768px]:flex-col flex-row max-[768px]:space-y-3 md:space-x-3 mt-3 items-center">
+            </motion.p>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ease: "easeOut", duration: 0.5, delay: 3.1 }}
+              className="hero-buttons flex max-[768px]:flex-col flex-row max-[768px]:space-y-3 md:space-x-3 mt-3 items-center"
+            >
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -239,10 +266,15 @@ const Hero = () => {
                 <FaApple />
                 Download Now
               </motion.button>
-            </div>
+            </motion.div>
           </motion.div>
 
-          <div className="hero-lottie relative w-full max-w-xl">
+          <motion.div
+            initial={{ opacity: 0, x: 15 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ ease: "easeOut", duration: 0.5, delay: 2.9 }}
+            className="hero-lottie relative w-full max-w-xl"
+          >
             {isMobile && (
               <canvas
                 ref={canvasRef}
@@ -259,10 +291,13 @@ const Hero = () => {
                 className="relative w-full h-auto"
                 style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
               >
-                <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
+                <source
+                  src="/Assets/Logo/LogoLoop_smooth.mp4"
+                  type="video/mp4"
+                />
               </video>
             )}
-          </div>
+          </motion.div>
         </div>
       </div>
     </>
