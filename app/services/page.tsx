@@ -58,13 +58,17 @@ export default function ServicesPage() {
       <style>{`
         /* ── DESKTOP: fixed-height snap layout, single scroll container ── */
         .svc-outer {
-          height: calc(100vh - 12vh);
-          overflow-x: hidden;
-          overflow-y: scroll;
-          scroll-snap-type: y mandatory;
-          background-color: #1A3A5C;
-          color: white;
-        }
+  position: fixed;
+  top: 6vh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+  background-color: #1A3A5C;
+  color: white;
+}
         .svc-section {
           height: 88vh;
           scroll-snap-align: start;
@@ -175,7 +179,6 @@ export default function ServicesPage() {
           }
         }
       `}</style>
-
       <div className="svc-outer">
         {/* HERO */}
         <section className="svc-section">
