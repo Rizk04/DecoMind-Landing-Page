@@ -27,7 +27,7 @@ const Nav = ({ openNav }: Props) => {
 
   return (
     <div
-      className={`text-lg fixed md:sticky top-0 left-0 z-50 w-full h-[6vh] transition-all duration-200 ${
+      className={`text-lg fixed md:sticky top-0 left-0 z-50 w-full h-[12vh] transition-all duration-200 ${
         navBg ? "bg-white shadow-md" : "bg-white"
       }`}
     >

@@ -56,19 +56,18 @@ export default function ServicesPage() {
   return (
     <>
       <style>{`
-        /* ── DESKTOP: fixed-height snap layout, single scroll container ── */
         .svc-outer {
-  position: fixed;
-  top: 6vh;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  scroll-snap-type: y mandatory;
-  background-color: #1A3A5C;
-  color: white;
-}
+          position: fixed;
+          top: 6vh;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          overflow-x: hidden;
+          overflow-y: scroll;
+          scroll-snap-type: y mandatory;
+          background-color: #1A3A5C;
+          color: white;
+        }
         .svc-section {
           height: 88vh;
           scroll-snap-align: start;
@@ -128,12 +127,14 @@ export default function ServicesPage() {
           flex-shrink: 0;
         }
 
-        /* ── MOBILE: free-scroll, stacked layout ── */
         @media (max-width: 768px) {
           .svc-outer {
+            position: static !important;
             height: auto !important;
-            overflow-y: visible !important;
+            overflow-y: auto !important;
             scroll-snap-type: none !important;
+            top: auto !important;
+            padding-top: 8vh !important;
           }
           .svc-section {
             height: auto !important;
@@ -144,7 +145,6 @@ export default function ServicesPage() {
             padding-right: 1.25rem !important;
             align-items: flex-start !important;
           }
-          /* Hero */
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
             height: auto !important;
@@ -156,12 +156,10 @@ export default function ServicesPage() {
           .svc-hero-p {
             max-width: 100% !important;
           }
-          /* Stats */
           .svc-stats-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 0.75rem !important;
           }
-          /* Services */
           .svc-service-grid {
             grid-template-columns: 1fr !important;
             height: auto !important;
@@ -172,13 +170,13 @@ export default function ServicesPage() {
             height: 70vw !important;
             direction: ltr !important;
           }
-          /* Floor plan */
           .svc-floor-grid {
             grid-template-columns: 1fr 1fr !important;
             gap: 0.75rem !important;
           }
         }
       `}</style>
+
       <div className="svc-outer">
         {/* HERO */}
         <section className="svc-section">
@@ -370,7 +368,7 @@ export default function ServicesPage() {
           </div>
         </section>
 
-        {/* FOOTER — last snap section, reached only by scrolling to the end */}
+        {/* FOOTER */}
         <section className="svc-footer-section text-black">
           <Footer />
         </section>
