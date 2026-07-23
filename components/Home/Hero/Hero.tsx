@@ -1,303 +1,412 @@
 "use client";
 import React, { useEffect, useRef, useState } from "react";
-import { FaApple, FaGooglePlay } from "react-icons/fa";
 import { motion } from "framer-motion";
-import { TypeAnimation } from "react-type-animation";
 
-const FRAME_COUNT = 164;
-const FRAME_PATH = (n: number) =>
-  `/Assets/Logo/frames/frame${String(n).padStart(4, "0")}.jpg`;
+function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?: string; decimals?: number }) {
+  const [val, setVal] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
 
-const Hero = () => {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const framesRef = useRef<HTMLImageElement[]>([]);
-  const currentFrameRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
-  const [framesLoaded, setFramesLoaded] = useState(false);
-
-  // Detect mobile
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // Preload all frames on mobile
-  useEffect(() => {
-    if (!isMobile) return;
-    let loaded = 0;
-    const imgs: HTMLImageElement[] = [];
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new window.Image();
-      img.src = FRAME_PATH(i);
-      img.onload = () => {
-        loaded++;
-        if (loaded === FRAME_COUNT) setFramesLoaded(true);
-      };
-      imgs.push(img);
-    }
-    framesRef.current = imgs;
-  }, [isMobile]);
-
-  // Draw a specific frame on canvas — sharp on retina/high-DPR screens
-  const drawFrame = (index: number) => {
-    const canvas = canvasRef.current;
-    const img = framesRef.current[index];
-    if (!canvas || !img) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    const dpr = window.devicePixelRatio || 1;
-    const cssWidth =
-      canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
-    // Always derive height from image aspect ratio — never trust offsetHeight on canvas
-    const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
-
-    // Set canvas.style so the element actually takes up that space in the layout
-    canvas.style.width = `${cssWidth}px`;
-    canvas.style.height = `${cssHeight}px`;
-
-    // Set internal resolution to CSS size × DPR for sharp rendering
-    canvas.width = cssWidth * dpr;
-    canvas.height = cssHeight * dpr;
-    ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, cssWidth, cssHeight);
-    ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
-  };
-
-  // Mobile scroll scrub via canvas
-  useEffect(() => {
-    if (!isMobile || !framesLoaded) return;
-    const outer = sectionRef.current;
-    if (!outer) return;
-
-    drawFrame(0);
-
-    let rafId: number | null = null;
-
-    const scrub = () => {
-      if (rafId !== null) return;
-      rafId = requestAnimationFrame(() => {
-        rafId = null;
-        const rect = outer.getBoundingClientRect();
-        const scrollableDistance = outer.offsetHeight - window.innerHeight;
-        if (scrollableDistance <= 0) return;
-        const scrolled = -rect.top;
-        const progress = Math.min(
-          Math.max(scrolled / scrollableDistance, 0),
-          1,
-        );
-        const frameIndex = Math.min(
-          Math.floor(progress * FRAME_COUNT),
-          FRAME_COUNT - 1,
-        );
-        if (frameIndex !== currentFrameRef.current) {
-          currentFrameRef.current = frameIndex;
-          drawFrame(frameIndex);
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting && !started.current) {
+          started.current = true;
+          const dur = 1600;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setVal(to * eased);
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
         }
       });
-    };
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [to]);
 
-    window.addEventListener("scroll", scrub, { passive: true });
-    scrub();
-    return () => {
-      window.removeEventListener("scroll", scrub);
-      if (rafId !== null) cancelAnimationFrame(rafId);
-    };
-  }, [isMobile, framesLoaded]);
+  return (
+    <div ref={ref} className="hero-counter-num">
+      {val.toFixed(decimals)}{suffix}
+    </div>
+  );
+}
 
-  // Desktop scroll scrub via video
+function BeforeAfterSlider() {
+  const [pos, setPos] = useState(55);
+  const ref = useRef<HTMLDivElement>(null);
+  const dragging = useRef(false);
+
+  const move = (clientX: number) => {
+    const el = ref.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const p = ((clientX - rect.left) / rect.width) * 100;
+    setPos(Math.max(2, Math.min(98, p)));
+  };
+
   useEffect(() => {
-    if (isMobile) return;
-    const video = videoRef.current;
-    const outer = sectionRef.current;
-    if (!video || !outer) return;
-
-    let cleanupScroll: (() => void) | null = null;
-
-    const attach = () => {
-      if (cleanupScroll) cleanupScroll();
-      const potentialContainer = outer.closest(
-        ".md\\:overflow-y-scroll",
-      ) as HTMLElement | null;
-      let scrollContainer: HTMLElement | null = null;
-      if (potentialContainer) {
-        const style = window.getComputedStyle(potentialContainer);
-        if (style.overflowY === "scroll" || style.overflowY === "auto") {
-          scrollContainer = potentialContainer;
-        }
+    let raf = 0;
+    let dir = 1;
+    let p = 55;
+    const animate = () => {
+      if (!dragging.current) {
+        p += dir * 0.25;
+        if (p > 78) dir = -1;
+        if (p < 32) dir = 1;
+        setPos(p);
       }
-      const target: HTMLElement | Window = scrollContainer || window;
-      let lastSeek = 0;
-      const scrub = () => {
-        const now = performance.now();
-        if (now - lastSeek < 16) return;
-        lastSeek = now;
-        if (!video.duration || isNaN(video.duration)) return;
-        const rect = outer.getBoundingClientRect();
-        const scrollableDistance = outer.offsetHeight - window.innerHeight;
-        if (scrollableDistance <= 0) return;
-        const scrolled = -rect.top;
-        const progress = Math.min(
-          Math.max(scrolled / scrollableDistance, 0),
-          1,
-        );
-        video.currentTime = progress * video.duration;
-      };
-      target.addEventListener("scroll", scrub, { passive: true });
-      scrub();
-      cleanupScroll = () => target.removeEventListener("scroll", scrub);
+      raf = requestAnimationFrame(animate);
     };
+    const t = setTimeout(() => { raf = requestAnimationFrame(animate); }, 1200);
+    return () => { clearTimeout(t); cancelAnimationFrame(raf); };
+  }, []);
 
-    video.addEventListener("loadedmetadata", attach, { once: true });
-    if (video.readyState >= 1) attach();
-    window.addEventListener("resize", attach);
-    return () => {
-      if (cleanupScroll) cleanupScroll();
-      window.removeEventListener("resize", attach);
-    };
-  }, [isMobile]);
+  return (
+    <div className="hero-visual">
+      <div
+        className="ba"
+        ref={ref}
+        onMouseDown={(e) => { dragging.current = true; move(e.clientX); }}
+        onMouseMove={(e) => { if (dragging.current) move(e.clientX); }}
+        onMouseUp={() => { dragging.current = false; }}
+        onMouseLeave={() => { dragging.current = false; }}
+        onTouchStart={(e) => { dragging.current = true; move(e.touches[0].clientX); }}
+        onTouchMove={(e) => { if (dragging.current) { move(e.touches[0].clientX); e.preventDefault(); } }}
+        onTouchEnd={() => { dragging.current = false; }}
+      >
+        <div className="ba-img ba-before" style={{ clipPath: `inset(0 ${100 - pos}% 0 0)` }} />
+        <div className="ba-img ba-after">
+          <div className="ba-after-inner" />
+        </div>
+        <span className="ba-tag left">Before</span>
+        <span className="ba-tag right">AI After</span>
+        <div className="ba-handle" style={{ left: `${pos}%` }}>
+          <div className="ba-handle-knob">⟷</div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
+const Hero = () => {
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
         .hero-outer {
           position: relative;
-          width: 95%;
-          margin: 0 auto;
-          height: 500vh;
-        }
-        .hero-sticky {
-          position: sticky;
-          top: 0;
-          height: 100vh;
           width: 100%;
+          min-height: 100vh;
+        }
+
+        .hero-sticky {
+          width: 100%;
+          min-height: 100vh;
+          display: flex;
+          align-items: center;
+          overflow: hidden;
+        }
+
+        .hero-sticky::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background:
+            radial-gradient(ellipse 60% 60% at 70% 50%, rgba(212,235,232,0.55) 0%, transparent 70%),
+            radial-gradient(ellipse 50% 70% at 90% 20%, rgba(240,214,220,0.45) 0%, transparent 65%),
+            #f0f4f3;
+          z-index: 0;
+        }
+
+        .hero-container {
+          position: relative;
+          z-index: 1;
+          width: 100%;
+          max-width: 72rem;
+          margin: 0 auto;
+          padding: clamp(2rem, 6vh, 5rem) clamp(1.5rem, 6vw, 5rem);
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: clamp(2rem, 5vw, 5rem);
+          align-items: center;
+        }
+
+        .hero-eyebrow {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: white;
+          border: 1px solid #dde8e5;
+          border-radius: 999px;
+          padding: 0.35rem 1rem;
+          font-size: clamp(0.7rem, 0.9vw, 0.8rem);
+          color: #3d5a52;
+          font-weight: 500;
+          margin-bottom: clamp(1rem, 2.5vh, 1.75rem);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+        }
+
+        .hero-eyebrow .dot {
+          width: 6px;
+          height: 6px;
+          border-radius: 50%;
+          background: #0D9DB8;
+          display: inline-block;
+          flex-shrink: 0;
+        }
+
+        .hero-h1 {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(2rem, 4vw, 4rem);
+          font-weight: 700;
+          line-height: 1.1;
+          color: #0f1f1c;
+          margin: 0 0 clamp(0.75rem, 2vh, 1.25rem);
+        }
+
+        .hero-h1 em {
+          font-style: italic;
+          color: #0D9DB8;
+        }
+
+        .hero-sub {
+          font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+          color: #5a756e;
+          line-height: 1.65;
+          margin: 0 0 clamp(1.25rem, 3vh, 2rem);
+          max-width: 420px;
+        }
+
+        .hero-cta {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          margin-bottom: clamp(1.5rem, 4vh, 2.5rem);
+        }
+
+        .btn-teal {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: #0D9DB8;
+          color: white;
+          font-weight: 600;
+          font-size: clamp(0.8rem, 1vw, 0.95rem);
+          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          border-radius: 999px;
+          border: none;
+          cursor: pointer;
+          text-decoration: none;
+          transition: background 0.18s, transform 0.15s;
+          white-space: nowrap;
+        }
+        .btn-teal:hover { background: #0b8da6; transform: translateY(-1px); }
+
+        .btn-ghost {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.4rem;
+          background: white;
+          color: #0f1f1c;
+          font-weight: 600;
+          font-size: clamp(0.8rem, 1vw, 0.95rem);
+          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          border-radius: 999px;
+          border: 1.5px solid #d0dbd8;
+          cursor: pointer;
+          text-decoration: none;
+          transition: border-color 0.18s, transform 0.15s;
+          white-space: nowrap;
+        }
+        .btn-ghost:hover { border-color: #0D9DB8; transform: translateY(-1px); }
+
+        .hero-stats {
+          display: flex;
+          gap: clamp(1.25rem, 3vw, 3rem);
+          padding-top: clamp(1rem, 2vh, 1.5rem);
+          border-top: 1px solid #d8e5e2;
+          flex-wrap: wrap;
+        }
+
+        .hero-counter-num {
+          font-size: clamp(1.2rem, 2vw, 1.75rem);
+          font-weight: 700;
+          color: #0f1f1c;
+          line-height: 1;
+        }
+
+        .hero-stat-lbl {
+          font-size: clamp(0.6rem, 0.75vw, 0.7rem);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #7a9990;
+          margin-top: 0.25rem;
+        }
+
+        .hero-visual {
+          position: relative;
+          background: #1A3A5C;
+          border-radius: 1.5rem;
+          overflow: hidden;
+          box-shadow: 0 24px 64px rgba(26,58,92,0.28);
+          aspect-ratio: 4/3;
+          width: 100%;
+        }
+
+        .ba {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          cursor: col-resize;
+          user-select: none;
+          overflow: hidden;
+        }
+
+        .ba-img {
+          position: absolute;
+          inset: 0;
+        }
+
+        .ba-before {
+          background: linear-gradient(135deg, #2a1a0a 0%, #5c3310 100%);
+          z-index: 1;
+        }
+
+        .ba-after {
+          background: linear-gradient(135deg, #1A3A5C 0%, #0D9DB8 100%);
+          z-index: 0;
+        }
+
+        .ba-after-inner {
+          position: absolute;
+          inset: 15%;
+          background: linear-gradient(135deg, #c8964a 0%, #e0b87a 100%);
+          border-radius: 0.5rem;
+          opacity: 0.85;
+        }
+
+        .ba-tag {
+          position: absolute;
+          top: clamp(0.5rem, 1vw, 0.875rem);
+          background: white;
+          border-radius: 999px;
+          padding: 0.25rem 0.75rem;
+          font-size: clamp(0.6rem, 0.75vw, 0.72rem);
+          font-weight: 700;
+          color: #0f1f1c;
+          z-index: 10;
+          letter-spacing: 0.04em;
+        }
+        .ba-tag.left { left: clamp(0.5rem, 1vw, 0.875rem); }
+        .ba-tag.right {
+          right: clamp(0.5rem, 1vw, 0.875rem);
+          background: #0f1f1c;
+          color: white;
+        }
+
+        .ba-handle {
+          position: absolute;
+          top: 0;
+          bottom: 0;
+          width: 2px;
+          background: white;
+          z-index: 10;
+          transform: translateX(-50%);
+          pointer-events: none;
+        }
+
+        .ba-handle-knob {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+          width: clamp(2rem, 3vw, 2.5rem);
+          height: clamp(2rem, 3vw, 2.5rem);
+          background: white;
+          border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          gap: 3rem;
-          padding: 0 1rem;
+          font-size: clamp(0.7rem, 1vw, 0.9rem);
+          box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+          color: #0f1f1c;
+          pointer-events: none;
         }
+
         @media (max-width: 768px) {
-          .hero-outer {
-            height: 300vh;
+          .hero-container {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+            padding-top: 13vh;
           }
-          .hero-sticky {
-            flex-direction: column;
-            gap: 1.5rem;
-            padding: 2rem 1.25rem;
-          }
-          .hero-buttons {
-            flex-direction: column !important;
-          }
-          .hero-buttons button {
-            width: 100% !important;
-          }
-          .hero-lottie {
-            max-width: 260px !important;
-            margin: 0 auto !important;
-          }
-        }
-        @media (min-width: 769px) {
-          .hero-sticky {
-            flex-direction: row;
-          }
+          .hero-sub { max-width: 100%; }
+          .hero-cta { flex-direction: column; align-items: flex-start; }
+          .hero-visual { aspect-ratio: 3/2 !important; }
         }
       `}</style>
 
-      <div ref={sectionRef} className="hero-outer bg-[#fafcf9]">
+      <div className="hero-outer">
         <div className="hero-sticky">
-          <motion.div className="relative">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800">
-              <TypeAnimation
-                sequence={[2700, "Transform Any Room AI-Powered Design"]}
-                speed={50}
-                cursor={true}
-              />
-            </h1>
-            {/* <motion.h1
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ease: "easeOut", duration: 0.5, delay: 2.7 }}
-              className="text-2xl sm:text-3xl md:text-4xl font-bold text-center text-gray-800"
-            >
-              Transform Any Room{" "}
-              <motion.span
-                animate={{ opacity: [0.8, 1, 0.8] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="pb-2 text-2xl sm:text-3xl md:text-4xl font-bold text-center text-transparent bg-linear-to-r bg-clip-text to-[#1A3A5C] from-[#0D9DB8]"
-              >
-                AI-Powered
-              </motion.span>
-              <span> Design</span>
-            </motion.h1> */}
-            <motion.p
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ease: "easeOut", duration: 0.5, delay: 2.9 }}
-              className="text-sm sm:text-base md:text-lg text-center text-gray-400"
-            >
-              Generate stunning furniture layouts and interior designs in
-              seconds. Choose from wood types, color palettes, furniture styles,
-              and materials no design experience needed.
-            </motion.p>
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ ease: "easeOut", duration: 0.5, delay: 3.1 }}
-              className="hero-buttons flex max-[768px]:flex-col flex-row max-[768px]:space-y-3 md:space-x-3 mt-3 items-center"
-            >
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="cursor-pointer max-[768px]:text-sm flex items-center justify-center gap-3 w-1/2 text-white rounded-md bg-[#1A3A5C] px-3 h-12 hover:bg-[#0D9DB8] font-medium hover:text-black transition-all duration-200 py-3"
-              >
-                <FaGooglePlay />
-                Download Now
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="cursor-pointer max-[768px]:text-sm flex items-center justify-center gap-3 w-1/2 text-black rounded-md border-2 border-[#1A3A5C] px-3 py-5 h-12 hover:bg-[#1A3A5C] font-medium hover:text-white transition-all duration-200"
-              >
-                <FaApple />
-                Download Now
-              </motion.button>
-            </motion.div>
-          </motion.div>
+          <div className="hero-container">
 
-          <motion.div
-            initial={{ opacity: 0, x: 15 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ ease: "easeOut", duration: 0.5, delay: 2.9 }}
-            className="hero-lottie relative w-full max-w-xl"
-          >
-            {isMobile && (
-              <canvas
-                ref={canvasRef}
-                className="w-full h-auto"
-                style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-              />
-            )}
-            {!isMobile && (
-              <video
-                ref={videoRef}
-                muted
-                playsInline
-                preload="auto"
-                className="relative w-full h-auto"
-                style={{ mixBlendMode: "screen", maxHeight: "50vh" }}
-              >
-                <source
-                  src="/Assets/Logo/LogoLoop_smooth.mp4"
-                  type="video/mp4"
-                />
-              </video>
-            )}
-          </motion.div>
+            {/* LEFT: text */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+            >
+              <div className="hero-eyebrow">
+                <span className="dot" /> AI interior design · beta
+              </div>
+
+              <h1 className="hero-h1">
+                Design your dream room in <em>30 seconds</em>
+              </h1>
+
+              <p className="hero-sub">
+                Pick a wood type, color palette, and furniture style. DecoMind generates
+                photoreal layouts you can walk through in 3D before you buy a single thing.
+              </p>
+
+              <div className="hero-cta">
+                <button className="btn-teal">Start designing — free <span>→</span></button>
+                <button className="btn-ghost">Browse gallery</button>
+              </div>
+
+              <div className="hero-stats">
+                <div>
+                  <Counter to={12} suffix="k+" />
+                  <div className="hero-stat-lbl">Designs generated</div>
+                </div>
+                <div>
+                  <Counter to={4.8} decimals={1} suffix="★" />
+                  <div className="hero-stat-lbl">User rating</div>
+                </div>
+                <div>
+                  <Counter to={100} suffix="+" />
+                  <div className="hero-stat-lbl">Style combos</div>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* RIGHT: before/after slider */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.65, ease: "easeOut" }}
+            >
+              <BeforeAfterSlider />
+            </motion.div>
+
+          </div>
         </div>
       </div>
     </>

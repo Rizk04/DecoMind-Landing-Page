@@ -58,7 +58,7 @@ export default function ServicesPage() {
       <style>{`
         .svc-outer {
           position: fixed;
-          top: 6vh;
+          top: 12vh;
           left: 0;
           right: 0;
           bottom: 0;

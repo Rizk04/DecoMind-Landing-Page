@@ -33,8 +33,7 @@ export default function RootLayout({
         geist.variable,
       )}
     >
-      <body className="h-screen md:overflow-hidden flex flex-col">
-        <LoadingScreen />
+<body className="pt-[12vh] h-screen md:overflow-hidden flex flex-col">        
         <WrapperNav />
         {children}
       </body>

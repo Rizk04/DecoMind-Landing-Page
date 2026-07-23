@@ -1,12 +1,11 @@
 "use client";
 
 import { animate, motion, useInView, useMotionValue, useTransform } from "framer-motion";
-import Lottie from "lottie-react";
 import React, { useEffect, useRef, useState } from "react";
 
-const FeatureBarProgress = () => {
-  const lottieRef = useRef(null);
+const styles = ["Modern", "Rustic", "Mid-Century", "Scandinavian", "Industrial", "Japandi", "Bohemian", "Minimalist", "Art Deco", "Coastal"];
 
+const FeatureBarProgress = () => {
   const count1 = useMotionValue(0);
   const count2 = useMotionValue(0);
   const count3 = useMotionValue(0);
@@ -29,14 +28,6 @@ const FeatureBarProgress = () => {
     }
   }, [inView]);
 
-  const [animation, setAnimation] = useState(null);
-
-  useEffect(() => {
-    fetch("/Assets/Lottie/InteriorDesign.json")
-      .then((res) => res.json())
-      .then(setAnimation);
-  }, []);
-
   const stats = [
     { value: rounded1, suffix: "+", label: "Happy Customers" },
     { value: rounded2, suffix: "+", label: "AI-Generated Designs" },
@@ -46,172 +37,287 @@ const FeatureBarProgress = () => {
 
   const cards = [
     {
-      emoji: "🪑",
-      title: "100+ combinations",
-      desc: "10 Wood Types · 8 Color Palettes · 10 Styles",
+      emoji: "🪵",
+      title: "100+ style combinations",
+      desc: "10 wood types — oak, walnut, ash, hickory and more. 8 color palettes, 10 furniture styles, mix and match freely.",
     },
     {
-      emoji: "💰",
-      title: "Save Money",
-      desc: "No expensive interior designers",
+      emoji: "✨",
+      title: "AI-generated in seconds",
+      desc: "Upload a photo of your room. Get a fully furnished, photoreal redesign in under 30 seconds — no prompt engineering.",
     },
     {
-      emoji: "🤖",
-      title: "AI-Powered",
-      desc: "Generate stunning rooms in seconds",
+      emoji: "💸",
+      title: "Skip the interior designer",
+      desc: "Pro results without the $2k+ consultation fee. Iterate as many times as you like, export when you love it.",
     },
   ];
 
   return (
-    <div
-      className="bg-[#1A3A5C] flex flex-col justify-center overflow-hidden"
-      style={{
-        minHeight: "100svh",
-        padding: "clamp(0.75rem, 2vh, 2rem) clamp(1rem, 4vw, 4rem)",
-      }}
-    >
-      <div
-        className="grid grid-cols-1 lg:grid-cols-2 items-center flex-1 min-h-0"
-        style={{ gap: "clamp(0.5rem, 2vw, 2rem)" }}
-      >
-        <div className="flex flex-col justify-center order-2 lg:order-1">
-          <h1
-            className="text-white font-bold leading-tight text-center lg:text-left"
-            style={{ fontSize: "clamp(1.2rem, 3.5vw, 3.75rem)" }}
-          >
-            Smart Design for
-          </h1>
+    <>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&display=swap');
 
-          <h1
-            className="font-bold text-[#0D9DB8] leading-tight text-center lg:text-left"
-            style={{
-              fontSize: "clamp(1.2rem, 3.5vw, 3.75rem)",
-              marginBottom: "clamp(0.5rem, 2vh, 2rem)",
-            }}
-          >
-            Smart Homeowners
-          </h1>
+       .fbp-outer {
+  background: #f7f8f6;
+  min-height: 100svh;
+  height: auto; /* add this */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
 
-          {/* STATS — moved here, under the headline */}
-          <div
-            ref={ref}
-            className="flex flex-wrap justify-center lg:justify-start text-white text-center lg:text-left"
-            style={{
-              gap: "clamp(0.75rem, 3vw, 3rem)",
-              marginBottom: "clamp(0.5rem, 2vh, 2rem)",
-            }}
-          >
-            {stats.map(({ value, suffix, label }) => (
-              <div key={label}>
-                <div className="flex items-baseline justify-center lg:justify-start">
-                  <motion.span
-                    style={{
-                      fontSize: "clamp(1rem, 2.2vw, 2rem)",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {value}
-                  </motion.span>
+        /* ── Ticker ── */
+        .fbp-ticker-wrap {
+          width: 100%;
+          margin-bottom: -1rem;
+          overflow: hidden;
+          border-top: 1px solid #e4e9e7;
+          border-bottom: 1px solid #e4e9e7;
+          padding: clamp(0.6rem, 1.2vh, 1rem) 0;
+          background: #f7f8f6;
+        }
+        .fbp-ticker-track {
+          display: flex;
+          width: max-content;
+          animation: ticker-scroll 28s linear infinite;
+        }
+        .fbp-ticker-track:hover {
+          animation-play-state: paused;
+        }
+        @keyframes ticker-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .fbp-ticker-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          padding: 0 clamp(1.2rem, 2.5vw, 2.5rem);
+          font-size: clamp(0.85rem, 1.2vw, 1.1rem);
+          font-weight: 500;
+          color: #3d5a52;
+          white-space: nowrap;
+        }
+        .fbp-ticker-dot {
+          color: #0D9DB8;
+          font-size: 0.6rem;
+        }
 
-                  <span
-                    style={{
-                      fontSize: "clamp(1rem, 2.2vw, 2rem)",
-                      fontWeight: 700,
-                    }}
-                  >
-                    {suffix}
-                  </span>
-                </div>
+        /* ── Main content ── */
+       .fbp-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(1.25rem, 3vh, 4rem) clamp(1.5rem, 7vw, 7rem);
+  gap: clamp(1.25rem, 2.5vh, 3.5rem); /* tighter gap at high zoom */
+}
 
-                <p
-                  className="text-gray-300"
-                  style={{
-                    fontSize: "clamp(0.55rem, 0.9vw, 0.8rem)",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {label}
-                </p>
-              </div>
+        /* ── Header ── */
+        .fbp-header {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          max-width: 640px;
+        }
+        .fbp-eyebrow {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: clamp(0.65rem, 0.85vw, 0.75rem);
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.1em;
+          color: #0D9DB8;
+        }
+        .fbp-eyebrow-line {
+          width: 1.5rem;
+          height: 1.5px;
+          background: #0D9DB8;
+        }
+        .fbp-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(1.4rem, 2.8vw, 3rem); /* slightly smaller ceiling */
+  font-weight: 700;
+  color: #1a2e2b;
+  line-height: 1.15;
+  margin: 0;
+}
+        .fbp-subtitle {
+          font-size: clamp(0.8rem, 1.05vw, 1rem);
+          color: #6b8278;
+          line-height: 1.6;
+          margin: 0;
+        }
+
+        /* ── Cards ── */
+        .fbp-cards {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: clamp(0.75rem, 1.5vw, 1.5rem);
+        }
+        .fbp-card {
+  background: white;
+  border: 1px solid #e8edeb;
+  border-radius: 1.25rem;
+  padding: clamp(0.75rem, 1.5vw, 1.75rem); /* tighter at high zoom */
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem; /* was 0.75rem */
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+        .fbp-card:hover {
+          box-shadow: 0 8px 32px rgba(26,58,92,0.10);
+          transform: translateY(-2px);
+        }
+        .fbp-card-icon {
+          width: clamp(2rem, 3vw, 2.75rem);
+          height: clamp(2rem, 3vw, 2.75rem);
+          background: #f0f4f2;
+          border-radius: 0.75rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: clamp(1rem, 1.5vw, 1.375rem);
+        }
+        .fbp-card-title {
+          font-size: clamp(0.85rem, 1.2vw, 1.05rem);
+          font-weight: 700;
+          color: #1a2e2b;
+          line-height: 1.3;
+        }
+        .fbp-card-desc {
+          font-size: clamp(0.7rem, 0.95vw, 0.875rem);
+          color: #6b8278;
+          line-height: 1.6;
+        }
+
+        /* ── Stats ── */
+        
+.fbp-stats {
+  display: flex;
+  gap: clamp(1rem, 3vw, 4rem);
+  padding-top: clamp(0.75rem, 1.5vh, 1.5rem);
+  border-top: 1px solid #e4e9e7;
+  flex-wrap: wrap;
+}
+        .fbp-stat-value {
+          font-size: clamp(1.2rem, 2vw, 1.75rem);
+          font-weight: 700;
+          color: #1a2e2b;
+        }
+        .fbp-stat-label {
+          font-size: clamp(0.6rem, 0.75vw, 0.7rem);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #8aaa9f;
+          margin-top: 0.1rem;
+        }
+
+        /* ── Mobile ── */
+        @media (max-width: 768px) {
+          .fbp-content {
+            padding: 2rem 1.25rem;
+          }
+          .fbp-cards {
+            grid-template-columns: 1fr !important;
+            gap: 0.75rem !important;
+          }
+          .fbp-stats {
+            flex-wrap: wrap;
+            gap: 1.25rem;
+          }
+        }
+      `}</style>
+
+      <div className="fbp-outer">
+
+        {/* Ticker */}
+        <div className="fbp-ticker-wrap">
+          <div className="fbp-ticker-track">
+            {[...styles, ...styles].map((s, i) => (
+              <span key={i} className="fbp-ticker-item">
+                {s}
+                <span className="fbp-ticker-dot">✦</span>
+              </span>
             ))}
           </div>
+        </div>
 
+        {/* Main */}
+        <div className="fbp-content">
+
+          {/* Header */}
           <motion.div
+            className="fbp-header"
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            <div className="fbp-eyebrow">
+              <div className="fbp-eyebrow-line" />
+              Features
+            </div>
+            <h2 className="fbp-title">
+              Everything you need to design your space
+            </h2>
+            <p className="fbp-subtitle">
+              Each card leads with an icon, a concrete claim, and a link to go deeper — instead of vague one-liners.
+            </p>
+          </motion.div>
+
+          {/* Cards */}
+          <motion.div
+            className="fbp-cards"
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.2 }}
             variants={{
               hidden: {},
-              visible: {
-                transition: {
-                  staggerChildren: 0.15,
-                },
-              },
+              visible: { transition: { staggerChildren: 0.12 } },
             }}
-            className="flex flex-col sm:flex-row"
-            style={{ gap: "clamp(0.25rem, 1vw, 1rem)" }}
           >
             {cards.map(({ emoji, title, desc }) => (
               <motion.div
                 key={title}
-                transition={{
-                  duration: 0.4,
-                  ease: "easeOut",
-                }}
+                className="fbp-card"
                 variants={{
                   hidden: { opacity: 0, y: 20 },
-                  visible: { opacity: 1, y: 0 },
-                }}
-                className="text-center text-white bg-white/5 rounded-xl flex-1"
-                style={{
-                  padding: "clamp(0.4rem, 1.5vh, 1rem)",
+                  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
                 }}
               >
-                <div
-                  style={{
-                    fontSize: "clamp(1rem, 2vw, 1.875rem)",
-                    marginBottom: "clamp(0.15rem, 0.3vh, 0.5rem)",
-                  }}
-                >
-                  {emoji}
-                </div>
-
-                <h3
-                  className="font-semibold"
-                  style={{
-                    fontSize: "clamp(0.6rem, 1vw, 0.875rem)",
-                  }}
-                >
-                  {title}
-                </h3>
-
-                <p
-                  className="text-gray-300"
-                  style={{
-                    fontSize: "clamp(0.65rem, 2.5vw, 0.75rem)",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {desc}
-                </p>
+                <div className="fbp-card-icon">{emoji}</div>
+                <div className="fbp-card-title">{title}</div>
+                <div className="fbp-card-desc">{desc}</div>
               </motion.div>
             ))}
           </motion.div>
-        </div>
 
-        <div className="flex justify-center items-center h-full order-1 lg:order-2">
-          <Lottie
-            lottieRef={lottieRef}
-            animationData={animation}
-            loop={true}
-            style={{
-              width: "clamp(220px, 80vw, 550px)",
-              maxHeight: "65vh",
-            }}
-          />
+          {/* Stats */}
+          <motion.div
+            ref={ref}
+            className="fbp-stats"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          >
+            {stats.map(({ value, suffix, label }) => (
+              <div key={label}>
+                <div className="fbp-stat-value">
+                  <motion.span>{value}</motion.span>{suffix}
+                </div>
+                <div className="fbp-stat-label">{label}</div>
+              </div>
+            ))}
+          </motion.div>
+
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
