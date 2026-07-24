@@ -6,7 +6,7 @@ import React from "react";
 
 const AboutPage = () => {
   return (
-    <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory pt-[12vh]">
+    <div className="md:h-screen md:overflow-y-scroll md:snap-y md:snap-mandatory">
       <section className="h-screen md:snap-start">
         <Description />
       </section>
@@ -15,7 +15,7 @@ const AboutPage = () => {
         <MiddleDecription />
       </section>
 
-      <section className="h-screen md:snap-start">
+      <section className="h-auto md:h-screen md:snap-start">
         <ContactUs />
       </section>
       <section className="md:snap-start">

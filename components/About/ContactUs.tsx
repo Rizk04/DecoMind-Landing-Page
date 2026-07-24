@@ -31,8 +31,7 @@ const ContactUs = () => {
   };
 
   return (
-    <section className="h-full w-full bg-[#0B1523] text-white overflow-hidden flex items-center">
-      <motion.div
+<section className="min-h-screen w-full bg-[#0B1523] text-white overflow-hidden flex items-center">      <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.35 }}

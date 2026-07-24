@@ -14,3 +14,7 @@
     font-size: 1.8rem !important;
   }
 }
+
+html, body {
+  background: #f0f4f3;
+}

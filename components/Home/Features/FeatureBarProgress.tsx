@@ -297,7 +297,7 @@ const FeatureBarProgress = () => {
           </motion.div>
 
           {/* Stats */}
-          <motion.div
+          {/* <motion.div
             ref={ref}
             className="fbp-stats"
             initial={{ opacity: 0, y: 12 }}
@@ -313,7 +313,7 @@ const FeatureBarProgress = () => {
                 <div className="fbp-stat-label">{label}</div>
               </div>
             ))}
-          </motion.div>
+          </motion.div> */}
 
         </div>
       </div>
