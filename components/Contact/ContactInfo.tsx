@@ -1,18 +1,36 @@
 "use client";
 
-import { Clock, Mail, Phone } from "lucide-react";
+import { Clock, Mail, Phone, ArrowUpRight } from "lucide-react";
 import React from "react";
 import { MdLocationOn } from "react-icons/md";
 import { motion } from "framer-motion";
 
 const ContactInfo = () => {
-  const itemVariants = {
-    hidden: { opacity: 0, y: 25 },
-    visible: { opacity: 1, y: 0 },
-  };
+  const items = [
+    {
+      icon: <Phone />,
+      title: "PHONE",
+      value: "+1 207 881 8202",
+    },
+    {
+      icon: <Mail />,
+      title: "EMAIL",
+      value: "info@optima-solutions.cloud",
+    },
+    {
+      icon: <MdLocationOn />,
+      title: "LOCATION",
+      value: "Lebanon",
+    },
+    {
+      icon: <Clock />,
+      title: "RESPONSE TIME",
+      value: "Within 24 hours",
+    },
+  ];
 
   return (
-    <motion.div
+    <motion.section
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.2 }}
@@ -20,95 +38,170 @@ const ContactInfo = () => {
         hidden: {},
         visible: {
           transition: {
-            staggerChildren: 0.2,
+            staggerChildren: 0.15,
           },
         },
       }}
-      className="w-full px-4 sm:px-6 lg:px-8 py-10 md:py-12 mt-20"
+      className="
+        w-full
+        px-5
+        sm:px-8
+        lg:px-12
+        py-20
+        md:py-28
+        bg-[#fbfcfa]
+      "
     >
+      {/* Header */}
       <motion.div
         variants={{
-          hidden: { opacity: 0, x: 20 },
-          visible: { opacity: 1, x: 0 },
+          hidden: { opacity: 0, y: 20 },
+          visible: { opacity: 1, y: 0 },
         }}
+        transition={{
+          duration: 0.7,
+          ease: [0.22, 1, 0.36, 1],
+        }}
+        className="max-w-3xl mb-14"
       >
-        <h1 className="text-xl sm:text-2xl md:text-3xl text-gray-800 mb-8 font-semibold">
-          Don't Hesitate to Reach Out
-        </h1>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="w-8 h-[1px] bg-[#0D9DB8]" />
+
+          <p
+            className="
+              text-sm
+              tracking-[0.25em]
+              font-semibold
+              text-[#0D9DB8]
+            "
+          >
+            DON'T HESITATE TO REACH OUT
+          </p>
+        </div>
+
+        <h2
+          className="
+            text-5xl
+            md:text-6xl
+            font-serif
+            font-medium
+            leading-tight
+            text-[#183253]
+          "
+        >
+          We're here to help
+        </h2>
+
+        <p
+          className="
+            mt-6
+            text-lg
+            md:text-xl
+            leading-relaxed
+            text-[#49647d]
+            max-w-2xl
+          "
+        >
+          Four ways to reach us. Pick whichever's easiest — we respond to every
+          message within one business day.
+        </p>
       </motion.div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 md:gap-8">
-        <motion.div
-          variants={itemVariants}
-          className="flex items-start gap-4"
-        >
-          <div className="bg-[#1A3A5C]/10 p-3 rounded-xl shrink-0">
-            <Phone className="w-5 h-5 md:w-6 md:h-6 text-[#1A3A5C]" />
-          </div>
-
-          <div className="min-w-0">
-            <p className="text-base md:text-lg font-medium">Phone</p>
-            <p className="text-sm text-blue-600 wrap-break-word">
-              +12078818202
-            </p>
-          </div>
-        </motion.div>
-
-        {/* Email */}
-        <motion.div
-          variants={itemVariants}
-          className="flex items-start gap-4"
-        >
-          <div className="bg-[#1A3A5C]/10 p-3 rounded-xl shrink-0">
-            <Mail className="w-5 h-5 md:w-6 md:h-6 text-[#1A3A5C]" />
-          </div>
-
-          <div className="min-w-0">
-            <p className="text-base md:text-lg font-medium">Email</p>
-            <a
-              href="mailto:info@optima-solutions.cloud"
-              className="text-sm text-blue-600 break-all"
+      {/* Cards */}
+      <div
+        className="
+          grid
+          grid-cols-1
+          sm:grid-cols-2
+          xl:grid-cols-4
+          gap-5
+        "
+      >
+        {items.map((item, index) => (
+          <motion.div
+            key={index}
+            variants={{
+              hidden: { opacity: 0, y: 25 },
+              visible: { opacity: 1, y: 0 },
+            }}
+            transition={{
+              duration: 0.7,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            whileHover={{
+              y: -6,
+            }}
+            className="
+              relative
+              min-h-[250px]
+              rounded-2xl
+              border
+              border-[#dce6ed]
+              bg-white
+              p-8
+              will-change-transform
+            "
+          >
+            {/* Icon */}
+            <div
+              className="
+                w-14
+                h-14
+                rounded-xl
+                flex
+                items-center
+                justify-center
+                bg-gradient-to-br
+                from-[#e8f7fa]
+                to-[#f9edf0]
+                text-[#0D9DB8]
+              "
             >
-              info@optima-solutions.cloud
-            </a>
-          </div>
-        </motion.div>
+              {React.cloneElement(item.icon, {
+                className: "w-6 h-6",
+              })}
+            </div>
 
-        {/* Location */}
-        <motion.div
-          variants={itemVariants}
-          className="flex items-start gap-4"
-        >
-          <div className="bg-[#1A3A5C]/10 p-3 rounded-xl shrink-0">
-            <MdLocationOn className="w-5 h-5 md:w-6 md:h-6 text-[#1A3A5C]" />
-          </div>
+            {/* Arrow */}
+            <ArrowUpRight
+              className="
+                absolute
+                top-8
+                right-8
+                w-5
+                h-5
+                text-[#7892ad]
+              "
+            />
 
-          <div>
-            <p className="text-base md:text-lg font-medium">Location</p>
-            <p className="text-sm text-blue-600">Lebanon</p>
-          </div>
-        </motion.div>
+            <div className="mt-8">
+              <p
+                className="
+                  text-sm
+                  tracking-[0.15em]
+                  font-semibold
+                  text-[#7892ad]
+                "
+              >
+                {item.title}
+              </p>
 
-        {/* Response Time */}
-        <motion.div
-          variants={itemVariants}
-          className="flex items-start gap-4"
-        >
-          <div className="bg-[#1A3A5C]/10 p-3 rounded-xl shrink-0">
-            <Clock className="w-5 h-5 md:w-6 md:h-6 text-[#1A3A5C]" />
-          </div>
-
-          <div>
-            <p className="text-base md:text-lg font-medium">
-              Response Time
-            </p>
-            <p className="text-sm text-blue-600">
-              Within 24 hours
-            </p>
-          </div>
-        </motion.div>
+              <p
+                className="
+                  mt-4
+                  text-lg
+                  font-medium
+                  text-[#183253]
+                  break-words
+                "
+              >
+                {item.value}
+              </p>
+            </div>
+          </motion.div>
+        ))}
       </div>
-    </motion.div>
+    </motion.section>
   );
 };
 
