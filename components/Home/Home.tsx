@@ -11,16 +11,16 @@ const Home = () => {
       <section className="h-auto snap-start">
         <Hero />
       </section>
-      <section className="h-screen md:snap-start">
+      <section className="h-auto md:h-screen md:snap-start">
         <FeatureBarProgress />
       </section>
-      <section className="h-screen md:snap-start">
+      <section className="h-auto md:h-screen md:snap-start">
         <FeatureList />
       </section>
-      <section className="h-screen md:snap-start">
+      <section className="h-auto md:h-screen md:snap-start">
         <Feature />
       </section>
-      <section className="h-screen md:snap-start">
+      <section className="h-auto md:h-screen md:snap-start">
         <Download />
       </section>
       <section className="md:snap-start">
