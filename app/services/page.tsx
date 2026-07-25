@@ -589,7 +589,7 @@ export default function ServicesPage() {
             height: 100vh !important;
             min-height: 100vh !important;
             max-height: 100vh !important;
-            align-items: center !important;
+            align-items: flex-start !important;
             overflow-y: auto !important;
             overflow-x: hidden !important;
             padding: 1.75rem 1.25rem !important;
