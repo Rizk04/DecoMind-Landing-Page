@@ -379,7 +379,7 @@ export default function ServicesPage() {
 
         .svc-hero-badge {
           position: absolute;
-          bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+          top: clamp(0.75rem, 1.5vw, 1.25rem);
           left: clamp(0.75rem, 1.5vw, 1.25rem);
           background: white;
           border-radius: 999px;
