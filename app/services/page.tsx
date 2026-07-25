@@ -2,376 +2,640 @@
 
 import { motion } from "framer-motion";
 import Footer from "@/components/Footer/Footer";
+import React, { useEffect, useRef, useState } from "react";
 
-const services = [
+function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?: string; decimals?: number }) {
+  const [val, setVal] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+  const started = useRef(false);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (e.isIntersecting && !started.current) {
+          started.current = true;
+          const dur = 1600;
+          const start = performance.now();
+          const tick = (now: number) => {
+            const p = Math.min(1, (now - start) / dur);
+            const eased = 1 - Math.pow(1 - p, 3);
+            setVal(to * eased);
+            if (p < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      });
+    }, { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [to]);
+  return <div ref={ref}>{val.toFixed(decimals)}{suffix}</div>;
+}
+
+const SERVICES = [
   {
-    title: "AI Room Design",
-    subtitle: "Generate stunning interiors in seconds",
-    description:
-      "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.",
-    features: [
-      "100+ design combinations",
-      "Lighting-aware generation",
-      "Budget-based planning",
-      "Photorealistic renders",
-    ],
-    image: "../Assets/images/ai-design.jpg",
+    num: "01",
+    icon: "✨",
+    title: "Generate stunning interiors in seconds",
+    body: "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.",
+    tag: "Photoreal · 30s",
   },
   {
-    title: "Instant Capture",
-    subtitle: "Photograph Any Room. See Its Future.",
-    description:
-      "Take a photo of your room and instantly redesign it with AI while preserving the room structure.",
-    features: [
-      "Preserves room dimensions",
-      "Multiple redesign concepts",
-      "Furniture transformation",
-      "Professional visualizations",
-    ],
-    image: "../Assets/images/capture.jpg",
+    num: "02",
+    icon: "📸",
+    title: "Photograph any room. See its future.",
+    body: "Take a photo of your room and instantly redesign it with AI while preserving the room structure — walls, windows, and layout stay intact.",
+    tag: "Structure-preserving",
   },
   {
-    title: "AI Editing",
-    subtitle: "Edit Without Starting Over",
-    description:
-      "Replace furniture, lighting, materials, and decor while keeping everything else untouched.",
-    features: [
-      "Replace sofas",
-      "Swap lighting",
-      "Change flooring",
-      "Material transformations",
-    ],
-    image: "../Assets/images/editing.jpg",
+    num: "03",
+    icon: "🛋️",
+    title: "Edit without starting over",
+    body: "Replace furniture, lighting, materials, and decor while keeping everything else untouched. Iterate on details, not from scratch.",
+    tag: "Non-destructive",
+  },
+  {
+    num: "04",
+    icon: "📐",
+    title: "From floor plans to reality",
+    body: "Upload a floor plan and let DecoMind furnish it intelligently — turning a 2D blueprint into a walkable 3D room in minutes.",
+    tag: "2D → 3D",
   },
 ];
 
-const stats = [
-  { value: "1200+", label: "AI Designs Generated" },
-  { value: "50+", label: "Styles & Materials" },
-  { value: "4.8★", label: "User Rating" },
-  { value: "500+", label: "Happy Customers" },
+const checkItems = [
+  { title: "Auto-detect walls & openings", desc: "Windows and doors are recognized from the plan, no manual tracing." },
+  { title: "Smart furniture placement", desc: "Furniture is sized and placed to fit the room — not floating mid-air." },
+  { title: "Export to your contractor", desc: "Share a 3D link or download a rendered image for your builder." },
 ];
 
 export default function ServicesPage() {
   return (
     <>
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&display=swap');
+
+        .svc-outer, .svc-outer *, .svc-outer *::before, .svc-outer *::after {
+          box-sizing: border-box;
+        }
+
+        /* ── OUTER SCROLL CONTAINER ── */
         .svc-outer {
           position: fixed;
           top: 12vh;
-          left: 0;
-          right: 0;
-          bottom: 0;
+          left: 0; right: 0; bottom: 0;
           overflow-x: hidden;
           overflow-y: scroll;
           scroll-snap-type: y mandatory;
-          background-color: #1A3A5C;
-          color: white;
+          background: #f0f4f3;
+          color: #0f1f1c;
         }
+
         .svc-section {
           height: 88vh;
           scroll-snap-align: start;
+          scroll-snap-stop: always;
           width: 100%;
           flex-shrink: 0;
           display: flex;
           align-items: center;
-          overflow: hidden;
-          padding-left: 5vw;
-          padding-right: 5vw;
+          overflow-y: hidden;
+          overflow-x: hidden;
+          padding: 0 clamp(1.5rem, 6vw, 5rem);
         }
+
+        .svc-container {
+          max-width: 72rem;
+          margin: 0 auto;
+          width: 100%;
+        }
+
+        /* ── HERO ── */
         .svc-hero-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 4vw;
-          height: 80vh;
-          width: 100%;
-          max-width: 80rem;
-          margin: 0 auto;
+          gap: clamp(2rem, 5vw, 5rem);
           align-items: center;
-        }
-        .svc-hero-img-col {
-          height: 80vh;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .svc-stats-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 2vw;
           width: 100%;
-          max-width: 80rem;
+          max-width: 72rem;
           margin: 0 auto;
         }
-        .svc-service-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 4vw;
-          height: 80vh;
-          width: 100%;
-          max-width: 80rem;
-          margin: 0 auto;
+
+        .svc-eyebrow {
+          display: inline-flex;
           align-items: center;
+          gap: 0.5rem;
+          background: white;
+          border: 1px solid #dde8e5;
+          border-radius: 999px;
+          padding: 0.35rem 1rem;
+          font-size: clamp(0.7rem, 0.9vw, 0.8rem);
+          color: #3d5a52;
+          font-weight: 500;
+          margin-bottom: clamp(1rem, 2vh, 1.5rem);
+          box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
-        .svc-service-img-col {
-          height: 80vh;
-          position: relative;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-        .svc-footer-section {
-          scroll-snap-align: start;
-          width: 100%;
+
+        .svc-eyebrow .dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: #0D9DB8;
           flex-shrink: 0;
         }
 
+        .svc-hero-h1 {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+          font-weight: 700;
+          line-height: 1.1;
+          color: #0f1f1c;
+          margin: 0 0 clamp(0.75rem, 1.5vh, 1.25rem);
+        }
+
+        .svc-hero-h1 em { font-style: italic; color: #0D9DB8; }
+
+        .svc-hero-sub {
+          font-size: clamp(0.85rem, 1.1vw, 1rem);
+          color: #5a756e;
+          line-height: 1.65;
+          margin: 0 0 clamp(1.25rem, 2.5vh, 2rem);
+          max-width: 440px;
+        }
+
+        .svc-hero-cta {
+          display: flex;
+          gap: 0.75rem;
+          flex-wrap: wrap;
+          margin-bottom: clamp(1.25rem, 2.5vh, 2rem);
+        }
+
+        .btn-teal {
+          display: inline-flex; align-items: center; gap: 0.4rem;
+          background: #0D9DB8; color: white; font-weight: 600;
+          font-size: clamp(0.8rem, 1vw, 0.95rem);
+          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          border-radius: 999px; border: none; cursor: pointer;
+          transition: background 0.18s, transform 0.15s; white-space: nowrap;
+        }
+        .btn-teal:hover { background: #0b8da6; transform: translateY(-1px); }
+
+        .btn-ghost {
+          display: inline-flex; align-items: center; gap: 0.4rem;
+          background: white; color: #0f1f1c; font-weight: 600;
+          font-size: clamp(0.8rem, 1vw, 0.95rem);
+          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          border-radius: 999px; border: 1.5px solid #d0dbd8; cursor: pointer;
+          transition: border-color 0.18s, transform 0.15s; white-space: nowrap;
+        }
+        .btn-ghost:hover { border-color: #0D9DB8; transform: translateY(-1px); }
+
+        .svc-hero-stats {
+          display: flex;
+          gap: clamp(1.25rem, 3vw, 3rem);
+          padding-top: clamp(1rem, 2vh, 1.5rem);
+          border-top: 1px solid #d8e5e2;
+          flex-wrap: wrap;
+        }
+
+        .svc-hero-stat-num {
+          font-size: clamp(1.2rem, 2vw, 1.75rem);
+          font-weight: 700;
+          color: #0f1f1c;
+        }
+
+        .svc-hero-stat-lbl {
+          font-size: clamp(0.6rem, 0.75vw, 0.7rem);
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #7a9990;
+          margin-top: 0.2rem;
+        }
+
+        /* Hero visual */
+        .svc-hero-visual {
+          background: #1A3A5C;
+          border-radius: 1.5rem;
+          box-shadow: 0 20px 60px rgba(26,58,92,0.25);
+          overflow: hidden;
+          position: relative;
+          aspect-ratio: 4/3;
+          width: 100%;
+        }
+
+        .svc-hero-orbit {
+          position: absolute;
+          inset: 10%;
+          border: 1px dashed rgba(13,157,184,0.4);
+          border-radius: 50%;
+          animation: svc-orbit 8s linear infinite;
+        }
+
+        .svc-hero-orbit-dot {
+          position: absolute;
+          top: -4px; left: 50%;
+          width: 8px; height: 8px;
+          background: #0D9DB8;
+          border-radius: 50%;
+          transform: translateX(-50%);
+        }
+
+        .svc-hero-room {
+          position: absolute;
+          inset: 20%;
+          background: linear-gradient(135deg, #c8964a 0%, #e0b87a 100%);
+          border-radius: 0.75rem;
+          opacity: 0.85;
+        }
+
+        .svc-hero-badge {
+          position: absolute;
+          bottom: clamp(0.75rem, 1.5vw, 1.25rem);
+          left: clamp(0.75rem, 1.5vw, 1.25rem);
+          background: white;
+          border-radius: 999px;
+          padding: 0.3rem 0.75rem;
+          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          font-weight: 600;
+          color: #0f1f1c;
+          display: flex; align-items: center; gap: 0.4rem;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .svc-live-dot {
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: #0D9DB8;
+          animation: svc-pulse 1.5s ease-in-out infinite;
+          flex-shrink: 0;
+        }
+
+        @keyframes svc-orbit { to { transform: rotate(360deg); } }
+        @keyframes svc-pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
+
+        /* ── SERVICES LIST ── */
+        .svc-list-section .svc-section-sub {
+          margin-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
+        }
+
+        .svc-list-section .svc-row {
+          padding: clamp(0.5rem, 1.4vh, 0.9rem) 0;
+        }
+
+        .svc-list-section .svc-row-body p {
+          font-size: clamp(0.68rem, 0.85vw, 0.8rem);
+          line-height: 1.4;
+        }
+
+        .svc-list-section .svc-row-body h3 {
+          margin: 0 0 0.15rem;
+        }
+
+        .svc-section-label {
+          display: flex; align-items: center; gap: 0.5rem;
+          font-size: clamp(0.65rem, 0.85vw, 0.75rem);
+          font-weight: 600; text-transform: uppercase;
+          letter-spacing: 0.1em; color: #0D9DB8;
+          margin-bottom: 0.75rem;
+        }
+
+        .svc-section-label-line {
+          width: 1.5rem; height: 1.5px;
+          background: #0D9DB8; flex-shrink: 0;
+        }
+
+        .svc-section-title {
+          font-family: 'Playfair Display', Georgia, serif;
+          font-size: clamp(1.6rem, 3vw, 2.75rem);
+          font-weight: 700; color: #0f1f1c;
+          line-height: 1.15; margin: 0 0 0.75rem;
+        }
+
+        .svc-section-sub {
+          font-size: clamp(0.8rem, 1.05vw, 1rem);
+          color: #6b8278; line-height: 1.6;
+          max-width: 580px; margin: 0 0 clamp(1.5rem, 3vh, 2.5rem);
+        }
+
+        .svc-list {
+          display: flex; flex-direction: column;
+          border-top: 1px solid #dde8e5;
+        }
+
+        .svc-row {
+          display: grid;
+          grid-template-columns: 3rem 2.5rem 1fr auto;
+          gap: clamp(0.75rem, 2vw, 2rem);
+          align-items: center;
+          padding: clamp(1rem, 2.5vh, 1.75rem) 0;
+          border-bottom: 1px solid #dde8e5;
+          cursor: default;
+          transition: background 0.2s;
+          border-radius: 0.5rem;
+        }
+
+        .svc-row:hover { background: white; padding-left: 0.75rem; padding-right: 0.75rem; }
+
+        .svc-row-num {
+          font-size: clamp(0.75rem, 0.9vw, 0.85rem);
+          font-weight: 700; color: #c8d8d5;
+          letter-spacing: 0.05em;
+        }
+
+        .svc-row-icon {
+          font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+        }
+
+        .svc-row-body h3 {
+          font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+          font-weight: 700; color: #0f1f1c; margin: 0 0 0.3rem;
+        }
+
+        .svc-row-body p {
+          font-size: clamp(0.72rem, 0.95vw, 0.875rem);
+          color: #6b8278; line-height: 1.55; margin: 0;
+        }
+
+        .svc-row-tag {
+          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          font-weight: 600; color: #0D9DB8;
+          background: #e6f7fa;
+          padding: 0.25rem 0.75rem;
+          border-radius: 999px;
+          white-space: nowrap;
+        }
+
+        /* ── FLOOR PLAN / SHOWCASE ── */
+        .svc-showcase-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: clamp(2rem, 5vw, 5rem);
+          align-items: center;
+        }
+
+        .svc-checklist {
+          display: flex; flex-direction: column;
+          gap: clamp(0.75rem, 1.5vh, 1.25rem);
+          margin-top: clamp(1rem, 2vh, 1.5rem);
+        }
+
+        .svc-check-item {
+          display: flex;
+          gap: clamp(0.6rem, 1vw, 0.875rem);
+          align-items: flex-start;
+        }
+
+        .svc-check-icon {
+          width: clamp(1.1rem, 1.4vw, 1.375rem);
+          height: clamp(1.1rem, 1.4vw, 1.375rem);
+          border-radius: 50%;
+          background: #e6f7fa; color: #0D9DB8;
+          display: flex; align-items: center; justify-content: center;
+          font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+          flex-shrink: 0; margin-top: 0.15rem; font-weight: 700;
+        }
+
+        .svc-check-title {
+          font-size: clamp(0.85rem, 1.1vw, 1rem);
+          font-weight: 700; color: #0f1f1c; line-height: 1.3;
+        }
+
+        .svc-check-desc {
+          font-size: clamp(0.7rem, 0.9vw, 0.875rem);
+          color: #6b8278; line-height: 1.55; margin-top: 0.2rem;
+        }
+
+        .svc-visual-card {
+          background: #1A3A5C;
+          border-radius: 1.5rem;
+          padding: clamp(0.75rem, 1.5vw, 1.25rem);
+          box-shadow: 0 20px 60px rgba(26,58,92,0.2);
+          aspect-ratio: 4/3;
+          position: relative; overflow: hidden;
+        }
+
+        .svc-visual-badge {
+          position: absolute;
+          top: clamp(0.6rem, 1vw, 1rem);
+          left: clamp(0.6rem, 1vw, 1rem);
+          background: white; border-radius: 999px;
+          padding: 0.3rem 0.75rem;
+          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          font-weight: 600; color: #0f1f1c;
+          display: flex; align-items: center; gap: 0.4rem;
+          z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .svc-floorplan-svg {
+          width: 100%; height: 100%;
+        }
+
+        /* ── FOOTER ── */
+        .svc-footer-section {
+          scroll-snap-align: start;
+          scroll-snap-stop: always;
+          width: 100%; flex-shrink: 0;
+        }
+
+        /* ── MOBILE ── */
         @media (max-width: 768px) {
           .svc-outer {
             position: static !important;
             height: auto !important;
             overflow-y: auto !important;
+            overflow-x: hidden !important;
             scroll-snap-type: none !important;
-            top: auto !important;
-            padding-top: 8vh !important;
+            max-width: 100vw !important;
           }
           .svc-section {
             height: auto !important;
             scroll-snap-align: none !important;
-            padding-top: 2.5rem !important;
-            padding-bottom: 2.5rem !important;
-            padding-left: 1.25rem !important;
-            padding-right: 1.25rem !important;
+            padding: 2.5rem 1.25rem !important;
             align-items: flex-start !important;
           }
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
-            height: auto !important;
             gap: 1.5rem !important;
           }
-          .svc-hero-img-col {
-            height: 70vw !important;
+          .svc-hero-visual { order: -1; aspect-ratio: 3/2 !important; }
+          .svc-hero-sub { max-width: 100% !important; }
+          .svc-hero-stats { flex-wrap: wrap; gap: 1.25rem; }
+          .svc-row {
+            grid-template-columns: 2rem 2rem 1fr !important;
           }
-          .svc-hero-p {
-            max-width: 100% !important;
-          }
-          .svc-stats-grid {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0.75rem !important;
-          }
-          .svc-service-grid {
+          .svc-row-tag { display: none; }
+          .svc-showcase-grid {
             grid-template-columns: 1fr !important;
-            height: auto !important;
             gap: 1.5rem !important;
-            direction: ltr !important;
           }
-          .svc-service-img-col {
-            height: 70vw !important;
-            direction: ltr !important;
-          }
-          .svc-floor-grid {
-            grid-template-columns: 1fr 1fr !important;
-            gap: 0.75rem !important;
+          .svc-list-section, .svc-showcase-section {
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
           }
         }
       `}</style>
 
       <div className="svc-outer">
-        {/* HERO */}
+
+        {/* ── HERO ── */}
         <section className="svc-section">
           <div className="svc-hero-grid">
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7 }}
-              className="flex flex-col justify-center"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
             >
-              <span
-                style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
-                className="text-[#0D9DB8] font-semibold uppercase tracking-widest"
-              >
-                DecoMind Services
-              </span>
-              <h1
-                className="font-bold leading-tight mt-[1.5vh]"
-                style={{ fontSize: "clamp(1.4rem, 2.8vw, 3.5rem)" }}
-              >
-                Design Smarter.
-                <br />
-                <span className="text-[#0D9DB8]">
-                  Visualize Before You Build.
-                </span>
+              <div className="svc-eyebrow">
+                <span className="dot" /> Services
+              </div>
+              <h1 className="svc-hero-h1">
+                Design smarter. <em>Visualize</em> before you build.
               </h1>
-              <p
-                className="svc-hero-p text-gray-300 leading-relaxed mt-[1.5vh]"
-                style={{
-                  fontSize: "clamp(0.7rem, 1vw, 1rem)",
-                  maxWidth: "38vw",
-                }}
-              >
-                Transform room photos, floor plans, and ideas into
-                photorealistic interiors powered by advanced AI technology.
+              <p className="svc-hero-sub">
+                Transform room photos, floor plans, and ideas into photorealistic interiors
+                powered by advanced AI technology.
+              </p>
+              <div className="svc-hero-cta">
+                <button className="btn-teal">Start a design →</button>
+                <button className="btn-ghost">Talk to us</button>
+              </div>
+              <div className="svc-hero-stats">
+                <div>
+                  <div className="svc-hero-stat-num"><Counter to={1200} suffix="+" /></div>
+                  <div className="svc-hero-stat-lbl">AI designs generated</div>
+                </div>
+                <div>
+                  <div className="svc-hero-stat-num"><Counter to={50} suffix="+" /></div>
+                  <div className="svc-hero-stat-lbl">Styles & materials</div>
+                </div>
+                <div>
+                  <div className="svc-hero-stat-num"><Counter to={500} suffix="+" /></div>
+                  <div className="svc-hero-stat-lbl">Happy customers</div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
+            >
+              <div className="svc-hero-visual">
+                <div className="svc-hero-orbit"><div className="svc-hero-orbit-dot" /></div>
+                <div className="svc-hero-room" />
+                <div className="svc-hero-badge">
+                  <span className="svc-live-dot" /> Generating…
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── SERVICES LIST ── */}
+        <div className="svc-list-section svc-section">
+          <div className="svc-container">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+            >
+              <div className="svc-section-label">
+                <div className="svc-section-label-line" /> What we offer
+              </div>
+              <h2 className="svc-section-title">Four ways to design with AI</h2>
+              <p className="svc-section-sub">
+                Each service leads with a concrete outcome — not a feature list.
               </p>
             </motion.div>
 
             <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="svc-hero-img-col"
+              className="svc-list"
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.1 }}
+              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
             >
-              <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[8vw] pointer-events-none" />
-              <img
-                src="../Assets/images/hero-phone.jpg"
-                alt="DecoMind"
-                className="relative z-10 object-contain rounded"
-                style={{ maxHeight: "100%", maxWidth: "100%", width: "auto" }}
-              />
+              {SERVICES.map(({ num, icon, title, body, tag }) => (
+                <motion.div
+                  key={num}
+                  className="svc-row"
+                  variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } } }}
+                >
+                  <div className="svc-row-num">{num}</div>
+                  <div className="svc-row-icon">{icon}</div>
+                  <div className="svc-row-body">
+                    <h3>{title}</h3>
+                    <p>{body}</p>
+                  </div>
+                  <div className="svc-row-tag">{tag}</div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
-        </section>
+        </div>
 
-        {/* STATS */}
-        <section className="svc-section">
-          <div className="svc-stats-grid">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="bg-white/5 border border-white/10 rounded-2xl text-center"
-                style={{ padding: "clamp(1rem, 2.5vw, 2.5rem)" }}
-              >
-                <h3
-                  className="font-bold text-[#0D9DB8]"
-                  style={{ fontSize: "clamp(1.2rem, 2.5vw, 2.5rem)" }}
-                >
-                  {stat.value}
-                </h3>
-                <p
-                  className="text-gray-300 mt-2"
-                  style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
-                >
-                  {stat.label}
-                </p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* SERVICES */}
-        {services.map((service, index) => (
-          <section key={service.title} className="svc-section">
-            <div
-              className="svc-service-grid"
-              style={{ direction: index % 2 !== 0 ? "rtl" : "ltr" }}
-            >
+        {/* ── FLOOR PLAN SHOWCASE ── */}
+        <div className="svc-showcase-section svc-section">
+          <div className="svc-container">
+            <div className="svc-showcase-grid">
               <motion.div
-                initial={{ opacity: 0, x: -30 }}
+                initial={{ opacity: 0, x: -20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="flex flex-col justify-center"
-                style={{ direction: "ltr" }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
               >
-                <span
-                  className="text-[#0D9DB8] font-medium"
-                  style={{ fontSize: "clamp(0.55rem, 0.9vw, 0.85rem)" }}
-                >
-                  {service.title}
-                </span>
-                <h2
-                  className="font-bold leading-tight mt-[1vh]"
-                  style={{ fontSize: "clamp(1.2rem, 2.4vw, 3rem)" }}
-                >
-                  {service.subtitle}
-                </h2>
-                <p
-                  className="text-gray-300 leading-relaxed mt-[1.2vh]"
-                  style={{ fontSize: "clamp(0.65rem, 0.95vw, 1rem)" }}
-                >
-                  {service.description}
+                <div className="svc-section-label">
+                  <div className="svc-section-label-line" /> Floor plan to 3D
+                </div>
+                <h2 className="svc-section-title">From blueprint to walkable room</h2>
+                <p className="svc-section-sub">
+                  Upload a 2D floor plan. DecoMind reads the walls, places furniture intelligently, and renders a 3D walkthrough you can orbit in real time.
                 </p>
-                <div
-                  className="grid mt-[2vh]"
-                  style={{ gridTemplateColumns: "1fr 1fr", gap: "1vw" }}
-                >
-                  {service.features.map((feature) => (
-                    <div
-                      key={feature}
-                      className="bg-white/5 border border-white/10 rounded"
-                      style={{
-                        padding: "clamp(0.4rem, 0.7vw, 0.8rem)",
-                        fontSize: "clamp(0.6rem, 0.85vw, 0.9rem)",
-                      }}
-                    >
-                      ✓ {feature}
+                <div className="svc-checklist">
+                  {checkItems.map(({ title, desc }) => (
+                    <div key={title} className="svc-check-item">
+                      <div className="svc-check-icon">✓</div>
+                      <div>
+                        <div className="svc-check-title">{title}</div>
+                        <div className="svc-check-desc">{desc}</div>
+                      </div>
                     </div>
                   ))}
                 </div>
               </motion.div>
 
               <motion.div
-                initial={{ opacity: 0, x: 30 }}
+                initial={{ opacity: 0, x: 20 }}
                 whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.7 }}
-                className="svc-service-img-col"
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.6, ease: "easeOut", delay: 0.1 }}
               >
-                <div className="absolute inset-0 bg-[#0D9DB8]/20 blur-[6vw] pointer-events-none" />
-                <img
-                  src={service.image}
-                  alt={service.title}
-                  className="relative z-10 object-contain rounded shadow-2xl border border-white/10"
-                  style={{ maxHeight: "100%", maxWidth: "100%", width: "auto" }}
-                />
+                <div className="svc-visual-card">
+                  <div className="svc-visual-badge">
+                    <span className="svc-live-dot" /> 2D → 3D
+                  </div>
+                  <svg viewBox="0 0 300 220" className="svc-floorplan-svg">
+                    <rect x="20" y="20" width="260" height="180" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="3" />
+                    <line x1="20" y1="110" x2="180" y2="110" stroke="rgba(255,255,255,.5)" strokeWidth="2" />
+                    <line x1="180" y1="20" x2="180" y2="200" stroke="rgba(255,255,255,.5)" strokeWidth="2" />
+                    <line x1="90" y1="20" x2="140" y2="20" stroke="rgba(13,157,184,.9)" strokeWidth="4" />
+                    <line x1="280" y1="80" x2="280" y2="140" stroke="rgba(13,157,184,.9)" strokeWidth="4" />
+                    <rect x="40" y="40" width="50" height="40" fill="rgba(212,165,116,.6)" rx="3" />
+                    <rect x="210" y="130" width="50" height="50" fill="rgba(13,157,184,.5)" rx="3" />
+                    <circle cx="240" cy="60" r="14" fill="rgba(228,64,95,.5)" />
+                  </svg>
+                </div>
               </motion.div>
             </div>
-          </section>
-        ))}
-
-        {/* FLOOR PLAN */}
-        <section className="svc-section">
-          <div className="w-full max-w-7xl mx-auto">
-            <h2
-              className="font-bold"
-              style={{ fontSize: "clamp(1.4rem, 3vw, 4rem)" }}
-            >
-              From Floor Plans To Reality
-            </h2>
-            <div
-              className="svc-floor-grid grid mt-[4vh]"
-              style={{ gridTemplateColumns: "repeat(3, 1fr)", gap: "1.5vw" }}
-            >
-              {[
-                "Upload Plan",
-                "AI Detects Rooms",
-                "Customize Styles",
-                "Generate Designs",
-                "Photoreal Results",
-                "Sustainable Plan",
-              ].map((step) => (
-                <div
-                  key={step}
-                  className="bg-white/5 border border-white/10 rounded-2xl text-center flex items-center justify-center"
-                  style={{
-                    padding: "clamp(0.8rem, 1.5vw, 2rem)",
-                    fontSize: "clamp(0.6rem, 0.9vw, 1rem)",
-                    minHeight: "clamp(60px, 8vh, 120px)",
-                  }}
-                >
-                  {step}
-                </div>
-              ))}
-            </div>
           </div>
-        </section>
+        </div>
 
-        {/* FOOTER */}
-        <section className="svc-footer-section text-black">
+        {/* ── FOOTER ── */}
+        <section className="svc-footer-section">
           <Footer />
         </section>
+
       </div>
     </>
   );
