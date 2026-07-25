@@ -4,6 +4,10 @@ import { motion } from "framer-motion";
 import Footer from "@/components/Footer/Footer";
 import React, { useEffect, useRef, useState } from "react";
 
+const FRAME_COUNT = 164;
+const FRAME_PATH = (n: number) =>
+  `/Assets/Logo/frames/frame${String(n).padStart(4, "0")}.jpg`;
+
 function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?: string; decimals?: number }) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
@@ -71,6 +75,134 @@ const checkItems = [
 ];
 
 export default function ServicesPage() {
+  const outerRef = useRef<HTMLDivElement>(null);
+  const heroOuterRef = useRef<HTMLDivElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const framesRef = useRef<HTMLImageElement[]>([]);
+  const currentFrameRef = useRef(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [framesLoaded, setFramesLoaded] = useState(false);
+
+  // Detect mobile
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  // Preload all frames on mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    let loaded = 0;
+    const imgs: HTMLImageElement[] = [];
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new window.Image();
+      img.src = FRAME_PATH(i);
+      img.onload = () => {
+        loaded++;
+        if (loaded === FRAME_COUNT) setFramesLoaded(true);
+      };
+      imgs.push(img);
+    }
+    framesRef.current = imgs;
+  }, [isMobile]);
+
+  // Draw a specific frame on canvas — sharp on retina/high-DPR screens
+  const drawFrame = (index: number) => {
+    const canvas = canvasRef.current;
+    const img = framesRef.current[index];
+    if (!canvas || !img) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const cssWidth =
+      canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
+    const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
+
+    canvas.style.width = `${cssWidth}px`;
+    canvas.style.height = `${cssHeight}px`;
+
+    canvas.width = cssWidth * dpr;
+    canvas.height = cssHeight * dpr;
+    ctx.scale(dpr, dpr);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
+  };
+
+  // Mobile scroll scrub via canvas — driven by the hero's own tall scroll region
+  useEffect(() => {
+    if (!isMobile || !framesLoaded) return;
+    const outer = outerRef.current;
+    const heroOuter = heroOuterRef.current;
+    if (!outer || !heroOuter) return;
+
+    drawFrame(0);
+
+    let rafId: number | null = null;
+
+    const scrub = () => {
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
+        if (scrollableDistance <= 0) return;
+        const progress = Math.min(
+          Math.max(outer.scrollTop / scrollableDistance, 0),
+          1,
+        );
+        const frameIndex = Math.min(
+          Math.floor(progress * FRAME_COUNT),
+          FRAME_COUNT - 1,
+        );
+        if (frameIndex !== currentFrameRef.current) {
+          currentFrameRef.current = frameIndex;
+          drawFrame(frameIndex);
+        }
+      });
+    };
+
+    outer.addEventListener("scroll", scrub, { passive: true });
+    scrub();
+    return () => {
+      outer.removeEventListener("scroll", scrub);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+    };
+  }, [isMobile, framesLoaded]);
+
+  // Desktop scroll scrub via video — driven by the hero's own tall scroll region
+  useEffect(() => {
+    if (isMobile) return;
+    const video = videoRef.current;
+    const outer = outerRef.current;
+    const heroOuter = heroOuterRef.current;
+    if (!video || !outer || !heroOuter) return;
+
+    let lastSeek = 0;
+    const scrub = () => {
+      const now = performance.now();
+      if (now - lastSeek < 16) return;
+      lastSeek = now;
+      if (!video.duration || isNaN(video.duration)) return;
+      const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
+      if (scrollableDistance <= 0) return;
+      const progress = Math.min(
+        Math.max(outer.scrollTop / scrollableDistance, 0),
+        1,
+      );
+      video.currentTime = progress * video.duration;
+    };
+
+    video.addEventListener("loadedmetadata", scrub, { once: true });
+    if (video.readyState >= 1) scrub();
+    outer.addEventListener("scroll", scrub, { passive: true });
+    return () => {
+      outer.removeEventListener("scroll", scrub);
+    };
+  }, [isMobile]);
+
   return (
     <>
       <style>{`
@@ -112,6 +244,20 @@ export default function ServicesPage() {
         }
 
         /* ── HERO ── */
+        .svc-hero-outer {
+          position: relative;
+          width: 100%;
+          height: 280vh;
+          scroll-snap-align: start;
+          scroll-snap-stop: always;
+        }
+
+        .svc-hero-sticky {
+          scroll-snap-align: none;
+          position: sticky;
+          top: 0;
+        }
+
         .svc-hero-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -219,33 +365,16 @@ export default function ServicesPage() {
           box-shadow: 0 20px 60px rgba(26,58,92,0.25);
           overflow: hidden;
           position: relative;
-          aspect-ratio: 4/3;
+          min-height: 220px;
           width: 100%;
         }
 
-        .svc-hero-orbit {
-          position: absolute;
-          inset: 10%;
-          border: 1px dashed rgba(13,157,184,0.4);
-          border-radius: 50%;
-          animation: svc-orbit 8s linear infinite;
-        }
-
-        .svc-hero-orbit-dot {
-          position: absolute;
-          top: -4px; left: 50%;
-          width: 8px; height: 8px;
-          background: #0D9DB8;
-          border-radius: 50%;
-          transform: translateX(-50%);
-        }
-
-        .svc-hero-room {
-          position: absolute;
-          inset: 20%;
-          background: linear-gradient(135deg, #c8964a 0%, #e0b87a 100%);
-          border-radius: 0.75rem;
-          opacity: 0.85;
+        .svc-hero-media {
+          display: block;
+          width: 100%;
+          height: auto;
+          position: relative;
+          z-index: 1;
         }
 
         .svc-hero-badge {
@@ -260,6 +389,7 @@ export default function ServicesPage() {
           color: #0f1f1c;
           display: flex; align-items: center; gap: 0.4rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+          z-index: 2;
         }
 
         .svc-live-dot {
@@ -270,7 +400,6 @@ export default function ServicesPage() {
           flex-shrink: 0;
         }
 
-        @keyframes svc-orbit { to { transform: rotate(360deg); } }
         @keyframes svc-pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
         /* ── SERVICES LIST ── */
@@ -453,11 +582,14 @@ export default function ServicesPage() {
             padding: 2.5rem 1.25rem !important;
             align-items: flex-start !important;
           }
+          .svc-hero-outer {
+            height: 180vh;
+          }
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
             gap: 1.5rem !important;
           }
-          .svc-hero-visual { order: -1; aspect-ratio: 3/2 !important; }
+          .svc-hero-visual { order: -1; }
           .svc-hero-sub { max-width: 100% !important; }
           .svc-hero-stats { flex-wrap: wrap; gap: 1.25rem; }
           .svc-row {
@@ -475,10 +607,11 @@ export default function ServicesPage() {
         }
       `}</style>
 
-      <div className="svc-outer">
+      <div className="svc-outer" ref={outerRef}>
 
         {/* ── HERO ── */}
-        <section className="svc-section">
+        <div className="svc-hero-outer" ref={heroOuterRef}>
+        <section className="svc-section svc-hero-sticky">
           <div className="svc-hero-grid">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -521,8 +654,24 @@ export default function ServicesPage() {
               transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
             >
               <div className="svc-hero-visual">
-                <div className="svc-hero-orbit"><div className="svc-hero-orbit-dot" /></div>
-                <div className="svc-hero-room" />
+                {isMobile ? (
+                  <canvas
+                    ref={canvasRef}
+                    className="svc-hero-media"
+                    style={{ mixBlendMode: "screen" }}
+                  />
+                ) : (
+                  <video
+                    ref={videoRef}
+                    muted
+                    playsInline
+                    preload="auto"
+                    className="svc-hero-media"
+                    style={{ mixBlendMode: "screen" }}
+                  >
+                    <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
+                  </video>
+                )}
                 <div className="svc-hero-badge">
                   <span className="svc-live-dot" /> Generating…
                 </div>
@@ -530,6 +679,7 @@ export default function ServicesPage() {
             </motion.div>
           </div>
         </section>
+        </div>
 
         {/* ── SERVICES LIST ── */}
         <div className="svc-list-section svc-section">
