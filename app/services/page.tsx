@@ -583,15 +583,32 @@ export default function ServicesPage() {
             align-items: flex-start !important;
           }
           .svc-hero-outer {
-            height: 180vh;
+            height: 160vh;
+          }
+          .svc-hero-sticky {
+            height: 100vh !important;
+            min-height: 100vh !important;
+            max-height: 100vh !important;
+            align-items: center !important;
+            overflow-y: auto !important;
+            overflow-x: hidden !important;
+            padding: 1.75rem 1.25rem !important;
           }
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 1.5rem !important;
+            gap: 1rem !important;
           }
-          .svc-hero-visual { order: -1; }
-          .svc-hero-sub { max-width: 100% !important; }
-          .svc-hero-stats { flex-wrap: wrap; gap: 1.25rem; }
+          .svc-hero-visual { order: -1; max-height: 26vh; }
+          .svc-hero-media {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover !important;
+          }
+          .svc-hero-sub { max-width: 100% !important; margin-bottom: 1rem !important; }
+          .svc-eyebrow { margin-bottom: 0.6rem !important; }
+          .svc-hero-h1 { margin-bottom: 0.6rem !important; }
+          .svc-hero-cta { margin-bottom: 0 !important; }
+          .svc-hero-stats { display: none !important; }
           .svc-row {
             grid-template-columns: 2rem 2rem 1fr !important;
           }
