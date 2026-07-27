@@ -392,12 +392,12 @@ export default function ServicesPage() {
 
         .svc-hero-badge {
           position: absolute;
-          bottom: clamp(0.5rem, 1vw, 1.25rem);
+          top: clamp(0.5rem, 1vw, 1.25rem);
           left: clamp(0.5rem, 1vw, 1.25rem);
           background: white;
           border-radius: 999px;
           padding: 0.2rem 0.6rem;
-          font-size: clamp(0.5rem, 0.6vw, 0.75rem);
+          font-size: clamp(0.5rem, 0.8vw, 0.75rem);
           font-weight: 600;
           color: #0f1f1c;
           display: flex; align-items: center; gap: 0.3rem;
