@@ -109,7 +109,7 @@ export default function ServicesPage() {
     framesRef.current = imgs;
   }, [isMobile]);
 
-  // Draw a specific frame on canvas — sharp on retina/high-DPR screens
+  // Draw a specific frame on canvas
   const drawFrame = (index: number) => {
     const canvas = canvasRef.current;
     const img = framesRef.current[index];
@@ -132,7 +132,7 @@ export default function ServicesPage() {
     ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
   };
 
-  // Mobile scroll scrub via canvas — driven by the hero's own tall scroll region
+  // MOBILE: scroll scrub via canvas
   useEffect(() => {
     if (!isMobile || !framesLoaded) return;
     const outer = outerRef.current;
@@ -147,12 +147,13 @@ export default function ServicesPage() {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
-        const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
+        const rect = heroOuter.getBoundingClientRect();
+        const containerH = outer.clientHeight;
+        const scrollableDistance = heroOuter.offsetHeight - containerH;
         if (scrollableDistance <= 0) return;
-        const progress = Math.min(
-          Math.max(outer.scrollTop / scrollableDistance, 0),
-          1,
-        );
+        const containerTop = outer.getBoundingClientRect().top;
+        const scrolled = -(rect.top - containerTop);
+        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
         const frameIndex = Math.min(
           Math.floor(progress * FRAME_COUNT),
           FRAME_COUNT - 1,
@@ -172,7 +173,7 @@ export default function ServicesPage() {
     };
   }, [isMobile, framesLoaded]);
 
-  // Desktop scroll scrub via video — driven by the hero's own tall scroll region
+  // DESKTOP: scroll scrub via video
   useEffect(() => {
     if (isMobile) return;
     const video = videoRef.current;
@@ -181,17 +182,21 @@ export default function ServicesPage() {
     if (!video || !outer || !heroOuter) return;
 
     let lastSeek = 0;
+
     const scrub = () => {
       const now = performance.now();
       if (now - lastSeek < 16) return;
       lastSeek = now;
       if (!video.duration || isNaN(video.duration)) return;
-      const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
+
+      const rect = heroOuter.getBoundingClientRect();
+      const containerH = outer.clientHeight;
+      const containerTop = outer.getBoundingClientRect().top;
+      const scrollableDistance = heroOuter.offsetHeight - containerH;
       if (scrollableDistance <= 0) return;
-      const progress = Math.min(
-        Math.max(outer.scrollTop / scrollableDistance, 0),
-        1,
-      );
+
+      const scrolled = -(rect.top - containerTop);
+      const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
       video.currentTime = progress * video.duration;
     };
 
@@ -253,9 +258,13 @@ export default function ServicesPage() {
         }
 
         .svc-hero-sticky {
-          scroll-snap-align: none;
           position: sticky;
           top: 0;
+          height: 88vh;
+          display: flex;
+          align-items: center;
+          padding: 0 clamp(1.5rem, 6vw, 5rem);
+          overflow: hidden;
         }
 
         .svc-hero-grid {
@@ -276,10 +285,10 @@ export default function ServicesPage() {
           border: 1px solid #dde8e5;
           border-radius: 999px;
           padding: 0.35rem 1rem;
-          font-size: clamp(0.7rem, 0.9vw, 0.8rem);
+          font-size: clamp(0.6rem, 0.8vw, 0.8rem);
           color: #3d5a52;
           font-weight: 500;
-          margin-bottom: clamp(1rem, 2vh, 1.5rem);
+          margin-bottom: clamp(0.75rem, 1.5vh, 1.5rem);
           box-shadow: 0 1px 4px rgba(0,0,0,0.05);
         }
 
@@ -292,20 +301,20 @@ export default function ServicesPage() {
 
         .svc-hero-h1 {
           font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.8rem, 3.5vw, 3.5rem);
+          font-size: clamp(1.5rem, 3vw, 3.5rem);
           font-weight: 700;
           line-height: 1.1;
           color: #0f1f1c;
-          margin: 0 0 clamp(0.75rem, 1.5vh, 1.25rem);
+          margin: 0 0 clamp(0.5rem, 1vh, 1.25rem);
         }
 
         .svc-hero-h1 em { font-style: italic; color: #0D9DB8; }
 
         .svc-hero-sub {
-          font-size: clamp(0.85rem, 1.1vw, 1rem);
+          font-size: clamp(0.75rem, 1vw, 1rem);
           color: #5a756e;
           line-height: 1.65;
-          margin: 0 0 clamp(1.25rem, 2.5vh, 2rem);
+          margin: 0 0 clamp(0.75rem, 1.5vh, 2rem);
           max-width: 440px;
         }
 
@@ -313,14 +322,14 @@ export default function ServicesPage() {
           display: flex;
           gap: 0.75rem;
           flex-wrap: wrap;
-          margin-bottom: clamp(1.25rem, 2.5vh, 2rem);
+          margin-bottom: clamp(0.75rem, 1.5vh, 2rem);
         }
 
         .btn-teal {
           display: inline-flex; align-items: center; gap: 0.4rem;
           background: #0D9DB8; color: white; font-weight: 600;
-          font-size: clamp(0.8rem, 1vw, 0.95rem);
-          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          font-size: clamp(0.7rem, 0.9vw, 0.95rem);
+          padding: clamp(0.5rem, 1vh, 0.8rem) clamp(0.9rem, 1.5vw, 1.5rem);
           border-radius: 999px; border: none; cursor: pointer;
           transition: background 0.18s, transform 0.15s; white-space: nowrap;
         }
@@ -329,8 +338,8 @@ export default function ServicesPage() {
         .btn-ghost {
           display: inline-flex; align-items: center; gap: 0.4rem;
           background: white; color: #0f1f1c; font-weight: 600;
-          font-size: clamp(0.8rem, 1vw, 0.95rem);
-          padding: clamp(0.6rem, 1.2vh, 0.8rem) clamp(1.1rem, 1.8vw, 1.5rem);
+          font-size: clamp(0.7rem, 0.9vw, 0.95rem);
+          padding: clamp(0.5rem, 1vh, 0.8rem) clamp(0.9rem, 1.5vw, 1.5rem);
           border-radius: 999px; border: 1.5px solid #d0dbd8; cursor: pointer;
           transition: border-color 0.18s, transform 0.15s; white-space: nowrap;
         }
@@ -338,35 +347,35 @@ export default function ServicesPage() {
 
         .svc-hero-stats {
           display: flex;
-          gap: clamp(1.25rem, 3vw, 3rem);
-          padding-top: clamp(1rem, 2vh, 1.5rem);
+          gap: clamp(1rem, 2.5vw, 3rem);
+          padding-top: clamp(0.75rem, 1.5vh, 1.5rem);
           border-top: 1px solid #d8e5e2;
           flex-wrap: wrap;
         }
 
         .svc-hero-stat-num {
-          font-size: clamp(1.2rem, 2vw, 1.75rem);
+          font-size: clamp(1rem, 1.5vw, 1.75rem);
           font-weight: 700;
           color: #0f1f1c;
         }
 
         .svc-hero-stat-lbl {
-          font-size: clamp(0.6rem, 0.75vw, 0.7rem);
+          font-size: clamp(0.5rem, 0.6vw, 0.7rem);
           text-transform: uppercase;
           letter-spacing: 0.08em;
           color: #7a9990;
           margin-top: 0.2rem;
         }
 
-        /* Hero visual */
         .svc-hero-visual {
-          background: #1A3A5C;
           border-radius: 1.5rem;
-          box-shadow: 0 20px 60px rgba(26,58,92,0.25);
           overflow: hidden;
           position: relative;
-          min-height: 220px;
+          min-height: 200px;
           width: 100%;
+          max-width: 500px;
+          background: #f0f4f3;
+          box-shadow: 0 20px 60px rgba(26,58,92,0.18);
         }
 
         .svc-hero-media {
@@ -375,25 +384,29 @@ export default function ServicesPage() {
           height: auto;
           position: relative;
           z-index: 1;
+          object-fit: contain;
+          background: transparent;
+          max-width: 500px;
+          border-radius: 1.5rem;
         }
 
         .svc-hero-badge {
           position: absolute;
-          top: clamp(0.75rem, 1.5vw, 1.25rem);
-          left: clamp(0.75rem, 1.5vw, 1.25rem);
+          bottom: clamp(0.5rem, 1vw, 1.25rem);
+          left: clamp(0.5rem, 1vw, 1.25rem);
           background: white;
           border-radius: 999px;
-          padding: 0.3rem 0.75rem;
-          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          padding: 0.2rem 0.6rem;
+          font-size: clamp(0.5rem, 0.6vw, 0.75rem);
           font-weight: 600;
           color: #0f1f1c;
-          display: flex; align-items: center; gap: 0.4rem;
+          display: flex; align-items: center; gap: 0.3rem;
           box-shadow: 0 2px 8px rgba(0,0,0,0.1);
           z-index: 2;
         }
 
         .svc-live-dot {
-          width: 6px; height: 6px;
+          width: 5px; height: 5px;
           border-radius: 50%;
           background: #0D9DB8;
           animation: svc-pulse 1.5s ease-in-out infinite;
@@ -403,29 +416,12 @@ export default function ServicesPage() {
         @keyframes svc-pulse { 0%,100% { opacity:1; } 50% { opacity:0.3; } }
 
         /* ── SERVICES LIST ── */
-        .svc-list-section .svc-section-sub {
-          margin-bottom: clamp(0.75rem, 1.5vh, 1.25rem);
-        }
-
-        .svc-list-section .svc-row {
-          padding: clamp(0.5rem, 1.4vh, 0.9rem) 0;
-        }
-
-        .svc-list-section .svc-row-body p {
-          font-size: clamp(0.68rem, 0.85vw, 0.8rem);
-          line-height: 1.4;
-        }
-
-        .svc-list-section .svc-row-body h3 {
-          margin: 0 0 0.15rem;
-        }
-
         .svc-section-label {
           display: flex; align-items: center; gap: 0.5rem;
-          font-size: clamp(0.65rem, 0.85vw, 0.75rem);
+          font-size: clamp(0.55rem, 0.7vw, 0.75rem);
           font-weight: 600; text-transform: uppercase;
           letter-spacing: 0.1em; color: #0D9DB8;
-          margin-bottom: 0.75rem;
+          margin-bottom: 0.5rem;
         }
 
         .svc-section-label-line {
@@ -435,15 +431,15 @@ export default function ServicesPage() {
 
         .svc-section-title {
           font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.6rem, 3vw, 2.75rem);
+          font-size: clamp(1.3rem, 2.5vw, 2.75rem);
           font-weight: 700; color: #0f1f1c;
-          line-height: 1.15; margin: 0 0 0.75rem;
+          line-height: 1.15; margin: 0 0 0.5rem;
         }
 
         .svc-section-sub {
-          font-size: clamp(0.8rem, 1.05vw, 1rem);
+          font-size: clamp(0.7rem, 0.9vw, 1rem);
           color: #6b8278; line-height: 1.6;
-          max-width: 580px; margin: 0 0 clamp(1.5rem, 3vh, 2.5rem);
+          max-width: 580px; margin: 0 0 clamp(1rem, 2vh, 2.5rem);
         }
 
         .svc-list {
@@ -453,10 +449,10 @@ export default function ServicesPage() {
 
         .svc-row {
           display: grid;
-          grid-template-columns: 3rem 2.5rem 1fr auto;
-          gap: clamp(0.75rem, 2vw, 2rem);
+          grid-template-columns: 2.5rem 2rem 1fr auto;
+          gap: clamp(0.5rem, 1.5vw, 2rem);
           align-items: center;
-          padding: clamp(1rem, 2.5vh, 1.75rem) 0;
+          padding: clamp(0.75rem, 1.8vh, 1.75rem) 0;
           border-bottom: 1px solid #dde8e5;
           cursor: default;
           transition: background 0.2s;
@@ -466,30 +462,30 @@ export default function ServicesPage() {
         .svc-row:hover { background: white; padding-left: 0.75rem; padding-right: 0.75rem; }
 
         .svc-row-num {
-          font-size: clamp(0.75rem, 0.9vw, 0.85rem);
+          font-size: clamp(0.6rem, 0.7vw, 0.85rem);
           font-weight: 700; color: #c8d8d5;
           letter-spacing: 0.05em;
         }
 
         .svc-row-icon {
-          font-size: clamp(1.25rem, 1.8vw, 1.5rem);
+          font-size: clamp(1rem, 1.4vw, 1.5rem);
         }
 
         .svc-row-body h3 {
-          font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-          font-weight: 700; color: #0f1f1c; margin: 0 0 0.3rem;
+          font-size: clamp(0.75rem, 1vw, 1.1rem);
+          font-weight: 700; color: #0f1f1c; margin: 0 0 0.2rem;
         }
 
         .svc-row-body p {
-          font-size: clamp(0.72rem, 0.95vw, 0.875rem);
-          color: #6b8278; line-height: 1.55; margin: 0;
+          font-size: clamp(0.6rem, 0.8vw, 0.875rem);
+          color: #6b8278; line-height: 1.5; margin: 0;
         }
 
         .svc-row-tag {
-          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          font-size: clamp(0.5rem, 0.65vw, 0.75rem);
           font-weight: 600; color: #0D9DB8;
           background: #e6f7fa;
-          padding: 0.25rem 0.75rem;
+          padding: 0.2rem 0.6rem;
           border-radius: 999px;
           white-space: nowrap;
         }
@@ -498,46 +494,46 @@ export default function ServicesPage() {
         .svc-showcase-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: clamp(2rem, 5vw, 5rem);
+          gap: clamp(1.5rem, 4vw, 5rem);
           align-items: center;
         }
 
         .svc-checklist {
           display: flex; flex-direction: column;
-          gap: clamp(0.75rem, 1.5vh, 1.25rem);
-          margin-top: clamp(1rem, 2vh, 1.5rem);
+          gap: clamp(0.5rem, 1vh, 1.25rem);
+          margin-top: clamp(0.75rem, 1.5vh, 1.5rem);
         }
 
         .svc-check-item {
           display: flex;
-          gap: clamp(0.6rem, 1vw, 0.875rem);
+          gap: clamp(0.5rem, 0.8vw, 0.875rem);
           align-items: flex-start;
         }
 
         .svc-check-icon {
-          width: clamp(1.1rem, 1.4vw, 1.375rem);
-          height: clamp(1.1rem, 1.4vw, 1.375rem);
+          width: clamp(0.9rem, 1.2vw, 1.375rem);
+          height: clamp(0.9rem, 1.2vw, 1.375rem);
           border-radius: 50%;
           background: #e6f7fa; color: #0D9DB8;
           display: flex; align-items: center; justify-content: center;
-          font-size: clamp(0.6rem, 0.75vw, 0.75rem);
+          font-size: clamp(0.5rem, 0.6vw, 0.75rem);
           flex-shrink: 0; margin-top: 0.15rem; font-weight: 700;
         }
 
         .svc-check-title {
-          font-size: clamp(0.85rem, 1.1vw, 1rem);
+          font-size: clamp(0.7rem, 0.9vw, 1rem);
           font-weight: 700; color: #0f1f1c; line-height: 1.3;
         }
 
         .svc-check-desc {
-          font-size: clamp(0.7rem, 0.9vw, 0.875rem);
-          color: #6b8278; line-height: 1.55; margin-top: 0.2rem;
+          font-size: clamp(0.6rem, 0.75vw, 0.875rem);
+          color: #6b8278; line-height: 1.5; margin-top: 0.1rem;
         }
 
         .svc-visual-card {
           background: #1A3A5C;
           border-radius: 1.5rem;
-          padding: clamp(0.75rem, 1.5vw, 1.25rem);
+          padding: clamp(0.5rem, 1vw, 1.25rem);
           box-shadow: 0 20px 60px rgba(26,58,92,0.2);
           aspect-ratio: 4/3;
           position: relative; overflow: hidden;
@@ -545,13 +541,13 @@ export default function ServicesPage() {
 
         .svc-visual-badge {
           position: absolute;
-          top: clamp(0.6rem, 1vw, 1rem);
-          left: clamp(0.6rem, 1vw, 1rem);
+          top: clamp(0.4rem, 0.7vw, 1rem);
+          left: clamp(0.4rem, 0.7vw, 1rem);
           background: white; border-radius: 999px;
-          padding: 0.3rem 0.75rem;
-          font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+          padding: 0.2rem 0.6rem;
+          font-size: clamp(0.5rem, 0.6vw, 0.75rem);
           font-weight: 600; color: #0f1f1c;
-          display: flex; align-items: center; gap: 0.4rem;
+          display: flex; align-items: center; gap: 0.3rem;
           z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
@@ -566,7 +562,25 @@ export default function ServicesPage() {
           width: 100%; flex-shrink: 0;
         }
 
-        /* ── MOBILE ── */
+        /* ── RESPONSIVE BREAKPOINTS ── */
+        @media (max-width: 1024px) {
+          .svc-hero-grid {
+            gap: 2rem;
+          }
+          .svc-hero-h1 {
+            font-size: 2rem;
+          }
+          .svc-row {
+            grid-template-columns: 2rem 1.8rem 1fr auto;
+          }
+          .svc-hero-visual {
+            max-width: 400px;
+          }
+          .svc-hero-media {
+            max-width: 400px;
+          }
+        }
+
         @media (max-width: 768px) {
           .svc-outer {
             position: static !important;
@@ -579,38 +593,40 @@ export default function ServicesPage() {
           .svc-section {
             height: auto !important;
             scroll-snap-align: none !important;
-            padding: 2.5rem 1.25rem !important;
+            padding: 2rem 1.25rem !important;
             align-items: flex-start !important;
           }
           .svc-hero-outer {
             height: 160vh;
           }
           .svc-hero-sticky {
+            position: sticky !important;
+            top: 0 !important;
             height: 100vh !important;
-            min-height: 100vh !important;
-            max-height: 100vh !important;
             align-items: flex-start !important;
-            overflow-y: auto !important;
-            overflow-x: hidden !important;
-            padding: 1.75rem 1.25rem !important;
+            overflow: hidden !important;
+            padding: 1.5rem 1.25rem !important;
           }
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
-            gap: 1rem !important;
+            gap: 0.75rem !important;
           }
-          .svc-hero-visual { order: -1; max-height: 26vh; }
+          .svc-hero-visual { 
+            order: -1; 
+            min-height: 150px;
+            max-width: 100%;
+          }
           .svc-hero-media {
-            width: 100% !important;
-            height: 100% !important;
-            object-fit: cover !important;
+            max-width: 100%;
           }
-          .svc-hero-sub { max-width: 100% !important; margin-bottom: 1rem !important; }
-          .svc-eyebrow { margin-bottom: 0.6rem !important; }
-          .svc-hero-h1 { margin-bottom: 0.6rem !important; }
+          .svc-hero-sub { max-width: 100% !important; margin-bottom: 0.75rem !important; }
+          .svc-eyebrow { margin-bottom: 0.5rem !important; }
+          .svc-hero-h1 { margin-bottom: 0.5rem !important; }
           .svc-hero-cta { margin-bottom: 0 !important; }
           .svc-hero-stats { display: none !important; }
           .svc-row {
-            grid-template-columns: 2rem 2rem 1fr !important;
+            grid-template-columns: 1.8rem 1.8rem 1fr !important;
+            padding: 0.75rem 0 !important;
           }
           .svc-row-tag { display: none; }
           .svc-showcase-grid {
@@ -621,6 +637,33 @@ export default function ServicesPage() {
             padding-left: 1.25rem !important;
             padding-right: 1.25rem !important;
           }
+          .svc-hero-h1 {
+            font-size: 1.5rem;
+          }
+          .svc-section-title {
+            font-size: 1.3rem;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .svc-hero-h1 {
+            font-size: 1.2rem;
+          }
+          .svc-section-title {
+            font-size: 1.1rem;
+          }
+          .svc-hero-sub {
+            font-size: 0.7rem;
+          }
+          .svc-row-body h3 {
+            font-size: 0.7rem;
+          }
+          .svc-row-body p {
+            font-size: 0.6rem;
+          }
+          .svc-hero-visual {
+            min-height: 120px;
+          }
         }
       `}</style>
 
@@ -628,74 +671,79 @@ export default function ServicesPage() {
 
         {/* ── HERO ── */}
         <div className="svc-hero-outer" ref={heroOuterRef}>
-        <section className="svc-section svc-hero-sticky">
-          <div className="svc-hero-grid">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-            >
-              <div className="svc-eyebrow">
-                <span className="dot" /> Services
-              </div>
-              <h1 className="svc-hero-h1">
-                Design smarter. <em>Visualize</em> before you build.
-              </h1>
-              <p className="svc-hero-sub">
-                Transform room photos, floor plans, and ideas into photorealistic interiors
-                powered by advanced AI technology.
-              </p>
-              <div className="svc-hero-cta">
-                <button className="btn-teal">Start a design →</button>
-                <button className="btn-ghost">Talk to us</button>
-              </div>
-              <div className="svc-hero-stats">
-                <div>
-                  <div className="svc-hero-stat-num"><Counter to={1200} suffix="+" /></div>
-                  <div className="svc-hero-stat-lbl">AI designs generated</div>
+          <section className="svc-hero-sticky">
+            <div className="svc-hero-grid">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, ease: "easeOut" }}
+                className="mb-10"
+              >
+                <div className="svc-eyebrow">
+                  <span className="dot" /> Services
                 </div>
-                <div>
-                  <div className="svc-hero-stat-num"><Counter to={50} suffix="+" /></div>
-                  <div className="svc-hero-stat-lbl">Styles & materials</div>
+                <h1 className="svc-hero-h1">
+                  Design smarter. <em>Visualize</em> before you build.
+                </h1>
+                <p className="svc-hero-sub">
+                  Transform room photos, floor plans, and ideas into photorealistic interiors
+                  powered by advanced AI technology.
+                </p>
+                <div className="svc-hero-cta">
+                  <button className="btn-teal">Start a design →</button>
+                  <button className="btn-ghost">Talk to us</button>
                 </div>
-                <div>
-                  <div className="svc-hero-stat-num"><Counter to={500} suffix="+" /></div>
-                  <div className="svc-hero-stat-lbl">Happy customers</div>
+                <div className="svc-hero-stats">
+                  <div>
+                    <div className="svc-hero-stat-num"><Counter to={1200} suffix="+" /></div>
+                    <div className="svc-hero-stat-lbl">AI designs generated</div>
+                  </div>
+                  <div>
+                    <div className="svc-hero-stat-num"><Counter to={50} suffix="+" /></div>
+                    <div className="svc-hero-stat-lbl">Styles & materials</div>
+                  </div>
+                  <div>
+                    <div className="svc-hero-stat-num"><Counter to={500} suffix="+" /></div>
+                    <div className="svc-hero-stat-lbl">Happy customers</div>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
+              </motion.div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
-            >
-              <div className="svc-hero-visual">
-                {isMobile ? (
-                  <canvas
-                    ref={canvasRef}
-                    className="svc-hero-media"
-                    style={{ mixBlendMode: "screen" }}
-                  />
-                ) : (
-                  <video
-                    ref={videoRef}
-                    muted
-                    playsInline
-                    preload="auto"
-                    className="svc-hero-media"
-                    style={{ mixBlendMode: "screen" }}
-                  >
-                    <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
-                  </video>
-                )}
-                <div className="svc-hero-badge">
-                  <span className="svc-live-dot" /> Generating…
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
+              >
+                <div className="svc-hero-visual">
+                  {isMobile ? (
+                    <canvas
+                      ref={canvasRef}
+                      className="svc-hero-media"
+                      style={{ width: "100%", height: "auto" }}
+                    />
+                  ) : (
+                    <video
+                      ref={videoRef}
+                      muted
+                      playsInline
+                      preload="auto"
+                      className="svc-hero-media"
+                      style={{ 
+                        width: "100%",
+                        height: "auto",
+                        display: "block"
+                      }}
+                    >
+                      <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
+                    </video>
+                  )}
+                  <div className="svc-hero-badge">
+                    <span className="svc-live-dot" /> Generating…
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          </div>
-        </section>
+              </motion.div>
+            </div>
+          </section>
         </div>
 
         {/* ── SERVICES LIST ── */}
