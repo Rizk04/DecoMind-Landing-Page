@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Navlinks } from "../Home/constant/Navlinks";
 import Link from "next/link";
 import { HiBars3BottomRight } from "react-icons/hi2";
+import { usePathname } from "next/navigation";
 
 type Props = {
   openNav: () => void;
@@ -10,12 +11,30 @@ type Props = {
 
 const Nav = ({ openNav }: Props) => {
   const [scrolled, setScrolled] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", handler, { passive: true });
     return () => window.removeEventListener("scroll", handler);
   }, []);
+
+  // Smooth scroll to download section
+  const handleScrollToDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    
+    if (pathname === "/") {
+      const downloadSection = document.getElementById("download");
+      if (downloadSection) {
+        downloadSection.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    } else {
+      window.location.href = "/#download";
+    }
+  };
 
   return (
     <>
@@ -64,11 +83,15 @@ const Nav = ({ openNav }: Props) => {
           color: white;
           font-weight: 800;
           font-size: 1rem;
+          font-family: 'Georgia', 'Times New Roman', serif;
         }
         .nav-brand-text {
           font-size: clamp(1rem, 1.3vw, 1.2rem);
           font-weight: 700;
           color: #0f1f1c;
+          font-family: 'Georgia', 'Times New Roman', serif;
+          font-style: italic;
+          letter-spacing: -0.02em;
         }
         .nav-links {
           display: flex;
@@ -81,8 +104,26 @@ const Nav = ({ openNav }: Props) => {
           color: #3d5a52;
           text-decoration: none;
           transition: color 0.15s;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          letter-spacing: 0.02em;
+          position: relative;
         }
-        .nav-links a:hover { color: #0D9DB8; }
+        .nav-links a::after {
+          content: '';
+          position: absolute;
+          bottom: -2px;
+          left: 0;
+          width: 0;
+          height: 2px;
+          background: #0D9DB8;
+          transition: width 0.3s ease;
+        }
+        .nav-links a:hover::after {
+          width: 100%;
+        }
+        .nav-links a:hover { 
+          color: #0D9DB8; 
+        }
         .nav-cta {
           display: inline-flex;
           align-items: center;
@@ -97,8 +138,22 @@ const Nav = ({ openNav }: Props) => {
           transition: background 0.18s, transform 0.15s;
           white-space: nowrap;
           flex-shrink: 0;
+          cursor: pointer;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          letter-spacing: 0.03em;
         }
-        .nav-cta:hover { background: #0D9DB8 !important; transform: translateY(-1px); }
+        .nav-cta:hover { 
+          background: #0D9DB8 !important; 
+          transform: translateY(-1px); 
+          box-shadow: 0 4px 12px rgba(13,157,184,0.3);
+        }
+        .nav-cta span {
+          transition: transform 0.2s ease;
+          display: inline-block;
+        }
+        .nav-cta:hover span {
+          transform: translateX(3px);
+        }
         .nav-burger {
           display: none;
           flex-direction: column;
@@ -141,9 +196,13 @@ const Nav = ({ openNav }: Props) => {
           </div>
 
           {/* Desktop CTA */}
-          <Link href="/" className="nav-cta nav-cta-desktop">
+          <a
+            href="/#download"
+            onClick={handleScrollToDownload}
+            className="nav-cta nav-cta-desktop"
+          >
             Start designing <span>→</span>
-          </Link>
+          </a>
 
           {/* Mobile burger */}
           <button

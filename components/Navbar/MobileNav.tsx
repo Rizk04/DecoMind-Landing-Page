@@ -2,6 +2,7 @@
 import React, { useEffect } from "react";
 import { Navlinks } from "../Home/constant/Navlinks";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 type Props = {
   showNav: boolean;
@@ -9,11 +10,33 @@ type Props = {
 };
 
 const MobileNav = ({ closeNav, showNav }: Props) => {
+  const pathname = usePathname();
+
   // Lock body scroll when open
   useEffect(() => {
     document.body.style.overflow = showNav ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [showNav]);
+
+  // Smooth scroll to download section
+  const handleScrollToDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    closeNav(); // Close mobile menu first
+    
+    if (pathname === "/") {
+      const downloadSection = document.getElementById("download");
+      if (downloadSection) {
+        setTimeout(() => {
+          downloadSection.scrollIntoView({
+            behavior: "smooth",
+            block: "start",
+          });
+        }, 300); // Small delay to let menu close
+      }
+    } else {
+      window.location.href = "/#download";
+    }
+  };
 
   return (
     <>
@@ -98,6 +121,7 @@ const MobileNav = ({ closeNav, showNav }: Props) => {
           text-decoration: none;
           margin-top: 1.5rem;
           transition: background 0.18s;
+          cursor: pointer;
         }
         .mobile-nav-cta:hover { background: #0D9DB8; }
         .mobile-nav-close {
@@ -148,9 +172,14 @@ const MobileNav = ({ closeNav, showNav }: Props) => {
           </Link>
         ))}
 
-        <Link href="/" className="mobile-nav-cta" onClick={closeNav}>
+        {/* Changed from Link to a tag with scroll handler */}
+        <a
+          href="/#download"
+          onClick={handleScrollToDownload}
+          className="mobile-nav-cta"
+        >
           Start designing <span>→</span>
-        </Link>
+        </a>
       </div>
     </>
   );

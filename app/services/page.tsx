@@ -110,28 +110,33 @@ export default function ServicesPage() {
   }, [isMobile]);
 
   // Draw a specific frame on canvas
-  const drawFrame = (index: number) => {
-    const canvas = canvasRef.current;
-    const img = framesRef.current[index];
-    if (!canvas || !img) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+ const drawFrame = (index: number) => {
+  const canvas = canvasRef.current;
+  const img = framesRef.current[index];
+  if (!canvas || !img) return;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const cssWidth =
-      canvas.offsetWidth || canvas.parentElement?.offsetWidth || 260;
-    const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
+  const dpr = window.devicePixelRatio || 1;
+  // Use the parent width for reliability when canvas hasn't laid out yet
+  const cssWidth = canvas.parentElement?.getBoundingClientRect().width 
+    || canvas.getBoundingClientRect().width 
+    || 400;
+  const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
 
+  // Only resize if dimensions actually changed — avoids unnecessary resets
+  if (canvas.width !== Math.round(cssWidth * dpr) || canvas.height !== Math.round(cssHeight * dpr)) {
+    canvas.width = Math.round(cssWidth * dpr);
+    canvas.height = Math.round(cssHeight * dpr);
     canvas.style.width = `${cssWidth}px`;
     canvas.style.height = `${cssHeight}px`;
+  }
 
-    canvas.width = cssWidth * dpr;
-    canvas.height = cssHeight * dpr;
-    ctx.scale(dpr, dpr);
-    ctx.clearRect(0, 0, cssWidth, cssHeight);
-    ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
-  };
-
+  // Reset transform before scaling — prevents cumulative scale compounding
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, cssWidth, cssHeight);
+  ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
+};
   // MOBILE: scroll scrub via canvas
   useEffect(() => {
     if (!isMobile || !framesLoaded) return;
