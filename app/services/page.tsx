@@ -38,34 +38,10 @@ function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?: strin
 }
 
 const SERVICES = [
-  {
-    num: "01",
-    icon: "✨",
-    title: "Generate stunning interiors in seconds",
-    body: "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.",
-    tag: "Photoreal · 30s",
-  },
-  {
-    num: "02",
-    icon: "📸",
-    title: "Photograph any room. See its future.",
-    body: "Take a photo of your room and instantly redesign it with AI while preserving the room structure — walls, windows, and layout stay intact.",
-    tag: "Structure-preserving",
-  },
-  {
-    num: "03",
-    icon: "🛋️",
-    title: "Edit without starting over",
-    body: "Replace furniture, lighting, materials, and decor while keeping everything else untouched. Iterate on details, not from scratch.",
-    tag: "Non-destructive",
-  },
-  {
-    num: "04",
-    icon: "📐",
-    title: "From floor plans to reality",
-    body: "Upload a floor plan and let DecoMind furnish it intelligently — turning a 2D blueprint into a walkable 3D room in minutes.",
-    tag: "2D → 3D",
-  },
+  { num: "01", icon: "✨", title: "Generate stunning interiors in seconds", body: "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.", tag: "Photoreal · 30s" },
+  { num: "02", icon: "📸", title: "Photograph any room. See its future.", body: "Take a photo of your room and instantly redesign it with AI while preserving the room structure — walls, windows, and layout stay intact.", tag: "Structure-preserving" },
+  { num: "03", icon: "🛋️", title: "Edit without starting over", body: "Replace furniture, lighting, materials, and decor while keeping everything else untouched. Iterate on details, not from scratch.", tag: "Non-destructive" },
+  { num: "04", icon: "📐", title: "From floor plans to reality", body: "Upload a floor plan and let DecoMind furnish it intelligently — turning a 2D blueprint into a walkable 3D room in minutes.", tag: "2D → 3D" },
 ];
 
 const checkItems = [
@@ -77,24 +53,13 @@ const checkItems = [
 export default function ServicesPage() {
   const outerRef = useRef<HTMLDivElement>(null);
   const heroOuterRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const framesRef = useRef<HTMLImageElement[]>([]);
   const currentFrameRef = useRef(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [framesLoaded, setFramesLoaded] = useState(false);
 
-  // Detect mobile
+  // Preload all frames
   useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 768);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
-  // Preload all frames on mobile
-  useEffect(() => {
-    if (!isMobile) return;
     let loaded = 0;
     const imgs: HTMLImageElement[] = [];
     for (let i = 1; i <= FRAME_COUNT; i++) {
@@ -107,62 +72,62 @@ export default function ServicesPage() {
       imgs.push(img);
     }
     framesRef.current = imgs;
-  }, [isMobile]);
+  }, []);
 
-  // Draw a specific frame on canvas
- const drawFrame = (index: number) => {
-  const canvas = canvasRef.current;
-  const img = framesRef.current[index];
-  if (!canvas || !img) return;
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
+  const drawFrame = (index: number) => {
+    const canvas = canvasRef.current;
+    const img = framesRef.current[index];
+    if (!canvas || !img || !img.complete || img.naturalWidth === 0) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-  const dpr = window.devicePixelRatio || 1;
-  // Use the parent width for reliability when canvas hasn't laid out yet
-  const cssWidth = canvas.parentElement?.getBoundingClientRect().width 
-    || canvas.getBoundingClientRect().width 
-    || 400;
-  const cssHeight = (cssWidth * img.naturalHeight) / img.naturalWidth;
+    const dpr = window.devicePixelRatio || 1;
+    const parent = canvas.parentElement;
+    if (!parent) return;
 
-  // Only resize if dimensions actually changed — avoids unnecessary resets
-  if (canvas.width !== Math.round(cssWidth * dpr) || canvas.height !== Math.round(cssHeight * dpr)) {
-    canvas.width = Math.round(cssWidth * dpr);
-    canvas.height = Math.round(cssHeight * dpr);
-    canvas.style.width = `${cssWidth}px`;
-    canvas.style.height = `${cssHeight}px`;
-  }
+    // CSS pixels of the container
+    const cssWidth = Math.round(parent.getBoundingClientRect().width);
+    const cssHeight = Math.round((cssWidth * img.naturalHeight) / img.naturalWidth);
 
-  // Reset transform before scaling — prevents cumulative scale compounding
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  ctx.clearRect(0, 0, cssWidth, cssHeight);
-  ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
-};
-  // MOBILE: scroll scrub via canvas
+    // Physical backing store = CSS × DPR → sharp at any zoom
+    const physW = Math.round(cssWidth * dpr);
+    const physH = Math.round(cssHeight * dpr);
+    if (canvas.width !== physW || canvas.height !== physH) {
+      canvas.width = physW;
+      canvas.height = physH;
+    }
+
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.drawImage(img, 0, 0, cssWidth, cssHeight);
+  };
+
+  // Scroll scrub
   useEffect(() => {
-    if (!isMobile || !framesLoaded) return;
+    if (!framesLoaded) return;
     const outer = outerRef.current;
     const heroOuter = heroOuterRef.current;
     if (!outer || !heroOuter) return;
 
-    drawFrame(0);
+    // Redraw on container resize (zoom changes, window resize)
+    const ro = new ResizeObserver(() => drawFrame(currentFrameRef.current));
+    if (canvasRef.current?.parentElement) ro.observe(canvasRef.current.parentElement);
+
+    // Draw first frame once layout is ready
+    requestAnimationFrame(() => drawFrame(0));
 
     let rafId: number | null = null;
-
     const scrub = () => {
       if (rafId !== null) return;
       rafId = requestAnimationFrame(() => {
         rafId = null;
         const rect = heroOuter.getBoundingClientRect();
-        const containerH = outer.clientHeight;
-        const scrollableDistance = heroOuter.offsetHeight - containerH;
-        if (scrollableDistance <= 0) return;
         const containerTop = outer.getBoundingClientRect().top;
+        const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
+        if (scrollableDistance <= 0) return;
         const scrolled = -(rect.top - containerTop);
         const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-        const frameIndex = Math.min(
-          Math.floor(progress * FRAME_COUNT),
-          FRAME_COUNT - 1,
-        );
+        const frameIndex = Math.min(Math.floor(progress * FRAME_COUNT), FRAME_COUNT - 1);
         if (frameIndex !== currentFrameRef.current) {
           currentFrameRef.current = frameIndex;
           drawFrame(frameIndex);
@@ -172,46 +137,13 @@ export default function ServicesPage() {
 
     outer.addEventListener("scroll", scrub, { passive: true });
     scrub();
+
     return () => {
+      ro.disconnect();
       outer.removeEventListener("scroll", scrub);
       if (rafId !== null) cancelAnimationFrame(rafId);
     };
-  }, [isMobile, framesLoaded]);
-
-  // DESKTOP: scroll scrub via video
-  useEffect(() => {
-    if (isMobile) return;
-    const video = videoRef.current;
-    const outer = outerRef.current;
-    const heroOuter = heroOuterRef.current;
-    if (!video || !outer || !heroOuter) return;
-
-    let lastSeek = 0;
-
-    const scrub = () => {
-      const now = performance.now();
-      if (now - lastSeek < 16) return;
-      lastSeek = now;
-      if (!video.duration || isNaN(video.duration)) return;
-
-      const rect = heroOuter.getBoundingClientRect();
-      const containerH = outer.clientHeight;
-      const containerTop = outer.getBoundingClientRect().top;
-      const scrollableDistance = heroOuter.offsetHeight - containerH;
-      if (scrollableDistance <= 0) return;
-
-      const scrolled = -(rect.top - containerTop);
-      const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-      video.currentTime = progress * video.duration;
-    };
-
-    video.addEventListener("loadedmetadata", scrub, { once: true });
-    if (video.readyState >= 1) scrub();
-    outer.addEventListener("scroll", scrub, { passive: true });
-    return () => {
-      outer.removeEventListener("scroll", scrub);
-    };
-  }, [isMobile]);
+  }, [framesLoaded]);
 
   return (
     <>
@@ -222,7 +154,6 @@ export default function ServicesPage() {
           box-sizing: border-box;
         }
 
-        /* ── OUTER SCROLL CONTAINER ── */
         .svc-outer {
           position: fixed;
           top: 12vh;
@@ -376,10 +307,9 @@ export default function ServicesPage() {
           border-radius: 1.5rem;
           overflow: hidden;
           position: relative;
-          min-height: 200px;
           width: 100%;
-          max-width: 500px;
-          background: #f0f4f3;
+          max-width: 592px;
+          background: transparent;
           box-shadow: 0 20px 60px rgba(26,58,92,0.18);
         }
 
@@ -387,12 +317,6 @@ export default function ServicesPage() {
           display: block;
           width: 100%;
           height: auto;
-          position: relative;
-          z-index: 1;
-          object-fit: contain;
-          background: transparent;
-          max-width: 500px;
-          border-radius: 1.5rem;
         }
 
         .svc-hero-badge {
@@ -472,9 +396,7 @@ export default function ServicesPage() {
           letter-spacing: 0.05em;
         }
 
-        .svc-row-icon {
-          font-size: clamp(1rem, 1.4vw, 1.5rem);
-        }
+        .svc-row-icon { font-size: clamp(1rem, 1.4vw, 1.5rem); }
 
         .svc-row-body h3 {
           font-size: clamp(0.75rem, 1vw, 1.1rem);
@@ -495,7 +417,7 @@ export default function ServicesPage() {
           white-space: nowrap;
         }
 
-        /* ── FLOOR PLAN / SHOWCASE ── */
+        /* ── SHOWCASE ── */
         .svc-showcase-grid {
           display: grid;
           grid-template-columns: 1fr 1fr;
@@ -556,9 +478,7 @@ export default function ServicesPage() {
           z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .svc-floorplan-svg {
-          width: 100%; height: 100%;
-        }
+        .svc-floorplan-svg { width: 100%; height: 100%; }
 
         /* ── FOOTER ── */
         .svc-footer-section {
@@ -567,25 +487,14 @@ export default function ServicesPage() {
           width: 100%; flex-shrink: 0;
         }
 
-        /* ── RESPONSIVE BREAKPOINTS ── */
+        /* ── TABLET ── */
         @media (max-width: 1024px) {
-          .svc-hero-grid {
-            gap: 2rem;
-          }
-          .svc-hero-h1 {
-            font-size: 2rem;
-          }
-          .svc-row {
-            grid-template-columns: 2rem 1.8rem 1fr auto;
-          }
-          .svc-hero-visual {
-            max-width: 400px;
-          }
-          .svc-hero-media {
-            max-width: 400px;
-          }
+          .svc-hero-grid { gap: 2rem; }
+          .svc-hero-h1 { font-size: 2rem; }
+          .svc-row { grid-template-columns: 2rem 1.8rem 1fr auto; }
         }
 
+        /* ── MOBILE ── */
         @media (max-width: 768px) {
           .svc-outer {
             position: static !important;
@@ -601,9 +510,7 @@ export default function ServicesPage() {
             padding: 2rem 1.25rem !important;
             align-items: flex-start !important;
           }
-          .svc-hero-outer {
-            height: 160vh;
-          }
+          .svc-hero-outer { height: 160vh; }
           .svc-hero-sticky {
             position: sticky !important;
             top: 0 !important;
@@ -616,17 +523,10 @@ export default function ServicesPage() {
             grid-template-columns: 1fr !important;
             gap: 0.75rem !important;
           }
-          .svc-hero-visual { 
-            order: -1; 
-            min-height: 150px;
-            max-width: 100%;
-          }
-          .svc-hero-media {
-            max-width: 100%;
-          }
+          .svc-hero-visual { order: -1; width: 100% !important; }
           .svc-hero-sub { max-width: 100% !important; margin-bottom: 0.75rem !important; }
           .svc-eyebrow { margin-bottom: 0.5rem !important; }
-          .svc-hero-h1 { margin-bottom: 0.5rem !important; }
+          .svc-hero-h1 { font-size: 1.5rem; margin-bottom: 0.5rem !important; }
           .svc-hero-cta { margin-bottom: 0 !important; }
           .svc-hero-stats { display: none !important; }
           .svc-row {
@@ -642,33 +542,15 @@ export default function ServicesPage() {
             padding-left: 1.25rem !important;
             padding-right: 1.25rem !important;
           }
-          .svc-hero-h1 {
-            font-size: 1.5rem;
-          }
-          .svc-section-title {
-            font-size: 1.3rem;
-          }
+          .svc-section-title { font-size: 1.3rem; }
         }
 
         @media (max-width: 480px) {
-          .svc-hero-h1 {
-            font-size: 1.2rem;
-          }
-          .svc-section-title {
-            font-size: 1.1rem;
-          }
-          .svc-hero-sub {
-            font-size: 0.7rem;
-          }
-          .svc-row-body h3 {
-            font-size: 0.7rem;
-          }
-          .svc-row-body p {
-            font-size: 0.6rem;
-          }
-          .svc-hero-visual {
-            min-height: 120px;
-          }
+          .svc-hero-h1 { font-size: 1.2rem; }
+          .svc-section-title { font-size: 1.1rem; }
+          .svc-hero-sub { font-size: 0.7rem; }
+          .svc-row-body h3 { font-size: 0.7rem; }
+          .svc-row-body p { font-size: 0.6rem; }
         }
       `}</style>
 
@@ -682,7 +564,6 @@ export default function ServicesPage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
-                className="mb-10"
               >
                 <div className="svc-eyebrow">
                   <span className="dot" /> Services
@@ -720,28 +601,10 @@ export default function ServicesPage() {
                 transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
               >
                 <div className="svc-hero-visual">
-                  {isMobile ? (
-                    <canvas
-                      ref={canvasRef}
-                      className="svc-hero-media"
-                      style={{ width: "100%", height: "auto" }}
-                    />
-                  ) : (
-                    <video
-                      ref={videoRef}
-                      muted
-                      playsInline
-                      preload="auto"
-                      className="svc-hero-media"
-                      style={{ 
-                        width: "100%",
-                        height: "auto",
-                        display: "block"
-                      }}
-                    >
-                      <source src="/Assets/Logo/LogoLoop_smooth.mp4" type="video/mp4" />
-                    </video>
-                  )}
+                  <canvas
+                    ref={canvasRef}
+                    className="svc-hero-media"
+                  />
                   <div className="svc-hero-badge">
                     <span className="svc-live-dot" /> Generating…
                   </div>
