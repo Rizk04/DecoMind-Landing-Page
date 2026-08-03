@@ -6,141 +6,145 @@ const Footer = () => {
   return (
     <>
       <style>{`
-  .footer {
-    background: #f8faf9;
-    color: #5f716c;
-    padding: clamp(3rem, 6vh, 5rem) 0 0;
-  }
+        .footer {
+          background: #f8faf9;
+          color: #5f716c;
+          padding: clamp(2.5rem, 5vh, 4rem) 0 0;
+        }
 
-  .footer-container {
-    max-width: 72rem;
-    margin: 0 auto;
-    padding: 0 clamp(1.5rem, 6vw, 5rem);
-  }
+        .footer-container {
+          max-width: 72rem;
+          margin: 0 auto;
+          padding: 0 clamp(1.5rem, 6vw, 5rem);
+        }
 
-  .footer-grid {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    gap: clamp(2rem, 4vw, 4rem);
-    padding-bottom: clamp(2rem, 4vh, 3rem);
-    border-bottom: 1px solid rgba(15,31,28,0.1);
-  }
+        .footer-grid {
+          display: grid;
+          grid-template-columns: 4fr 1.5fr; /* brand gets more width, navigate on the right */
+          gap: clamp(2rem, 4vw, 4rem);
+          padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
+          border-bottom: 1px solid rgba(15,31,28,0.1);
+          align-items: start;
+        }
 
-  .footer-brand-mark {
-    width: 2rem;
-    height: 2rem;
-    background: #0D9DB8;
-    border-radius: 0.45rem;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-weight: 800;
-    font-size: 1rem;
-    margin-right: 0.6rem;
-    vertical-align: middle;
-  }
+        .footer-brand {
+          display: flex;
+          align-items: center;
+          gap: 0.6rem;
+        }
 
-  .footer-brand-text {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #0f1f1c;
-    vertical-align: middle;
-  }
+        .footer-brand-mark {
+          width: 2rem;
+          height: 2rem;
+          background: #0D9DB8;
+          border-radius: 0.45rem;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-weight: 800;
+          font-size: 1rem;
+          flex-shrink: 0;
+        }
 
-  .footer-brand-desc {
-    margin-top: 0.875rem;
-    font-size: clamp(0.8rem, 0.95vw, 0.9rem);
-    line-height: 1.65;
-    color: #6d817b;
-    max-width: 260px;
-  }
+        .footer-brand-text {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #0f1f1c;
+        }
 
-  .footer-col h4 {
-    font-size: clamp(0.75rem, 0.9vw, 0.85rem);
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #0f1f1c;
-    margin: 0 0 1rem;
-  }
+        .footer-brand-desc {
+          margin-top: 0.6rem;
+          font-size: clamp(0.85rem, 1vw, 1rem);
+          line-height: 1.7;
+          color: #6d817b;
+          max-width: 460px; /* much wider for more breathing room */
+        }
 
-  .footer-col ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem;
-  }
+        .footer-links {
+          display: flex;
+          flex-direction: column;
+          gap: 0.35rem;
+          text-align: right; /* align to the right since it's at the end */
+        }
 
-  .footer-col ul li a {
-    font-size: clamp(0.8rem, 0.95vw, 0.9rem);
-    color: #6d817b;
-    text-decoration: none;
-    transition: color 0.15s;
-  }
+        .footer-links h4 {
+          font-size: clamp(0.7rem, 0.85vw, 0.8rem);
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: #0f1f1c;
+          margin: 0 0 0.5rem;
+        }
 
-  .footer-col ul li a:hover {
-    color: #0D9DB8;
-  }
+        .footer-links a {
+          font-size: clamp(0.85rem, 1vw, 0.95rem);
+          color: #6d817b;
+          text-decoration: none;
+          transition: color 0.15s;
+          line-height: 1.5;
+        }
 
-  .footer-bottom {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: clamp(1.25rem, 2.5vh, 1.75rem) 0;
-    gap: 1rem;
-    flex-wrap: wrap;
-  }
+        .footer-links a:hover {
+          color: #0D9DB8;
+        }
 
-  .footer-copy {
-    font-size: clamp(0.75rem, 0.9vw, 0.85rem);
-    color: #8a9b96;
-  }
+        .footer-bottom {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: clamp(1rem, 2vh, 1.5rem) 0;
+          gap: 1rem;
+          flex-wrap: wrap;
+        }
 
-  .footer-socials {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
+        .footer-copy {
+          font-size: clamp(0.7rem, 0.85vw, 0.8rem);
+          color: #8a9b96;
+        }
 
-  .footer-socials a {
-    color: #8a9b96;
-    font-size: 1.25rem;
-    transition: color 0.15s;
-    display: flex;
-  }
+        .footer-socials {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
 
-  .footer-socials a:hover {
-    color: #0D9DB8;
-  }
+        .footer-socials a {
+          color: #8a9b96;
+          font-size: 1.25rem;
+          transition: color 0.15s;
+          display: flex;
+        }
 
-  @media (max-width: 768px) {
-    .footer-grid {
-      grid-template-columns: 1fr 1fr !important;
-      gap: 2rem !important;
-    }
+        .footer-socials a:hover {
+          color: #0D9DB8;
+        }
 
-    .footer-brand-col {
-      grid-column: 1 / -1;
-    }
-
-    .footer-bottom {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-  }
-`}</style>
+        @media (max-width: 768px) {
+          .footer-grid {
+            grid-template-columns: 1fr !important;
+            gap: 2rem !important;
+          }
+          .footer-brand-desc {
+            max-width: 100%;
+          }
+          .footer-links {
+            text-align: left;
+          }
+          .footer-bottom {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.75rem;
+          }
+        }
+      `}</style>
 
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-grid">
-
-            {/* Brand */}
-            <div className="footer-col footer-brand-col">
-              <div>
+            {/* Brand – takes most of the space */}
+            <div>
+              <div className="footer-brand">
                 <span className="footer-brand-mark">D</span>
                 <span className="footer-brand-text">DecoMind</span>
               </div>
@@ -149,37 +153,14 @@ const Footer = () => {
               </p>
             </div>
 
-            {/* Product */}
-            <div className="footer-col">
-              <h4>Product</h4>
-              <ul>
-                <li><Link href="/#features">Features</Link></li>
-                <li><Link href="/#gallery">Gallery</Link></li>
-                <li><Link href="/#showcase">3D Viewer</Link></li>
-                <li><Link href="/">Pricing</Link></li>
-              </ul>
+            {/* Navigate – pushed to the far right */}
+            <div className="footer-links">
+              <h4>Navigate</h4>
+              <Link href="/services">Services</Link>
+              <Link href="/about">About</Link>
+              <Link href="/contactus">Contact</Link>
+              <Link href="/gallery">Gallery</Link>
             </div>
-
-            {/* Company */}
-            <div className="footer-col">
-              <h4>Company</h4>
-              <ul>
-                <li><Link href="/about">About</Link></li>
-                <li><Link href="/services">Services</Link></li>
-                <li><Link href="/contact">Contact</Link></li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div className="footer-col">
-              <h4>Legal</h4>
-              <ul>
-                <li><a href="#">Privacy</a></li>
-                <li><a href="#">Terms</a></li>
-                <li><a href="#">Cookies</a></li>
-              </ul>
-            </div>
-
           </div>
 
           {/* Bottom bar */}
@@ -214,7 +195,6 @@ const Footer = () => {
               </a>
             </div>
           </div>
-
         </div>
       </footer>
     </>

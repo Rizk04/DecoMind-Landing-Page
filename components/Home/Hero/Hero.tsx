@@ -377,8 +377,8 @@ const Hero = () => {
               </p>
 
               <div className="hero-cta">
-                <button className="btn-teal">Start designing — free <span>→</span></button>
-                <button className="btn-ghost">Browse gallery</button>
+                <a href="/#download"className="btn-teal">Start designing — free <span>→</span></a>
+                <a href="/gallery" className="btn-ghost">Browse gallery</a>
               </div>
 
               <div className="hero-stats">

@@ -22,7 +22,7 @@ const Home = () => {
         <Feature />
       </section>
       {/* Added ID to Download section for scrolling */}
-      <section id="download" className="h-auto md:h-screen md:snap-start">
+      <section id="download" className="h-screen md:snap-start">
         <Download />
       </section>
       <section className="md:snap-start">

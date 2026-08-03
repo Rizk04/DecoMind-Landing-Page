@@ -8,46 +8,95 @@ const FRAME_COUNT = 164;
 const FRAME_PATH = (n: number) =>
   `/Assets/Logo/frames/frame${String(n).padStart(4, "0")}.jpg`;
 
-function Counter({ to, suffix = "", decimals = 0 }: { to: number; suffix?: string; decimals?: number }) {
+function Counter({
+  to,
+  suffix = "",
+  decimals = 0,
+}: {
+  to: number;
+  suffix?: string;
+  decimals?: number;
+}) {
   const [val, setVal] = useState(0);
   const ref = useRef<HTMLDivElement>(null);
   const started = useRef(false);
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((e) => {
-        if (e.isIntersecting && !started.current) {
-          started.current = true;
-          const dur = 1600;
-          const start = performance.now();
-          const tick = (now: number) => {
-            const p = Math.min(1, (now - start) / dur);
-            const eased = 1 - Math.pow(1 - p, 3);
-            setVal(to * eased);
-            if (p < 1) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        }
-      });
-    }, { threshold: 0.4 });
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((e) => {
+          if (e.isIntersecting && !started.current) {
+            started.current = true;
+            const dur = 1600;
+            const start = performance.now();
+            const tick = (now: number) => {
+              const p = Math.min(1, (now - start) / dur);
+              const eased = 1 - Math.pow(1 - p, 3);
+              setVal(to * eased);
+              if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          }
+        });
+      },
+      { threshold: 0.4 },
+    );
     io.observe(el);
     return () => io.disconnect();
   }, [to]);
-  return <div ref={ref}>{val.toFixed(decimals)}{suffix}</div>;
+  return (
+    <div ref={ref}>
+      {val.toFixed(decimals)}
+      {suffix}
+    </div>
+  );
 }
 
 const SERVICES = [
-  { num: "01", icon: "✨", title: "Generate stunning interiors in seconds", body: "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.", tag: "Photoreal · 30s" },
-  { num: "02", icon: "📸", title: "Photograph any room. See its future.", body: "Take a photo of your room and instantly redesign it with AI while preserving the room structure — walls, windows, and layout stay intact.", tag: "Structure-preserving" },
-  { num: "03", icon: "🛋️", title: "Edit without starting over", body: "Replace furniture, lighting, materials, and decor while keeping everything else untouched. Iterate on details, not from scratch.", tag: "Non-destructive" },
-  { num: "04", icon: "📐", title: "From floor plans to reality", body: "Upload a floor plan and let DecoMind furnish it intelligently — turning a 2D blueprint into a walkable 3D room in minutes.", tag: "2D → 3D" },
+  {
+    num: "01",
+    icon: "✨",
+    title: "Generate stunning interiors in seconds",
+    body: "Create photorealistic room designs with custom styles, lighting, materials, wood species, color palettes, and budget priorities.",
+    tag: "Photoreal · 30s",
+  },
+  {
+    num: "02",
+    icon: "📸",
+    title: "Photograph any room. See its future.",
+    body: "Take a photo of your room and instantly redesign it with AI while preserving the room structure — walls, windows, and layout stay intact.",
+    tag: "Structure-preserving",
+  },
+  {
+    num: "03",
+    icon: "🛋️",
+    title: "Edit without starting over",
+    body: "Replace furniture, lighting, materials, and decor while keeping everything else untouched. Iterate on details, not from scratch.",
+    tag: "Non-destructive",
+  },
+  {
+    num: "04",
+    icon: "📐",
+    title: "From floor plans to reality",
+    body: "Upload a floor plan and let DecoMind furnish it intelligently — turning a 2D blueprint into a walkable 3D room in minutes.",
+    tag: "2D → 3D",
+  },
 ];
 
 const checkItems = [
-  { title: "Auto-detect walls & openings", desc: "Windows and doors are recognized from the plan, no manual tracing." },
-  { title: "Smart furniture placement", desc: "Furniture is sized and placed to fit the room — not floating mid-air." },
-  { title: "Export to your contractor", desc: "Share a 3D link or download a rendered image for your builder." },
+  {
+    title: "Auto-detect walls & openings",
+    desc: "Windows and doors are recognized from the plan, no manual tracing.",
+  },
+  {
+    title: "Smart furniture placement",
+    desc: "Furniture is sized and placed to fit the room — not floating mid-air.",
+  },
+  {
+    title: "Export to your contractor",
+    desc: "Share a 3D link or download a rendered image for your builder.",
+  },
 ];
 
 export default function ServicesPage() {
@@ -87,7 +136,9 @@ export default function ServicesPage() {
 
     // CSS pixels of the container
     const cssWidth = Math.round(parent.getBoundingClientRect().width);
-    const cssHeight = Math.round((cssWidth * img.naturalHeight) / img.naturalWidth);
+    const cssHeight = Math.round(
+      (cssWidth * img.naturalHeight) / img.naturalWidth,
+    );
 
     // Physical backing store = CSS × DPR → sharp at any zoom
     const physW = Math.round(cssWidth * dpr);
@@ -111,7 +162,8 @@ export default function ServicesPage() {
 
     // Redraw on container resize (zoom changes, window resize)
     const ro = new ResizeObserver(() => drawFrame(currentFrameRef.current));
-    if (canvasRef.current?.parentElement) ro.observe(canvasRef.current.parentElement);
+    if (canvasRef.current?.parentElement)
+      ro.observe(canvasRef.current.parentElement);
 
     // Draw first frame once layout is ready
     requestAnimationFrame(() => drawFrame(0));
@@ -126,8 +178,14 @@ export default function ServicesPage() {
         const scrollableDistance = heroOuter.offsetHeight - outer.clientHeight;
         if (scrollableDistance <= 0) return;
         const scrolled = -(rect.top - containerTop);
-        const progress = Math.min(Math.max(scrolled / scrollableDistance, 0), 1);
-        const frameIndex = Math.min(Math.floor(progress * FRAME_COUNT), FRAME_COUNT - 1);
+        const progress = Math.min(
+          Math.max(scrolled / scrollableDistance, 0),
+          1,
+        );
+        const frameIndex = Math.min(
+          Math.floor(progress * FRAME_COUNT),
+          FRAME_COUNT - 1,
+        );
         if (frameIndex !== currentFrameRef.current) {
           currentFrameRef.current = frameIndex;
           drawFrame(frameIndex);
@@ -201,6 +259,7 @@ export default function ServicesPage() {
           align-items: center;
           padding: 0 clamp(1.5rem, 6vw, 5rem);
           overflow: hidden;
+          background: #f9fef8
         }
 
         .svc-hero-grid {
@@ -310,7 +369,6 @@ export default function ServicesPage() {
           width: 100%;
           max-width: 592px;
           background: transparent;
-          box-shadow: 0 20px 60px rgba(26,58,92,0.18);
         }
 
         .svc-hero-media {
@@ -518,6 +576,7 @@ export default function ServicesPage() {
             align-items: flex-start !important;
             overflow: hidden !important;
             padding: 1.5rem 1.25rem !important;
+            background: #f9fef8
           }
           .svc-hero-grid {
             grid-template-columns: 1fr !important;
@@ -555,7 +614,6 @@ export default function ServicesPage() {
       `}</style>
 
       <div className="svc-outer" ref={outerRef}>
-
         {/* ── HERO ── */}
         <div className="svc-hero-outer" ref={heroOuterRef}>
           <section className="svc-hero-sticky">
@@ -572,24 +630,36 @@ export default function ServicesPage() {
                   Design smarter. <em>Visualize</em> before you build.
                 </h1>
                 <p className="svc-hero-sub">
-                  Transform room photos, floor plans, and ideas into photorealistic interiors
-                  powered by advanced AI technology.
+                  Transform room photos, floor plans, and ideas into
+                  photorealistic interiors powered by advanced AI technology.
                 </p>
                 <div className="svc-hero-cta">
-                  <button className="btn-teal">Start a design →</button>
-                  <button className="btn-ghost">Talk to us</button>
+                  <a href="/#download" className="btn-teal">
+                    Start a design →
+                  </a>
+                  <a href="/contactus" className="btn-ghost">
+                    Talk to us
+                  </a>
                 </div>
                 <div className="svc-hero-stats">
                   <div>
-                    <div className="svc-hero-stat-num"><Counter to={1200} suffix="+" /></div>
-                    <div className="svc-hero-stat-lbl">AI designs generated</div>
+                    <div className="svc-hero-stat-num">
+                      <Counter to={1200} suffix="+" />
+                    </div>
+                    <div className="svc-hero-stat-lbl">
+                      AI designs generated
+                    </div>
                   </div>
                   <div>
-                    <div className="svc-hero-stat-num"><Counter to={50} suffix="+" /></div>
+                    <div className="svc-hero-stat-num">
+                      <Counter to={50} suffix="+" />
+                    </div>
                     <div className="svc-hero-stat-lbl">Styles & materials</div>
                   </div>
                   <div>
-                    <div className="svc-hero-stat-num"><Counter to={500} suffix="+" /></div>
+                    <div className="svc-hero-stat-num">
+                      <Counter to={500} suffix="+" />
+                    </div>
                     <div className="svc-hero-stat-lbl">Happy customers</div>
                   </div>
                 </div>
@@ -601,10 +671,7 @@ export default function ServicesPage() {
                 transition={{ duration: 0.65, ease: "easeOut", delay: 0.15 }}
               >
                 <div className="svc-hero-visual">
-                  <canvas
-                    ref={canvasRef}
-                    className="svc-hero-media"
-                  />
+                  <canvas ref={canvasRef} className="svc-hero-media" />
                   <div className="svc-hero-badge">
                     <span className="svc-live-dot" /> Generating…
                   </div>
@@ -637,13 +704,23 @@ export default function ServicesPage() {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true, amount: 0.1 }}
-              variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.08 } } }}
+              variants={{
+                hidden: {},
+                visible: { transition: { staggerChildren: 0.08 } },
+              }}
             >
               {SERVICES.map(({ num, icon, title, body, tag }) => (
                 <motion.div
                   key={num}
                   className="svc-row"
-                  variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: "easeOut" } } }}
+                  variants={{
+                    hidden: { opacity: 0, y: 16 },
+                    visible: {
+                      opacity: 1,
+                      y: 0,
+                      transition: { duration: 0.4, ease: "easeOut" },
+                    },
+                  }}
                 >
                   <div className="svc-row-num">{num}</div>
                   <div className="svc-row-icon">{icon}</div>
@@ -671,9 +748,13 @@ export default function ServicesPage() {
                 <div className="svc-section-label">
                   <div className="svc-section-label-line" /> Floor plan to 3D
                 </div>
-                <h2 className="svc-section-title">From blueprint to walkable room</h2>
+                <h2 className="svc-section-title">
+                  From blueprint to walkable room
+                </h2>
                 <p className="svc-section-sub">
-                  Upload a 2D floor plan. DecoMind reads the walls, places furniture intelligently, and renders a 3D walkthrough you can orbit in real time.
+                  Upload a 2D floor plan. DecoMind reads the walls, places
+                  furniture intelligently, and renders a 3D walkthrough you can
+                  orbit in real time.
                 </p>
                 <div className="svc-checklist">
                   {checkItems.map(({ title, desc }) => (
@@ -699,13 +780,63 @@ export default function ServicesPage() {
                     <span className="svc-live-dot" /> 2D → 3D
                   </div>
                   <svg viewBox="0 0 300 220" className="svc-floorplan-svg">
-                    <rect x="20" y="20" width="260" height="180" fill="none" stroke="rgba(255,255,255,.7)" strokeWidth="3" />
-                    <line x1="20" y1="110" x2="180" y2="110" stroke="rgba(255,255,255,.5)" strokeWidth="2" />
-                    <line x1="180" y1="20" x2="180" y2="200" stroke="rgba(255,255,255,.5)" strokeWidth="2" />
-                    <line x1="90" y1="20" x2="140" y2="20" stroke="rgba(13,157,184,.9)" strokeWidth="4" />
-                    <line x1="280" y1="80" x2="280" y2="140" stroke="rgba(13,157,184,.9)" strokeWidth="4" />
-                    <rect x="40" y="40" width="50" height="40" fill="rgba(212,165,116,.6)" rx="3" />
-                    <rect x="210" y="130" width="50" height="50" fill="rgba(13,157,184,.5)" rx="3" />
+                    <rect
+                      x="20"
+                      y="20"
+                      width="260"
+                      height="180"
+                      fill="none"
+                      stroke="rgba(255,255,255,.7)"
+                      strokeWidth="3"
+                    />
+                    <line
+                      x1="20"
+                      y1="110"
+                      x2="180"
+                      y2="110"
+                      stroke="rgba(255,255,255,.5)"
+                      strokeWidth="2"
+                    />
+                    <line
+                      x1="180"
+                      y1="20"
+                      x2="180"
+                      y2="200"
+                      stroke="rgba(255,255,255,.5)"
+                      strokeWidth="2"
+                    />
+                    <line
+                      x1="90"
+                      y1="20"
+                      x2="140"
+                      y2="20"
+                      stroke="rgba(13,157,184,.9)"
+                      strokeWidth="4"
+                    />
+                    <line
+                      x1="280"
+                      y1="80"
+                      x2="280"
+                      y2="140"
+                      stroke="rgba(13,157,184,.9)"
+                      strokeWidth="4"
+                    />
+                    <rect
+                      x="40"
+                      y="40"
+                      width="50"
+                      height="40"
+                      fill="rgba(212,165,116,.6)"
+                      rx="3"
+                    />
+                    <rect
+                      x="210"
+                      y="130"
+                      width="50"
+                      height="50"
+                      fill="rgba(13,157,184,.5)"
+                      rx="3"
+                    />
                     <circle cx="240" cy="60" r="14" fill="rgba(228,64,95,.5)" />
                   </svg>
                 </div>
@@ -718,7 +849,6 @@ export default function ServicesPage() {
         <section className="svc-footer-section">
           <Footer />
         </section>
-
       </div>
     </>
   );

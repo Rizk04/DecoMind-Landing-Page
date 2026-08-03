@@ -162,7 +162,7 @@ const FeatureList = () => {
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.5, ease: "easeOut" }}
         >
-          <div className="fl-eyebrow">
+          <div className="fl-eyebrow" style={{ marginTop: '-2rem' }}>
             <div className="fl-eyebrow-line" />
             Why DecoMind
           </div>
