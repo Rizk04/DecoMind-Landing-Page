@@ -245,7 +245,7 @@ const Description = () => {
             className="desc-cta"
             variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } } }}
           >
-            <button className="btn-teal">Try it free <span>→</span></button>
+            <a href="/#download"className="btn-teal">Try it free <span>→</span></a>
             <button className="btn-ghost">Our values</button>
           </motion.div>
 
