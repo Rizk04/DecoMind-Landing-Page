@@ -1,22 +1,103 @@
 "use client";
 
-import React from "react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
 import Footer from "@/components/Footer/Footer";
 
-const ITEMS = [
-  { id: 1, color: "#C8D8D4", label: "Living Room" },
-  { id: 2, color: "#B8C9C4", label: "Bedroom" },
-  { id: 3, color: "#D4E0DC", label: "Kitchen" },
-  { id: 4, color: "#A8BCBA", label: "Bathroom" },
-  { id: 5, color: "#BFD0CB", label: "Office" },
-  { id: 6, color: "#C4D4D0", label: "Dining Room" },
-  { id: 7, color: "#B0C4BF", label: "Hallway" },
-  { id: 8, color: "#CDDBD7", label: "Balcony" },
-  { id: 9, color: "#A4BAB6", label: "Studio" },
-  { id: 10, color: "#D0DEDA", label: "Loft" },
-  { id: 11, color: "#BBC8C5", label: "Nursery" },
-  { id: 12, color: "#C6D6D2", label: "Garage" },
+// Simple hash function for deterministic colors
+function hashString(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0; // Convert to 32-bit integer
+  }
+  return Math.abs(hash);
+}
+
+function generateColor(category: string, index: number): string {
+  const seed = `${category}-${index}`;
+  const hue = hashString(seed) % 360;
+  return `hsl(${hue}, 60%, 80%)`;
+}
+
+const CATEGORIES = [
+  "Bedroom",
+  "Living Room",
+  "Kitchen",
+  "Bathroom",
+  "Office",
+  "Dining Room",
+  "Hallway",
+  "Balcony",
 ];
+
+const ITEMS_PER_ROW = 10;
+
+const data = CATEGORIES.map((name) => ({
+  name,
+  items: Array.from({ length: ITEMS_PER_ROW }, (_, i) => ({
+    id: `${name}-${i}`,
+    color: generateColor(name, i),
+  })),
+}));
+
+// ScrollRow component with arrows (unchanged)
+const ScrollRow = ({ title, items }: { title: string; items: { id: string; color: string }[] }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkScroll = useCallback(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    setCanScrollLeft(el.scrollLeft > 0);
+    setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 1);
+  }, []);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    checkScroll();
+    el.addEventListener("scroll", checkScroll);
+    window.addEventListener("resize", checkScroll);
+    return () => {
+      el.removeEventListener("scroll", checkScroll);
+      window.removeEventListener("resize", checkScroll);
+    };
+  }, [checkScroll]);
+
+  const scroll = (direction: "left" | "right") => {
+    const el = containerRef.current;
+    if (!el) return;
+    const card = el.querySelector(".card") as HTMLElement;
+    if (!card) return;
+    const cardWidth = card.offsetWidth + 20; // card width + gap
+    const scrollAmount = direction === "left" ? -cardWidth : cardWidth;
+    el.scrollBy({ left: scrollAmount, behavior: "smooth" });
+  };
+
+  return (
+    <section className="category-row">
+      <h2 className="category-title">{title}</h2>
+      <div className="scroll-wrapper">
+        {canScrollLeft && (
+          <button className="scroll-arrow" onClick={() => scroll("left")} aria-label="Scroll left">
+            ‹
+          </button>
+        )}
+        <div className="scroll-container" ref={containerRef}>
+          {items.map(({ id, color }) => (
+            <div key={id} className="card" style={{ backgroundColor: color }} />
+          ))}
+        </div>
+        {canScrollRight && (
+          <button className="scroll-arrow" onClick={() => scroll("right")} aria-label="Scroll right">
+            ›
+          </button>
+        )}
+      </div>
+    </section>
+  );
+};
 
 export default function GalleryPage() {
   return (
@@ -41,14 +122,13 @@ export default function GalleryPage() {
         }
 
         .gal-inner {
-          max-width: 72rem;
+          max-width: 80rem;
           margin: 0 auto;
           width: 100%;
-          padding: clamp(2rem, 5vh, 4rem) clamp(1.5rem, 6vw, 5rem) 2rem;
+          padding: clamp(1.5rem, 4vh, 3rem) clamp(1.5rem, 4vw, 4rem) 2rem;
           flex: 1 0 auto;
         }
 
-        /* Footer wrapper – full width, sits outside the max-width constraint */
         .gal-footer-wrapper {
           width: 100%;
           flex-shrink: 0;
@@ -57,6 +137,7 @@ export default function GalleryPage() {
 
         .gal-header {
           margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+          animation: gal-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
         .gal-eyebrow {
@@ -79,6 +160,8 @@ export default function GalleryPage() {
           border-radius: 50%;
           background: #0D9DB8;
           flex-shrink: 0;
+          box-shadow: 0 0 0 0 rgba(13, 157, 184, 0.5);
+          animation: gal-pulse 2.4s ease-out infinite;
         }
 
         .gal-title {
@@ -101,40 +184,108 @@ export default function GalleryPage() {
           margin: 0;
         }
 
-        .gal-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 1rem;
+        .category-row {
+          margin-bottom: 2.5rem;
+          animation: gal-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
 
-        .gal-item {
-          border-radius: 1rem;
-          overflow: hidden;
-          box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-          background: white;
-          cursor: pointer;
-          transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .gal-item:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 12px 32px rgba(0,0,0,0.12);
-        }
-
-        .gal-item-img {
-          width: 100%;
-          aspect-ratio: 4/3;
-        }
-
-        .gal-item-label {
-          padding: 0.6rem 0.875rem;
-          font-size: 0.8rem;
+        .category-title {
+          font-size: 1.25rem;
           font-weight: 600;
-          color: #3d5a52;
+          color: #2a4039;
+          letter-spacing: -0.01em;
+          margin: 0 0 0.75rem 0;
         }
 
-        @media (max-width: 1024px) {
-          .gal-grid { grid-template-columns: repeat(3, 1fr); }
+        .scroll-wrapper {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .scroll-container {
+          display: flex;
+          gap: 1.25rem;
+          overflow-x: auto;
+          overflow-y: hidden;
+          padding: 0.5rem 0.25rem 1.5rem 0.25rem;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          scroll-snap-type: x proximity;
+          flex: 1;
+
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scroll-container::-webkit-scrollbar {
+          display: none;
+        }
+
+        .card {
+          flex: 0 0 200px;
+          height: 260px;
+          border-radius: 1.5rem;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+          transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+          scroll-snap-align: start;
+          cursor: pointer;
+        }
+
+        .card:hover {
+          transform: scale(1.04) translateY(-4px);
+          box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+        }
+
+        .card:active {
+          transform: scale(0.98) translateY(-2px);
+          transition-duration: 0.1s;
+        }
+
+        .scroll-arrow {
+          flex-shrink: 0;
+          width: 44px;
+          height: 44px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.85);
+          border: none;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+          font-size: 2rem;
+          line-height: 1;
+          color: #2a4039;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: background 0.25s cubic-bezier(0.22, 1, 0.36, 1), transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+          padding: 0;
+          animation: gal-arrow-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .scroll-arrow:hover {
+          background: white;
+          transform: scale(1.08);
+          box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+        }
+
+        .scroll-arrow:active {
+          transform: scale(0.94);
+          transition-duration: 0.1s;
+        }
+
+        @keyframes gal-fade-up {
+          from { opacity: 0; transform: translateY(12px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes gal-pulse {
+          0% { box-shadow: 0 0 0 0 rgba(13, 157, 184, 0.5); }
+          70% { box-shadow: 0 0 0 6px rgba(13, 157, 184, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(13, 157, 184, 0); }
+        }
+
+        @keyframes gal-arrow-in {
+          from { opacity: 0; transform: scale(0.8); }
+          to { opacity: 1; transform: scale(1); }
         }
 
         @media (max-width: 768px) {
@@ -142,14 +293,50 @@ export default function GalleryPage() {
             position: static !important;
             height: auto !important;
           }
-          .gal-grid { grid-template-columns: repeat(2, 1fr); }
-          .gal-inner {
-            padding-bottom: 1rem;
+          .card {
+            flex: 0 0 160px;
+            height: 210px;
+          }
+          .scroll-arrow {
+            width: 36px;
+            height: 36px;
+            font-size: 1.6rem;
           }
         }
 
         @media (max-width: 480px) {
-          .gal-grid { grid-template-columns: 1fr; }
+          .card {
+            flex: 0 0 130px;
+            height: 170px;
+          }
+          .scroll-container {
+            gap: 0.75rem;
+          }
+          .scroll-arrow {
+            width: 32px;
+            height: 32px;
+            font-size: 1.4rem;
+          }
+          .scroll-wrapper {
+            gap: 0.4rem;
+          }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          .gal-header,
+          .category-row {
+            animation: none;
+          }
+          .gal-eyebrow .dot {
+            animation: none;
+          }
+          .card,
+          .scroll-arrow {
+            transition: none;
+          }
+          .scroll-container {
+            scroll-behavior: auto;
+          }
         }
       `}</style>
 
@@ -157,21 +344,15 @@ export default function GalleryPage() {
         <div className="gal-inner">
           <div className="gal-header">
             <div className="gal-eyebrow"><span className="dot" /> Gallery</div>
-            <h1 className="gal-title">AI-designed <em>spaces</em></h1>
-            <p className="gal-sub">Browse rooms designed with DecoMind.</p>
+            <h1 className="gal-title">AI‑designed <em>spaces</em></h1>
+            <p className="gal-sub">Browse rooms, each row scrolls horizontally.</p>
           </div>
 
-          <div className="gal-grid">
-            {ITEMS.map(({ id, color, label }) => (
-              <div key={id} className="gal-item">
-                <div className="gal-item-img" style={{ background: color }} />
-                <div className="gal-item-label">{label}</div>
-              </div>
-            ))}
-          </div>
+          {data.map(({ name, items }) => (
+            <ScrollRow key={name} title={name} items={items} />
+          ))}
         </div>
 
-        {/* Footer – full width, outside the max-width container */}
         <div className="gal-footer-wrapper">
           <Footer />
         </div>
