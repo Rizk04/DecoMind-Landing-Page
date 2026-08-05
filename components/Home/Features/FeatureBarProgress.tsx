@@ -3,8 +3,6 @@
 import { animate, motion, useInView, useMotionValue, useTransform } from "framer-motion";
 import React, { useEffect, useRef, useState } from "react";
 
-const styles = ["Modern", "Rustic", "Mid-Century", "Scandinavian", "Industrial", "Japandi", "Bohemian", "Minimalist", "Art Deco", "Coastal"];
-
 const FeatureBarProgress = () => {
   const count1 = useMotionValue(0);
   const count2 = useMotionValue(0);
@@ -66,43 +64,6 @@ const FeatureBarProgress = () => {
   flex-direction: column;
   overflow: hidden;
 }
-
-        /* ── Ticker ── */
-        .fbp-ticker-wrap {
-          width: 100%;
-          margin-bottom: -1rem;
-          overflow: hidden;
-          border-top: 1px solid #e4e9e7;
-          border-bottom: 1px solid #e4e9e7;
-          padding: clamp(0.6rem, 1.2vh, 1rem) 0;
-          background: #f7f8f6;
-        }
-        .fbp-ticker-track {
-          display: flex;
-          width: max-content;
-          animation: ticker-scroll 28s linear infinite;
-        }
-        .fbp-ticker-track:hover {
-          animation-play-state: paused;
-        }
-        @keyframes ticker-scroll {
-          0%   { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .fbp-ticker-item {
-          display: inline-flex;
-          align-items: center;
-          gap: 0.6rem;
-          padding: 0 clamp(1.2rem, 2.5vw, 2.5rem);
-          font-size: clamp(0.85rem, 1.2vw, 1.1rem);
-          font-weight: 500;
-          color: #3d5a52;
-          white-space: nowrap;
-        }
-        .fbp-ticker-dot {
-          color: #0D9DB8;
-          font-size: 0.6rem;
-        }
 
         /* ── Main content ── */
        .fbp-content {
@@ -233,18 +194,6 @@ const FeatureBarProgress = () => {
       `}</style>
 
       <div className="fbp-outer">
-
-        {/* Ticker */}
-        <div className="fbp-ticker-wrap">
-          <div className="fbp-ticker-track">
-            {[...styles, ...styles].map((s, i) => (
-              <span key={i} className="fbp-ticker-item">
-                {s}
-                <span className="fbp-ticker-dot">✦</span>
-              </span>
-            ))}
-          </div>
-        </div>
 
         {/* Main */}
         <div className="fbp-content">

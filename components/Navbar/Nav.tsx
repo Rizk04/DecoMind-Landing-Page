@@ -9,6 +9,20 @@ type Props = {
   openNav: () => void;
 };
 
+// Style ticker moved out of the Hero/FeatureBar and attached directly under the navbar.
+const tickerStyles = [
+  "Modern",
+  "Rustic",
+  "Mid-Century",
+  "Scandinavian",
+  "Industrial",
+  "Japandi",
+  "Bohemian",
+  "Minimalist",
+  "Art Deco",
+  "Coastal",
+];
+
 const Nav = ({ openNav }: Props) => {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
@@ -22,7 +36,7 @@ const Nav = ({ openNav }: Props) => {
   // Smooth scroll to download section
   const handleScrollToDownload = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
-    
+
     if (pathname === "/") {
       const downloadSection = document.getElementById("download");
       if (downloadSection) {
@@ -171,6 +185,54 @@ const Nav = ({ openNav }: Props) => {
           border-radius: 2px;
           transition: all 0.2s;
         }
+
+        /* ── Style ticker: fixed directly under the navbar, no gap ── */
+        .nav-ticker-wrap {
+          position: fixed;
+          top: 12vh;
+          left: 0;
+          right: 0;
+          z-index: 49;
+          width: 100%;
+          overflow: hidden;
+          border-bottom: 1px solid #e4e9e7;
+          padding: clamp(0.45rem, 1vh, 0.7rem) 0;
+          background: rgba(240,244,243,0.9);
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+        }
+        .nav.scrolled + .nav-ticker-wrap {
+          background: rgba(255,255,255,0.95);
+        }
+        .nav-ticker-track {
+          display: flex;
+          width: max-content;
+          animation: nav-ticker-scroll 28s linear infinite;
+        }
+        .nav-ticker-track:hover {
+          animation-play-state: paused;
+        }
+        @keyframes nav-ticker-scroll {
+          0%   { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .nav-ticker-item {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.6rem;
+          padding: 0 clamp(1.2rem, 2.5vw, 2.5rem);
+          font-size: clamp(0.8rem, 1.1vw, 1rem);
+          font-weight: 500;
+          color: #3d5a52;
+          white-space: nowrap;
+          font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          letter-spacing: 0.02em;
+        }
+        .nav-ticker-dot {
+          color: #0D9DB8;
+          font-size: 0.6rem;
+        }
+
         @media (max-width: 920px) {
           .nav-links { display: none; }
           .nav-cta-desktop { display: none; }
@@ -216,6 +278,18 @@ const Nav = ({ openNav }: Props) => {
           </button>
         </div>
       </nav>
+
+      {/* Style ticker sits directly under the navbar */}
+      <div className="nav-ticker-wrap" aria-hidden="true">
+        <div className="nav-ticker-track">
+          {[...tickerStyles, ...tickerStyles].map((s, i) => (
+            <span key={i} className="nav-ticker-item">
+              {s}
+              <span className="nav-ticker-dot">✦</span>
+            </span>
+          ))}
+        </div>
+      </div>
     </>
   );
 };
