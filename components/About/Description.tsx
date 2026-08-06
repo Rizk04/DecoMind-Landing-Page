@@ -246,7 +246,7 @@ const Description = () => {
             variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } } }}
           >
             <a href="/#download"className="btn-teal">Try it free <span>→</span></a>
-            <button className="btn-ghost">Our values</button>
+            <a href="/gallery" className="btn-ghost">Gallery</a>
           </motion.div>
 
           <motion.div
