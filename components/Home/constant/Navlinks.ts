@@ -22,4 +22,11 @@ export const Navlinks = [
     url: "/contactus",
     label: "Contact Us",
   },
+
+   {
+    id: 5,
+
+    url: "/gallery",
+    label: "Gallery",
+  },
 ];
