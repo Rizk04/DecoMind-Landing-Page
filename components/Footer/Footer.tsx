@@ -9,81 +9,86 @@ const Footer = () => {
         .footer {
           background: #f8faf9;
           color: #5f716c;
-          padding: clamp(2.5rem, 5vh, 4rem) 0 0;
+          min-height: 100svh;
+          display: flex;
+          flex-direction: column;
+          padding: clamp(2.5rem, 5vh, 4rem) 0 clamp(1.5rem, 3vh, 2.5rem);
         }
 
         .footer-container {
           max-width: 72rem;
+          width: 100%;
           margin: 0 auto;
           padding: 0 clamp(1.5rem, 6vw, 5rem);
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
         }
 
-        .footer-grid {
-          display: grid;
-          grid-template-columns: 4fr 1.5fr; /* brand gets more width, navigate on the right */
-          gap: clamp(2rem, 4vw, 4rem);
-          padding-bottom: clamp(1.5rem, 3vh, 2.5rem);
+        .footer-main {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          text-align: center;
+          padding: clamp(2rem, 6vh, 5rem) 0;
           border-bottom: 1px solid rgba(15,31,28,0.1);
-          align-items: start;
+          width: 100%;
         }
 
         .footer-brand {
           display: flex;
           align-items: center;
-          gap: 0.6rem;
+          justify-content: center;
+          gap: 0.75rem;
         }
 
         .footer-brand-mark {
-          width: 2rem;
-          height: 2rem;
+          width: clamp(2.75rem, 3.5vw, 3.25rem);
+          height: clamp(2.75rem, 3.5vw, 3.25rem);
           background: #0D9DB8;
-          border-radius: 0.45rem;
+          border-radius: 0.55rem;
           display: inline-flex;
           align-items: center;
           justify-content: center;
           color: white;
           font-weight: 800;
-          font-size: 1rem;
+          font-size: clamp(1.3rem, 1.8vw, 1.6rem);
           flex-shrink: 0;
         }
 
         .footer-brand-text {
-          font-size: 1.1rem;
+          font-size: clamp(1.75rem, 2.8vw, 2.4rem);
           font-weight: 700;
           color: #0f1f1c;
         }
 
         .footer-brand-desc {
-          margin-top: 0.6rem;
-          font-size: clamp(0.85rem, 1vw, 1rem);
+          margin-top: 1.25rem;
+          font-size: clamp(1.05rem, 1.4vw, 1.3rem);
           line-height: 1.7;
           color: #6d817b;
-          max-width: 460px; /* much wider for more breathing room */
+          max-width: 560px;
         }
 
         .footer-links {
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-          text-align: right; /* align to the right since it's at the end */
-        }
 
-        .footer-links h4 {
-          font-size: clamp(0.7rem, 0.85vw, 0.8rem);
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 0.08em;
-          color: #0f1f1c;
-          margin: 0 0 0.5rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: clamp(1.5rem, 3vw, 3rem);
+          margin-top: 2rem;
+          flex-wrap: wrap;
         }
 
         .footer-links a {
-          font-size: clamp(0.85rem, 1vw, 0.95rem);
-          color: #6d817b;
-          text-decoration: none;
-          transition: color 0.15s;
-          line-height: 1.5;
-        }
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  color: #6d817b;
+  text-decoration: none;
+  transition: color 0.15s;
+  font-weight: 700;  /* add this */
+}
 
         .footer-links a:hover {
           color: #0D9DB8;
@@ -93,25 +98,26 @@ const Footer = () => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: clamp(1rem, 2vh, 1.5rem) 0;
+          padding-top: clamp(1.25rem, 2.5vh, 2rem);
           gap: 1rem;
           flex-wrap: wrap;
+          width: 100%;
         }
 
         .footer-copy {
-          font-size: clamp(0.7rem, 0.85vw, 0.8rem);
+          font-size: clamp(0.72rem, 0.9vw, 0.85rem);
           color: #8a9b96;
         }
 
         .footer-socials {
           display: flex;
           align-items: center;
-          gap: 1rem;
+          gap: 1.25rem;
         }
 
         .footer-socials a {
           color: #8a9b96;
-          font-size: 1.25rem;
+          font-size: 1.35rem;
           transition: color 0.15s;
           display: flex;
         }
@@ -121,76 +127,48 @@ const Footer = () => {
         }
 
         @media (max-width: 768px) {
-          .footer-grid {
-            grid-template-columns: 1fr !important;
-            gap: 2rem !important;
-          }
-          .footer-brand-desc {
-            max-width: 100%;
-          }
-          .footer-links {
-            text-align: left;
+          .footer {
+            min-height: 0;
           }
           .footer-bottom {
             flex-direction: column;
-            align-items: flex-start;
+            align-items: center;
             gap: 0.75rem;
+            text-align: center;
           }
         }
       `}</style>
 
       <footer className="footer">
         <div className="footer-container">
-          <div className="footer-grid">
-            {/* Brand – takes most of the space */}
-            <div>
-              <div className="footer-brand">
-                <span className="footer-brand-mark">D</span>
-                <span className="footer-brand-text">DecoMind</span>
-              </div>
-              <p className="footer-brand-desc">
-                AI-powered interior design for homeowners. Design, visualize, and build your dream space — no experience needed.
-              </p>
+          <div className="footer-main">
+            <div className="footer-brand">
+              <span className="footer-brand-mark">D</span>
+              <span className="footer-brand-text">DecoMind</span>
             </div>
-
-            {/* Navigate – pushed to the far right */}
-            <div className="footer-links">
-              <h4>Navigate</h4>
+            <p className="footer-brand-desc">
+              AI-powered interior design for homeowners. Design, visualize, and build your dream space — no experience needed.
+            </p>
+            <nav className="footer-links">
               <Link href="/services">Services</Link>
               <Link href="/about">About</Link>
               <Link href="/contactus">Contact</Link>
               <Link href="/gallery">Gallery</Link>
-            </div>
+            </nav>
           </div>
 
-          {/* Bottom bar */}
           <div className="footer-bottom">
             <div className="footer-copy">
               © 2026 Optima Solutions. All rights reserved.
             </div>
             <div className="footer-socials">
-              <a
-                href="http://www.linkedin.com/company/optima-solutions-cloud"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-              >
+              <a href="http://www.linkedin.com/company/optima-solutions-cloud" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
                 <BsLinkedin />
               </a>
-              <a
-                href="https://www.facebook.com/optima.solutions.cloud/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Facebook"
-              >
+              <a href="https://www.facebook.com/optima.solutions.cloud/" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
                 <BsFacebook />
               </a>
-              <a
-                href="https://www.instagram.com/optima.solutions.cloud/"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Instagram"
-              >
+              <a href="https://www.instagram.com/optima.solutions.cloud/" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
                 <BsInstagram />
               </a>
             </div>

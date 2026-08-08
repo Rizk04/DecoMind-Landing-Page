@@ -220,14 +220,14 @@ const Download = () => {
           </div>
 
           {/* Divider */}
-          <div className="dl-divider">
+          {/* <div className="dl-divider">
             <div className="dl-divider-line" />
             <span className="dl-divider-text">or</span>
             <div className="dl-divider-line" />
-          </div>
+          </div> */}
 
           {/* Email */}
-          <div className="dl-email-row">
+          {/* <div className="dl-email-row">
             <input
               className="dl-email-input"
               type="email"
@@ -236,7 +236,7 @@ const Download = () => {
               onChange={(e) => setEmail(e.target.value)}
             />
             <button className="dl-notify-btn">Notify me</button>
-          </div>
+          </div> */}
         </motion.div>
       </div>
     </>

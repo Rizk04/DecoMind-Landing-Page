@@ -19,24 +19,37 @@ function generateColor(category: string, index: number): string {
   return `hsl(${hue}, 60%, 80%)`;
 }
 
+// Each category maps to a folder in /public/Assets/Screenshots and a file
+// prefix. Files are named <prefix>1.jpg, <prefix>2.jpg, ...
+// `count` is how many images exist for that category right now — bump it as
+// you add more and the row will pick them up automatically. Set count to 0
+// (or leave images out) and that row falls back to generated colors.
 const CATEGORIES = [
-  "Bedroom",
-  "Living Room",
-  "Kitchen",
-  "Bathroom",
-  "Office",
-  "Dining Room",
-  "Hallway",
-  "Balcony",
+  { name: "Bedroom", folder: "Bedroom", prefix: "bedroom", count: 5 },
+  { name: "Living Room", folder: "Living", prefix: "living", count: 5 },
+  { name: "Kitchen", folder: "Kitchen", prefix: "kitchen", count: 4 },
+  { name: "Bathroom", folder: "Bathroom", prefix: "bathroom", count: 5 },
 ];
 
 const ITEMS_PER_ROW = 10;
 
-const data = CATEGORIES.map((name) => ({
-  name,
+// Build the image path for a given category, cycling through the available
+// images so the row stays full.
+function categoryImage(
+  cat: { folder: string; prefix: string; count: number },
+  index: number
+): string {
+  const n = (index % cat.count) + 1;
+  return `/Assets/Screenshots/${cat.folder}/${cat.prefix}${n}.jpg`;
+}
+
+const data = CATEGORIES.map((cat) => ({
+  name: cat.name,
   items: Array.from({ length: ITEMS_PER_ROW }, (_, i) => ({
-    id: `${name}-${i}`,
-    color: generateColor(name, i),
+    id: `${cat.name}-${i}`,
+    // Rows with images use them; rows without images fall back to color.
+    image: cat.count > 0 ? categoryImage(cat, i) : undefined,
+    color: cat.count > 0 ? undefined : generateColor(cat.name, i),
   })),
 }));
 
@@ -54,7 +67,7 @@ const ScrollRow = ({
   direction = 1,
 }: {
   title: string;
-  items: { id: string; color: string }[];
+  items: { id: string; color?: string; image?: string }[];
   direction?: 1 | -1;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,19 +93,37 @@ const ScrollRow = ({
     };
     setStart();
 
-    // Scale each card based on its distance from the row's center.
+    // Smoothly interpolate each card's scale/opacity toward its target so
+    // cards ease into place instead of snapping. State is kept on the element
+    // so it survives across frames.
+    const focusState = new WeakMap<
+      HTMLElement,
+      { scale: number; opacity: number }
+    >();
     const applyFocus = () => {
-      const rect = el.getBoundingClientRect();
-      const center = rect.left + rect.width / 2;
-      const maxDist = rect.width / 2;
-      const cards = el.querySelectorAll<HTMLElement>(".card");
+      const center = el.scrollLeft + el.clientWidth / 2;
+      const maxDist = el.clientWidth / 2;
+      const cards = Array.from(el.querySelectorAll<HTMLElement>(".card"));
+
       cards.forEach((card) => {
-        const cRect = card.getBoundingClientRect();
-        const cCenter = cRect.left + cRect.width / 2;
-        const dist = Math.abs(cCenter - center);
+        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
+        const dist = Math.abs(cardCenter - center);
         const t = Math.min(dist / maxDist, 1);
-        const scale = 1 - t * 0.42; // center = 1, edges = ~0.58
-        const opacity = 1 - t * 0.55;
+        // Sharper falloff so the middle card stands out clearly while
+        // neighbors drop off quickly but still smoothly.
+        const eased = t * t;
+        const targetScale = 1.25 - eased * 0.45; // center 1.25, edges ~0.8
+        const targetOpacity = 1 - eased * 0.55;
+
+        const prev = focusState.get(card) ?? {
+          scale: targetScale,
+          opacity: targetOpacity,
+        };
+        // Lerp toward the target — lower factor = smoother/easingslower.
+        const scale = prev.scale + (targetScale - prev.scale) * 0.12;
+        const opacity = prev.opacity + (targetOpacity - prev.opacity) * 0.12;
+        focusState.set(card, { scale, opacity });
+
         card.style.transform = `scale(${scale})`;
         card.style.opacity = `${opacity}`;
         card.style.zIndex = `${Math.round((1 - t) * 100)}`;
@@ -143,11 +174,20 @@ const ScrollRow = ({
           onTouchStart={() => (pausedRef.current = true)}
           onTouchEnd={() => (pausedRef.current = false)}
         >
-          {loopItems.map(({ id, color }, i) => (
+          {loopItems.map(({ id, color, image }, i) => (
             <div
               key={`${id}-${i}`}
               className="card"
-              style={{ backgroundColor: color }}
+              style={
+                image
+                  ? {
+                      backgroundImage: `url(${image})`,
+                      backgroundSize: "contain",
+                      backgroundPosition: "center",
+                      backgroundRepeat: "no-repeat",
+                    }
+                  : { backgroundColor: color }
+              }
             />
           ))}
         </div>
@@ -182,12 +222,15 @@ export default function GalleryPage() {
           max-width: 80rem;
           margin: 0 auto;
           width: 100%;
-          padding: clamp(1.5rem, 4vh, 3rem) 0 2rem;
+          /* Minimum must exceed the fixed navbar + filter bar height (~150px)
+             so the "Gallery" chip always clears it, even at 150% zoom where
+             svh shrinks relative to the fixed header. */
+          padding: clamp(9.5rem, 14svh, 12rem) 0 2rem;
           flex: 1 0 auto;
         }
 
         .gal-header {
-          margin-bottom: clamp(1.5rem, 3vh, 2.5rem);
+          margin-bottom: clamp(1rem, 2.5vh, 2rem);
           padding: 0 clamp(1.5rem, 4vw, 4rem);
           animation: gal-fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
@@ -218,11 +261,11 @@ export default function GalleryPage() {
 
         .gal-title {
           font-family: 'Playfair Display', Georgia, serif;
-          font-size: clamp(1.8rem, 3.5vw, 3rem);
+          font-size: clamp(1.6rem, 2.8vw, 2.5rem);
           font-weight: 700;
           color: #0f1f1c;
           line-height: 1.1;
-          margin: 0 0 0.5rem;
+          margin: 0 0 0.4rem;
         }
 
         .gal-title em {
@@ -257,10 +300,10 @@ export default function GalleryPage() {
 
         .scroll-container {
           display: flex;
-          gap: 1.25rem;
+          gap: clamp(3rem, 5vw, 5rem);
           overflow-x: scroll;
           overflow-y: hidden;
-          padding: 2rem clamp(1.5rem, 4vw, 4rem);
+          padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.5rem, 4vw, 4rem);
           flex: 1;
 
           /* Hide scrollbar (and its buttons) across browsers */
@@ -279,9 +322,10 @@ export default function GalleryPage() {
         }
 
         .card {
-          flex: 0 0 200px;
-          height: 260px;
-          border-radius: 1.5rem;
+          flex: 0 0 clamp(140px, 15vw, 200px);
+          aspect-ratio: 1152 / 896;
+          height: auto;
+          border-radius: clamp(1rem, 1.5vw, 1.5rem);
           box-shadow: 0 4px 20px rgba(0,0,0,0.08);
           /* transform/opacity are driven per-frame by JS for the focal effect;
              the transition just smooths any resize jumps */
@@ -367,19 +411,20 @@ export default function GalleryPage() {
             position: static !important;
             height: auto !important;
           }
+          .gal-inner {
+            padding-top: clamp(5rem, 14svh, 8rem);
+          }
           .card {
-            flex: 0 0 160px;
-            height: 210px;
+            flex: 0 0 clamp(150px, 42vw, 190px);
           }
         }
 
         @media (max-width: 480px) {
           .card {
-            flex: 0 0 130px;
-            height: 170px;
+            flex: 0 0 clamp(140px, 55vw, 170px);
           }
           .scroll-container {
-            gap: 0.75rem;
+            gap: 1rem;
           }
         }
 
